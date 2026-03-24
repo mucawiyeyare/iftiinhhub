@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
 
 const Contact = () => {
   const location = useLocation();
@@ -25,13 +26,18 @@ const Contact = () => {
     }
   }, [location.state, user]);
 
+  const [error, setError] = useState('');
+
   const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    if (!window.confirm('Are you sure to send message? (Yes or No)')) {
+      return;
+    }
+    
     try {
-      const existing = JSON.parse(localStorage.getItem('contactMessages') || '[]');
-      const newMessage = {
-        id: Date.now(),
+      await axios.post('/messages', {
         name: form.name,
         email: form.email,
         whatsapp: form.whatsapp,
@@ -39,15 +45,12 @@ const Contact = () => {
         type: isEnrollmentRequest ? 'enrollment_request' : 'general',
         courseDetails: isEnrollmentRequest ? location.state?.courseDetails : null,
         subject: isEnrollmentRequest ? location.state?.subject : 'General Inquiry',
-        createdAt: new Date().toISOString()
-      };
-      const updated = [newMessage, ...existing];
-      localStorage.setItem('contactMessages', JSON.stringify(updated));
+      });
       setSent(true);
-      setTimeout(() => setSent(false), 3000);
+      setTimeout(() => setSent(false), 4000);
       setForm({ name: '', email: '', whatsapp: '', message: '' });
     } catch (err) {
-      // noop: localStorage write failed
+      setError(err.response?.data?.message || 'Failed to send message. Please try again.');
     }
   };
 
@@ -135,9 +138,14 @@ const Contact = () => {
           {sent && (
             <div className="mb-4 p-3 rounded bg-purple-50 border border-purple-200 text-purple-700">
               {isEnrollmentRequest 
-                ? 'Thanks! Your enrollment request has been submitted. We\'ll contact you soon.' 
-                : 'Thanks! Your message has been sent.'
+                ? "message send succesfully ,Admin will contact you" 
+                : 'message send succesfully ,Admin will contact you'
               }
+            </div>
+          )}
+          {error && (
+            <div className="mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-700">
+              {error}
             </div>
           )}
           <form onSubmit={onSubmit} className="grid grid-cols-1 gap-4">

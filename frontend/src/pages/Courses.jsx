@@ -15,7 +15,6 @@ const Courses = () => {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedLevel, setSelectedLevel] = useState('');
   const [activeTab, setActiveTab] = useState('assigned'); // 'assigned', 'unassigned', 'all'
 
   useEffect(() => {
@@ -58,9 +57,8 @@ const Courses = () => {
                            (course.description || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                            (course.instructor || '').toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = !selectedCategory || course.category === selectedCategory;
-      const matchesLevel = !selectedLevel || course.level === selectedLevel;
       
-      return matchesSearch && matchesCategory && matchesLevel;
+      return matchesSearch && matchesCategory;
     });
   };
 
@@ -83,7 +81,6 @@ const Courses = () => {
 
   const displayCourses = getDisplayCourses();
   const categories = [...new Set(allCourses.filter(Boolean).map(course => course?.category).filter(Boolean))];
-  const levels = ['beginner', 'intermediate', 'advanced'];
 
   if (loading) {
     return (
@@ -218,27 +215,12 @@ const Courses = () => {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Level
-              </label>
-              <select
-                value={selectedLevel}
-                onChange={(e) => setSelectedLevel(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">All Levels</option>
-                {levels.map(level => (
-                  <option key={level} value={level}>{level.charAt(0).toUpperCase() + level.slice(1)}</option>
-                ))}
-              </select>
-            </div>
+
             <div className="flex items-end">
               <button
                 onClick={() => {
                   setSearchTerm('');
                   setSelectedCategory('');
-                  setSelectedLevel('');
                 }}
                 className="w-full bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-200"
               >
@@ -349,9 +331,6 @@ const Courses = () => {
                       
                       <div className="mt-4">
                         <div className="flex justify-between items-center mb-3">
-                          <span className={`capitalize px-2.5 py-0.5 text-[10px] font-bold rounded-full ${course.level === 'beginner' ? 'bg-green-100 text-green-800' : course.level === 'intermediate' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
-                            {course.level}
-                          </span>
                           <span className="text-xl font-bold text-gray-900">${course.price}</span>
                         </div>
                         <Link to={linkTo} className={`w-full flex items-center justify-center px-6 py-2.5 border border-transparent text-sm font-medium rounded-md text-white transition-colors ${buttonClass}`}>

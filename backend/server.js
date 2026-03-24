@@ -20,6 +20,7 @@ import userRoutes from './routes/user.routes.js';
 import profileRoutes from './routes/profile.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import cartRoutes from './routes/cart.routes.js';
+import messageRoutes from './routes/message.routes.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -80,6 +81,7 @@ app.use('/api/users', userRoutes);           // User management routes (admin)
 app.use('/api/profile', profileRoutes);      // User profile routes
 app.use('/api/dashboard', dashboardRoutes);  // Dashboard statistics routes
 app.use('/api/cart', cartRoutes);            // Shopping cart routes
+app.use('/api/messages', messageRoutes);     // Contact message routes
 
 /**
  * Error Handling Middleware

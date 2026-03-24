@@ -286,16 +286,8 @@ const CourseDetail = () => {
                 <div>
                   <h1 className="text-3xl font-bold text-gray-900 mb-2">{course.name}</h1>
                   <p className="text-lg text-gray-600 mb-4">{course.description}</p>
-                  <div className="flex items-center space-x-4 mb-4">
+                  <div className="flex flex-wrap items-center gap-4 mb-4">
                     <span className="text-sm text-gray-500">👨‍🏫 {course.instructor}</span>
-                    <span className="text-sm text-gray-500">⏱️ {course.duration}</span>
-                    <span className={`px-3 py-1 text-xs font-bold rounded-full ${
-                      course.level === 'beginner' ? 'bg-green-500 text-white' :
-                      course.level === 'intermediate' ? 'bg-yellow-500 text-white' :
-                      'bg-red-500 text-white'
-                    }`}>
-                      {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-                    </span>
                     <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
                       {course.category}
                     </span>
@@ -371,12 +363,11 @@ const CourseDetail = () => {
                       to="/contact"
                       state={{
                         subject: `Enrollment Request for: ${course.name}`,
-                        message: `Hello Admin,\n\nI would like to request enrollment in the following course:\n\nCourse: ${course.name}\nInstructor: ${course.instructor}\nPrice: $${course.price}\nLevel: ${course.level}\n\nPlease let me know the next steps for enrollment.\n\nThank you!`,
+                        message: `Hello Admin,\n\nI would like to request enrollment in the following course:\n\nCourse: ${course.name}\nInstructor: ${course.instructor}\nPrice: $${course.price}\n\nPlease let me know the next steps for enrollment.\n\nThank you!`,
                         courseDetails: {
                           name: course.name,
                           instructor: course.instructor,
                           price: course.price,
-                          level: course.level,
                           category: course.category
                         }
                       }}
@@ -634,12 +625,11 @@ const CourseDetail = () => {
                                   to="/contact"
                                   state={{
                                     subject: `Enrollment Request for: ${course.name}`,
-                                    message: `Hello Admin,\n\nI would like to request enrollment in the following course:\n\nCourse: ${course.name}\nInstructor: ${course.instructor}\nPrice: $${course.price}\nLevel: ${course.level}\n\nPlease let me know the next steps for enrollment.\n\nThank you!`,
+                                    message: `Hello Admin,\n\nI would like to request enrollment in the following course:\n\nCourse: ${course.name}\nInstructor: ${course.instructor}\nPrice: $${course.price}\n\nPlease let me know the next steps for enrollment.\n\nThank you!`,
                                     courseDetails: {
                                       name: course.name,
                                       instructor: course.instructor,
                                       price: course.price,
-                                      level: course.level,
                                       category: course.category
                                     }
                                   }}
@@ -749,20 +739,6 @@ const CourseDetail = () => {
                                      <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-3 sm:p-4 rounded-lg">
                      <h3 className="font-semibold text-gray-900 mb-1 sm:mb-2 text-sm sm:text-base">Instructor</h3>
                      <p className="text-gray-700 text-sm sm:text-base">{course.instructor}</p>
-                   </div>
-                   <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-3 sm:p-4 rounded-lg">
-                     <h3 className="font-semibold text-gray-900 mb-1 sm:mb-2 text-sm sm:text-base">Duration</h3>
-                     <p className="text-gray-700 text-sm sm:text-base">{course.duration}</p>
-                   </div>
-                   <div className="bg-gradient-to-br from-pink-50 to-purple-50 p-3 sm:p-4 rounded-lg">
-                     <h3 className="font-semibold text-gray-900 mb-1 sm:mb-2 text-sm sm:text-base">Level</h3>
-                     <span className={`px-2 sm:px-3 py-1 text-xs sm:text-sm font-semibold rounded-full ${
-                       course.level === 'beginner' ? 'bg-green-500 text-white' :
-                       course.level === 'intermediate' ? 'bg-yellow-500 text-white' :
-                       'bg-red-500 text-white'
-                     }`}>
-                       {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-                     </span>
                    </div>
                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-3 sm:p-4 rounded-lg">
                      <h3 className="font-semibold text-gray-900 mb-1 sm:mb-2 text-sm sm:text-base">Category</h3>

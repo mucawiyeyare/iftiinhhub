@@ -52,10 +52,7 @@ router.post('/', authenticateToken, isAdmin, [
   body('name').notEmpty().withMessage('Course name is required'),
   body('description').notEmpty().withMessage('Description is required'),
   body('price').isNumeric().withMessage('Price must be a number'),
-  body('instructor').notEmpty().withMessage('Instructor is required'),
-  body('duration').notEmpty().withMessage('Duration is required'),
-  body('level').isIn(['beginner', 'intermediate', 'advanced']).withMessage('Invalid level'),
-  body('category').notEmpty().withMessage('Category is required')
+  body('instructor').notEmpty().withMessage('Instructor is required')
 ], createCourse);
 
 // PUT /api/courses/:id - Update an existing course (admin only)

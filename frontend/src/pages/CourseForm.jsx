@@ -18,9 +18,6 @@ const CourseForm = () => {
     description: '',
     instructor: '',
     price: '',
-    duration: '',
-    level: 'beginner',
-    category: 'programming',
     imageUrl: '',
     requirements: '',
     whatYouWillLearn: '',
@@ -40,20 +37,6 @@ const CourseForm = () => {
   const [sectionForm, setSectionForm] = useState({
     title: ''
   });
-
-  const levels = ['beginner', 'intermediate', 'advanced'];
-  const categories = [
-    'programming',
-    'design',
-    'business',
-    'marketing',
-    'music',
-    'photography',
-    'health',
-    'fitness',
-    'language',
-    'other'
-  ];
 
   useEffect(() => {
     if (id) {
@@ -301,64 +284,9 @@ const CourseForm = () => {
                 />
               </div>
 
-              {/* Duration */}
-              <div>
-                <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
-                  Duration *
-                </label>
-                <input
-                  type="text"
-                  id="duration"
-                  name="duration"
-                  value={formData.duration}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="e.g., 10 hours, 6 weeks"
-                />
-              </div>
 
-              {/* Level */}
-              <div>
-                <label htmlFor="level" className="block text-sm font-medium text-gray-700 mb-2">
-                  Level *
-                </label>
-                <select
-                  id="level"
-                  name="level"
-                  value={formData.level}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  {levels.map(level => (
-                    <option key={level} value={level}>
-                      {level.charAt(0).toUpperCase() + level.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
 
-              {/* Category */}
-              <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-                  Category *
-                </label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  {categories.map(category => (
-                    <option key={category} value={category}>
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
+
 
               {/* Course Image Upload */}
               <div className="md:col-span-2">
