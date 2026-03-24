@@ -46,7 +46,7 @@ router.get('/public/stats', getPublicStats);
 router.get('/:id', getCourseById);
 /**
  * POST /api/courses - Create a new course (admin only)
- * Validates: name, description, price, instructor, duration, level, category
+ * Validates: name, description, price, instructor, duration, level
  */
 router.post('/', authenticateToken, isAdmin, [
   body('name').notEmpty().withMessage('Course name is required'),

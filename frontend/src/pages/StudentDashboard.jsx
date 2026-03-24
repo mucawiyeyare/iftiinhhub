@@ -283,7 +283,6 @@ const StudentDashboard = () => {
                              )}
                           </div>
                           <div className="flex flex-col flex-1">
-                            <span className="text-xs font-semibold text-purple-600 uppercase mb-1">{course.category}</span>
                             <h4 className="font-bold text-gray-900 line-clamp-1 mb-1">{course.name}</h4>
                             <div className="mt-auto">
                                <div className="w-full bg-gray-100 rounded-full h-1.5 mb-1">
@@ -354,9 +353,6 @@ const StudentDashboard = () => {
                         <div className="p-5 flex flex-col flex-grow">
                           <div className="mb-4">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-[10px] uppercase tracking-wider font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
-                                {course.category}
-                              </span>
                             </div>
                             <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 leading-tight group-hover:text-purple-600 transition-colors">
                               <Link to={`/courses/${course._id}/learn`}>{course.name}</Link>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import PriceLabel from '../components/PriceLabel';
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -584,10 +585,6 @@ const Home = () => {
 
                       <div className="p-5 flex flex-col flex-grow">
                         <div className="flex-grow">
-                          {/* Category */}
-                          <p className="text-xs font-bold text-purple-600 uppercase tracking-widest mb-1">
-                            {course.category}
-                          </p>
                           {/* Title */}
                           <h3 className="text-base font-bold text-gray-900 leading-snug line-clamp-2 mb-1">
                             {course.name}
@@ -622,7 +619,7 @@ const Home = () => {
                         <div className="mt-4 pt-4 border-t border-gray-100">
                           <div className="flex justify-between items-center mb-3">
                             <span className={levelBadge}>{course.level}</span>
-                            <span className="text-xl font-extrabold text-gray-900">${course.price}</span>
+                            <PriceLabel price={course.price} originalPrice={course.originalPrice} size="sm" />
                           </div>
                           <Link to={linkTo} className={btnClass}>
                             {buttonText}

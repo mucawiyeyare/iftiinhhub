@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import PriceLabel from './PriceLabel';
 
 const CourseCard = ({ course, user, canAccessCourse }) => {
   const totalVideos = (course.videos?.length || 0) + (course.video1 ? 1 : 0) + (course.video2 ? 1 : 0);
@@ -52,12 +53,9 @@ const CourseCard = ({ course, user, canAccessCourse }) => {
         </p>
         <div className="flex items-center justify-between mb-4">
           <span className="text-sm text-gray-500">By {course.instructor}</span>
-          <span className="text-2xl font-bold text-blue-600">${course.price}</span>
+          <PriceLabel price={course.price} originalPrice={course.originalPrice} size="md" />
         </div>
         <div className="flex items-center justify-between mb-4">
-          <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-            {course.category}
-          </span>
           <span className="text-sm text-gray-500">{course.duration}</span>
         </div>
         

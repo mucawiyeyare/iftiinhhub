@@ -119,14 +119,6 @@ const Contact = () => {
                 <p className="text-sm text-gray-600">Price</p>
                 <p className="font-semibold text-blue-600">${location.state.courseDetails.price}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-600">Level</p>
-                <p className="font-semibold text-gray-900 capitalize">{location.state.courseDetails.level}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Category</p>
-                <p className="font-semibold text-gray-900">{location.state.courseDetails.category}</p>
-              </div>
             </div>
           </div>
         )}

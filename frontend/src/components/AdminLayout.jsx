@@ -111,10 +111,9 @@ const AdminLayout = ({ children, activeTab = null }) => {
             {menuItems.map(item => (
               <Link
                 key={item.id}
-                to={item.id === 'overview' ? '/admin' : 
+                to={item.id === 'overview' ? '/admin-dashboard' : 
                     item.id === 'register' ? '/register' :
-                    item.id === 'courses' ? '/courses/new' :
-                    `/admin#${item.id}`}
+                    `/admin-dashboard#${item.id}`}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`w-full flex items-center justify-between px-4 py-3 text-left rounded-lg transition-all duration-200 group ${
                   activeTab === item.id

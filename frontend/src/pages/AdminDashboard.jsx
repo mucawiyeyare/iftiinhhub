@@ -71,11 +71,6 @@ const AdminDashboard = () => {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h6m5 8l-4-4H7a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v12z" />
       </svg>
     ) },
-    { id: 'categories', label: 'Categories', icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-      </svg>
-    ) },
   ];
   
   // Derived counts for sidebar badges
@@ -86,7 +81,6 @@ const AdminDashboard = () => {
     enrollments: recentEnrollments.length,
     videos: videoStats.totalVideos,
     messages: messages.length,
-    categories: categories.length,
   };
   
   // State for edit user modal
@@ -133,9 +127,6 @@ const AdminDashboard = () => {
   const [editingSection, setEditingSection] = useState(null);
   const [editSectionName, setEditSectionName] = useState('');
 
-  // Category state
-  const [newCategoryName, setNewCategoryName] = useState('');
-
   useEffect(() => {
     // Handle redirect toast from Register page
     const state = location.state;
@@ -153,7 +144,6 @@ const AdminDashboard = () => {
 
     fetchDashboardData();
     fetchMessages();
-    fetchCategories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -873,66 +863,7 @@ const AdminDashboard = () => {
                 )}
               </div>
             )}
-            {/* Categories Tab */}
-            {activeTab === 'categories' && (
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Course Categories Management</h2>
-                <div className="bg-white rounded-lg shadow p-6 mb-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Add New Category</h3>
-                  <form onSubmit={handleCreateCategory} className="flex gap-4">
-                    <input
-                      type="text"
-                      value={newCategoryName}
-                      onChange={(e) => setNewCategoryName(e.target.value)}
-                      placeholder="Category name (e.g. programming, design)"
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                      required
-                    />
-                    <button
-                      type="submit"
-                      className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium"
-                    >
-                      Add Category
-                    </button>
-                  </form>
-                </div>
 
-                <div className="bg-white rounded-lg shadow overflow-hidden">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {categories.map((c) => (
-                        <tr key={c._id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 capitalize font-medium">{c.name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(c.createdAt).toLocaleDateString()}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button
-                              onClick={() => handleDeleteCategory(c._id)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                      {categories.length === 0 && (
-                        <tr>
-                          <td colSpan="3" className="px-6 py-4 text-center text-sm text-gray-500">
-                            No categories found. Ad one above.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
             {/* Courses Tab */}
             {activeTab === 'courses' && (
               <div>
@@ -969,9 +900,6 @@ const AdminDashboard = () => {
                           Price
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Level
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Actions
                         </th>
                       </tr>
@@ -980,7 +908,6 @@ const AdminDashboard = () => {
                       {courses
                         .filter(course =>
                           course.name.toLowerCase().includes(courseSearchTerm.toLowerCase()) ||
-                          course.category.toLowerCase().includes(courseSearchTerm.toLowerCase()) ||
                           course.instructor.toLowerCase().includes(courseSearchTerm.toLowerCase())
                         )
                         .map(course => (
@@ -988,7 +915,6 @@ const AdminDashboard = () => {
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div>
                                 <div className="text-sm font-medium text-gray-900">{course.name}</div>
-                                <div className="text-sm text-gray-500">{course.category}</div>
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -996,15 +922,6 @@ const AdminDashboard = () => {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               ${course.price}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                                course.level === 'beginner' ? 'bg-green-100 text-green-800' :
-                                course.level === 'intermediate' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-red-100 text-red-800'
-                              }`}>
-                                {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-                              </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                               <div className="flex items-center space-x-2">
@@ -1708,7 +1625,6 @@ const AdminDashboard = () => {
                                   </div>
                                   <div className="ml-4">
                                     <div className="text-sm font-medium text-gray-900">{course.name}</div>
-                                    <div className="text-sm text-gray-500">{course.category}</div>
                                   </div>
                                 </div>
                               </td>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import PriceLabel from '../components/PriceLabel';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -14,7 +15,6 @@ const Courses = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
   const [activeTab, setActiveTab] = useState('assigned'); // 'assigned', 'unassigned', 'all'
 
   useEffect(() => {
@@ -56,9 +56,7 @@ const Courses = () => {
       const matchesSearch = (course.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                            (course.description || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                            (course.instructor || '').toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = !selectedCategory || course.category === selectedCategory;
-      
-      return matchesSearch && matchesCategory;
+      return matchesSearch;
     });
   };
 
@@ -80,7 +78,7 @@ const Courses = () => {
   };
 
   const displayCourses = getDisplayCourses();
-  const categories = [...new Set(allCourses.filter(Boolean).map(course => course?.category).filter(Boolean))];
+
 
   if (loading) {
     return (
@@ -200,27 +198,12 @@ const Courses = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Category
-              </label>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">All Categories</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
-                ))}
-              </select>
-            </div>
+
 
             <div className="flex items-end">
               <button
                 onClick={() => {
                   setSearchTerm('');
-                  setSelectedCategory('');
                 }}
                 className="w-full bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-200"
               >
@@ -313,7 +296,6 @@ const Courses = () => {
                     </Link>
                     <div className="p-4 flex flex-col flex-grow">
                       <div className="flex-grow">
-                        <p className="text-xs font-semibold text-purple-600">{course.category}</p>
                         <h3 className="mt-1 text-lg font-semibold text-gray-900 line-clamp-2">{course.name}</h3>
                         <p className="mt-0.5 text-xs text-gray-500">By {course.instructor}</p>
                         <p className="mt-2 text-sm text-gray-600 line-clamp-2">{(course.description || '').substring(0, 90)}</p>
@@ -331,7 +313,7 @@ const Courses = () => {
                       
                       <div className="mt-4">
                         <div className="flex justify-between items-center mb-3">
-                          <span className="text-xl font-bold text-gray-900">${course.price}</span>
+                          <PriceLabel price={course.price} originalPrice={course.originalPrice} size="md" />
                         </div>
                         <Link to={linkTo} className={`w-full flex items-center justify-center px-6 py-2.5 border border-transparent text-sm font-medium rounded-md text-white transition-colors ${buttonClass}`}>
                           {buttonText}

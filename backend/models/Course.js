@@ -4,6 +4,7 @@ const courseSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
   price: { type: Number, required: true },
+  originalPrice: { type: Number }, // Optional: original price before discount
   instructor: { type: String, required: true },
   imageUrl: { type: String },
   requirements: { type: String },

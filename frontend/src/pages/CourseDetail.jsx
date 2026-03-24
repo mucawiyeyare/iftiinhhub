@@ -8,6 +8,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import VideoManager from '../components/VideoManager';
+import PriceLabel from '../components/PriceLabel';
 
 // Helper function to convert YouTube URL to embed URL
 const getYouTubeEmbedUrl = (url) => {
@@ -288,13 +289,12 @@ const CourseDetail = () => {
                   <p className="text-lg text-gray-600 mb-4">{course.description}</p>
                   <div className="flex flex-wrap items-center gap-4 mb-4">
                     <span className="text-sm text-gray-500">👨‍🏫 {course.instructor}</span>
-                    <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                      {course.category}
-                    </span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-4xl font-bold text-blue-600 mb-2">${course.price}</div>
+                  <div className="mb-2">
+                    <PriceLabel price={course.price} originalPrice={course.originalPrice} size="lg" />
+                  </div>
                   {isEnrolled ? (
                     <span className="bg-green-100 text-green-800 px-3 py-1 text-sm font-medium rounded-full">
                       ✓ Enrolled
@@ -367,8 +367,7 @@ const CourseDetail = () => {
                         courseDetails: {
                           name: course.name,
                           instructor: course.instructor,
-                          price: course.price,
-                          category: course.category
+                          price: course.price
                         }
                       }}
                       className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition duration-200 font-medium flex items-center"
@@ -736,15 +735,11 @@ const CourseDetail = () => {
                    Course Details
                  </h2>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                                     <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-3 sm:p-4 rounded-lg">
+                   <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-3 sm:p-4 rounded-lg">
                      <h3 className="font-semibold text-gray-900 mb-1 sm:mb-2 text-sm sm:text-base">Instructor</h3>
                      <p className="text-gray-700 text-sm sm:text-base">{course.instructor}</p>
                    </div>
-                   <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-3 sm:p-4 rounded-lg">
-                     <h3 className="font-semibold text-gray-900 mb-1 sm:mb-2 text-sm sm:text-base">Category</h3>
-                     <p className="text-gray-700 text-sm sm:text-base">{course.category}</p>
-                   </div>
-                </div>
+                 </div>
               </div>
 
                                                            {/* What You'll Learn */}
