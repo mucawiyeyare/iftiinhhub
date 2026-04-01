@@ -302,7 +302,7 @@ const CoursePlayer = () => {
                 <h2 className="text-xl font-bold text-gray-900 mb-4">About This Course</h2>
                 <p className="text-gray-700 leading-relaxed">{course.description}</p>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <h3 className="font-semibold text-gray-900 mb-1">Instructor</h3>
                     <p className="text-gray-700">{course.instructor}</p>
@@ -310,16 +310,6 @@ const CoursePlayer = () => {
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <h3 className="font-semibold text-gray-900 mb-1">Duration</h3>
                     <p className="text-gray-700">{course.duration}</p>
-                  </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-gray-900 mb-1">Level</h3>
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                      course.level === 'beginner' ? 'bg-green-100 text-green-800' :
-                      course.level === 'intermediate' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-                    </span>
                   </div>
                 </div>
               </div>

@@ -19,15 +19,7 @@ const CourseCard = ({ course, user, canAccessCourse }) => {
             alt={course.name}
             className="w-full h-full object-cover"
           />
-          <div className="absolute top-4 right-4">
-            <span className={`px-3 py-1 text-xs font-bold rounded-full ${
-              course.level === 'beginner' ? 'bg-green-500 text-white' :
-              course.level === 'intermediate' ? 'bg-yellow-500 text-white' :
-              'bg-red-500 text-white'
-            }`}>
-              {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-            </span>
-          </div>
+
           {canAccessCourse && (
             <div className="absolute top-4 left-4">
               <span className="bg-green-500 text-white px-3 py-1 text-xs font-bold rounded-full">

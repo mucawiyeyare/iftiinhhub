@@ -116,29 +116,250 @@ const styles = `
 
   .home-root { font-family: 'Inter', system-ui, sans-serif; }
 
-  /* Hero button primary */
-  .btn-hero-primary {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: #7c3aed; color: #fff;
-    font-weight: 700; font-size: 1rem; letter-spacing: 0.01em;
-    padding: 14px 32px; border-radius: 10px;
-    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 20px rgba(124,58,237,0.4);
-  }
-  .btn-hero-primary:hover {
-    background: #6d28d9; transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(124,58,237,0.5);
+  /* ── NEW HERO ─────────────────────────────────────── */
+  .hero-section {
+    position: relative;
+    min-height: 100vh;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding: 0 0 60px 0;
+    border-bottom: 1px solid #ede9fe;
   }
 
-  /* Hero button outline */
+  /* Subtle radial glow blobs */
+  .hero-blob-1 {
+    position: absolute; top: -120px; right: -80px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(167,139,250,0.12) 0%, transparent 70%);
+    border-radius: 50%; pointer-events: none;
+  }
+  .hero-blob-2 {
+    position: absolute; bottom: -100px; left: -60px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%);
+    border-radius: 50%; pointer-events: none;
+  }
+  .hero-grid-lines {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  /* Badge pill */
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #ede9fe;
+    border: 1px solid #c4b5fd;
+    color: #6d28d9;
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; padding: 6px 16px; border-radius: 50px;
+    margin-bottom: 28px;
+    animation: heroFadeUp 0.6s ease 0.05s both;
+  }
+  .hero-badge-dot {
+    width: 7px; height: 7px;
+    background: #a78bfa;
+    border-radius: 50%;
+    animation: pulse-dot 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.7); }
+  }
+
+  /* Hero heading */
+  .hero-heading {
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: #111827;
+    margin-bottom: 24px;
+    animation: heroFadeUp 0.7s ease 0.15s both;
+  }
+  .hero-heading-accent {
+    background: linear-gradient(90deg, #a78bfa, #c4b5fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Sub text */
+  .hero-sub {
+    font-size: 1.05rem;
+    color: #4b5563;
+    line-height: 1.75;
+    max-width: 540px;
+    margin-bottom: 32px;
+    font-weight: 400;
+    animation: heroFadeUp 0.7s ease 0.3s both;
+  }
+
+  /* Feature bullets */
+  .hero-bullets {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-bottom: 40px;
+    animation: heroFadeUp 0.7s ease 0.4s both;
+  }
+  .hero-bullet {
+    display: flex; align-items: flex-start; gap: 12px;
+    color: #374151;
+    font-size: 0.93rem; font-weight: 500; line-height: 1.5;
+  }
+  .hero-bullet-icon {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+
+  /* CTA buttons group */
+  .hero-btn-group {
+    display: flex; flex-wrap: wrap; gap: 14px; align-items: center;
+    animation: heroFadeUp 0.7s ease 0.55s both;
+  }
+
+  /* Primary CTA */
+  .btn-hero-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: #fff;
+    font-weight: 700; font-size: 1rem; letter-spacing: 0.01em;
+    padding: 15px 32px; border-radius: 12px;
+    transition: all 0.25s;
+    box-shadow: 0 6px 24px rgba(124,58,237,0.5), 0 1px 0 rgba(255,255,255,0.1) inset;
+    text-decoration: none;
+  }
+  .btn-hero-primary:hover {
+    background: linear-gradient(135deg, #6d28d9, #5b21b6);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 36px rgba(124,58,237,0.6);
+  }
+
+  /* WhatsApp CTA */
+  .btn-hero-whatsapp {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #25D366;
+    color: #fff;
+    font-weight: 700; font-size: 1rem; letter-spacing: 0.01em;
+    padding: 15px 32px; border-radius: 12px;
+    transition: all 0.25s;
+    box-shadow: 0 6px 24px rgba(37,211,102,0.4);
+    text-decoration: none;
+    border: none; cursor: pointer;
+  }
+  .btn-hero-whatsapp:hover {
+    background: #20b358;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 36px rgba(37,211,102,0.5);
+  }
+
+  /* Stats row */
+  .hero-stats {
+    display: flex; flex-wrap: wrap; gap: 28px; margin-top: 52px;
+    animation: heroFadeUp 0.7s ease 0.65s both;
+    padding-top: 36px;
+    border-top: 1px solid #e5e7eb;
+  }
+  .hero-stat-num {
+    font-size: 1.75rem; font-weight: 900; color: #111827; line-height: 1;
+  }
+  .hero-stat-label {
+    font-size: 0.82rem; color: #6b7280; font-weight: 500; margin-top: 4px;
+  }
+
+  /* Right visual card */
+  .hero-visual {
+    animation: heroFadeUp 0.8s ease 0.25s both;
+  }
+  .hero-card {
+    background: #f8f5ff;
+    border: 1px solid #e0d4fc;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 8px 40px rgba(124,58,237,0.1);
+  }
+  .hero-card-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 24px;
+  }
+  .hero-card-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(124,58,237,0.4);
+  }
+  .hero-module-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .hero-module-item:hover { background: #f5f3ff; border-color: #c4b5fd; }
+  .hero-module-label { font-size: 0.87rem; color: #1f2937; font-weight: 600; }
+  .hero-module-badge {
+    font-size: 0.72rem; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+    background: #ede9fe;
+    color: #6d28d9;
+    white-space: nowrap;
+  }
+  .hero-module-badge.included {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+  .hero-progress-bar-wrap {
+    background: #e5e7eb;
+    border-radius: 99px; height: 6px; width: 100%; margin-top: 4px;
+  }
+  .hero-progress-bar {
+    height: 6px; border-radius: 99px;
+    background: linear-gradient(90deg, #7c3aed, #a78bfa);
+  }
+
+  /* Floating badge on card */
+  .hero-floating-badge {
+    position: absolute;
+    background: #fff;
+    border-radius: 14px;
+    padding: 10px 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.8rem; font-weight: 700; color: #1a1a1a;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+  }
+  .hero-floating-badge-icon {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Hero button primary */
   .btn-hero-outline {
     display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(255,255,255,0.1); color: #fff;
+    background: rgba(255,255,255,0.08); color: #fff;
     font-weight: 700; font-size: 1rem; letter-spacing: 0.01em;
     padding: 14px 32px; border-radius: 10px;
-    border: 2px solid rgba(255,255,255,0.6);
+    border: 2px solid rgba(255,255,255,0.4);
     backdrop-filter: blur(6px);
     transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+    text-decoration: none;
   }
   .btn-hero-outline:hover {
     background: #fff; color: #7c3aed; border-color: #fff;
@@ -182,18 +403,7 @@ const styles = `
   .btn-course-green  { background: #059669; color: #fff; box-shadow: 0 4px 12px rgba(5,150,105,0.3); }
   .btn-course-green:hover { background: #047857; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(5,150,105,0.4); }
 
-  /* Level badges */
-  .badge {
-    display: inline-flex; align-items: center;
-    padding: 3px 10px; border-radius: 20px;
-    font-size: 0.65rem; font-weight: 800; letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .badge-beginner { background: #d1fae5; color: #065f46; }
-  .badge-intermediate { background: #fef3c7; color: #92400e; }
-  .badge-advanced { background: #fee2e2; color: #991b1b; }
-
-  /* Testimonial card — reference layout */
+  /* Testimonial card */
   .testimonial-card {
     background: linear-gradient(145deg, #faf5ff, #f5f3ff);
     border: 1px solid #ede9fe;
@@ -212,12 +422,7 @@ const styles = `
     transform: translateY(-4px);
     box-shadow: 0 12px 32px rgba(124,58,237,0.12);
   }
-  .testimonial-card-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+  .testimonial-card-body { flex: 1; display: flex; flex-direction: column; gap: 8px; }
   .testimonial-card-quote-icon {
     flex-shrink: 0;
     color: #7c3aed;
@@ -229,50 +434,32 @@ const styles = `
     letter-spacing: -2px;
   }
 
-  /* Custom centered bottom nav for testimonials */
   .testimonials-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    margin-top: 36px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 2px; margin-top: 36px;
   }
   .testimonials-nav button {
     width: 44px; height: 44px;
     border: 1.5px solid #ede9fe;
-    border-radius: 6px;
-    background: #fff;
+    border-radius: 6px; background: #fff;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     transition: background 0.2s, border-color 0.2s, transform 0.15s;
     color: #6d28d9;
   }
-  .testimonials-nav button:hover {
-    background: #ede9fe;
-    border-color: #c4b5fd;
-    transform: scale(1.06);
-  }
-  .testimonials-nav button svg {
-    width: 16px; height: 16px;
-    stroke: #6d28d9;
-    stroke-width: 2.5;
-  }
+  .testimonials-nav button:hover { background: #ede9fe; border-color: #c4b5fd; transform: scale(1.06); }
+  .testimonials-nav button svg { width: 16px; height: 16px; stroke: #6d28d9; stroke-width: 2.5; }
 
   /* Feature card */
   .feature-card {
     background: linear-gradient(145deg, #5b21b6, #6d28d9);
-    border-radius: 20px;
-    padding: 36px 28px;
-    text-align: center;
+    border-radius: 20px; padding: 36px 28px; text-align: center;
     display: flex; flex-direction: column; align-items: center;
     border: 1px solid rgba(255,255,255,0.08);
     box-shadow: 0 8px 32px rgba(109,40,217,0.3);
     transition: transform 0.3s, box-shadow 0.3s;
   }
-  .feature-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 16px 48px rgba(109,40,217,0.45);
-  }
+  .feature-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(109,40,217,0.45); }
   .feature-icon-ring {
     width: 80px; height: 80px;
     background: rgba(255,255,255,0.12);
@@ -283,10 +470,7 @@ const styles = `
     transition: background 0.3s, transform 0.3s;
     backdrop-filter: blur(4px);
   }
-  .feature-card:hover .feature-icon-ring {
-    background: rgba(255,255,255,0.22);
-    transform: scale(1.08);
-  }
+  .feature-card:hover .feature-icon-ring { background: rgba(255,255,255,0.22); transform: scale(1.08); }
 
   /* Section label pill */
   .section-pill {
@@ -297,14 +481,12 @@ const styles = `
     margin-bottom: 12px;
   }
 
-  /* Divider line under section headings */
   .section-underline {
     width: 48px; height: 3px;
     background: linear-gradient(90deg, #7c3aed, #a78bfa);
     border-radius: 2px; margin: 16px auto 0;
   }
 
-  /* Loading spinner */
   .spinner {
     width: 48px; height: 48px;
     border: 3px solid #ede9fe;
@@ -314,23 +496,53 @@ const styles = `
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Hero text reveal */
   @keyframes heroFadeUp {
     from { opacity: 0; transform: translateY(24px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .hero-title   { animation: heroFadeUp 0.7s ease 0.1s both; }
-  .hero-sub     { animation: heroFadeUp 0.7s ease 0.3s both; }
-  .hero-btn     { animation: heroFadeUp 0.7s ease 0.5s both; }
+  .hero-title { animation: heroFadeUp 0.7s ease 0.1s both; }
+  .hero-btn   { animation: heroFadeUp 0.7s ease 0.5s both; }
 
-  /* Letter-by-letter reveal keyframe */
   @keyframes letterReveal {
     from { opacity: 0; transform: translateY(14px) scaleY(0.85); }
     to   { opacity: 1; transform: translateY(0)   scaleY(1);   }
   }
 
-  /* Testimonials swiper — no default nav, clean */
   .testimonials-swiper .swiper-wrapper { padding-bottom: 4px; }
+
+  /* Scroll indicator */
+  .scroll-indicator {
+    position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    cursor: pointer; animation: heroFadeUp 0.7s ease 1s both;
+  }
+  .scroll-indicator-text { font-size: 0.72rem; color: #9ca3af; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+  .scroll-indicator-arrow {
+    width: 30px; height: 30px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    animation: bounce-arrow 1.8s ease-in-out infinite;
+  }
+  @keyframes bounce-arrow {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(5px); }
+  }
+
+  @media (max-width: 1024px) {
+    .hero-grid-layout {
+      grid-template-columns: 1fr !important;
+      gap: 40px !important;
+    }
+    .hero-visual { display: none; }
+  }
+  @media (max-width: 768px) {
+    .hero-section { padding-top: 80px; padding-bottom: 80px; min-height: auto; }
+    .hero-stats   { gap: 20px; }
+    .hero-heading { margin-bottom: 18px; }
+    .hero-sub     { font-size: 0.97rem; }
+    .hero-btn-group { flex-direction: column; align-items: flex-start; }
+  }
 `;
 
 /* ─── Testimonials Slider sub-component ─────────────────────────────────── */
@@ -427,91 +639,219 @@ const Home = () => {
     }
   ];
 
+  const handleScrollDown = () => {
+    window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+  };
+
+  const whatsappUrl = `https://wa.me/616408886?text=${encodeURIComponent('Salaan! Waxaan doonayaa inaan ogaado faahfaahinta koorsada IftiinHub. Fadlan ii sheeg macluumaadka.')}` ;
+
   return (
     <div className="home-root bg-white">
       <style>{styles}</style>
 
-      {/* ── Hero Section with Slider ────────────────────────────────────── */}
-      <Swiper
-        modules={[Pagination, Autoplay, EffectFade]}
-        spaceBetween={0}
-        slidesPerView={1}
-        pagination={{ clickable: true }}
-        loop={true}
-        autoplay={{ delay: 5000, disableOnInteraction: false }}
-        effect="fade"
-        className="h-[60vh] md:h-[80vh] w-full"
-        onRealIndexChange={(swiper) => setActiveSlide(swiper.realIndex)}
-      >
-        <SwiperSlide>
-          <div className="h-full w-full bg-cover bg-center" style={{ backgroundImage: `url('/photo-1542831371-29b0f74f9713.avif')` }}>
-            <div className="h-full w-full flex items-center justify-center bg-black/40">
-              <div className="text-center text-white px-4 max-w-3xl">
-                <h1 className="text-4xl md:text-6xl font-extrabold mb-5 leading-tight tracking-tight">
-                  <AnimatedText key={`s0-h-${activeSlide}`} text="Unlock Your Potential" baseDelay={80} charDelay={22} />
-                </h1>
-                <p className="text-lg md:text-xl mb-9 text-purple-100 font-medium leading-relaxed">
-                  <AnimatedText key={`s0-p-${activeSlide}`} text="Join IftiinHub and start your journey in the world of technology today." baseDelay={500} charDelay={14} />
-                </p>
-                <div className="hero-btn">
-                  <Link to="/courses" className="btn-hero-primary">
-                    Explore Courses
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </SwiperSlide>
+      {/* ── NEW Hero Section ─────────────────────────────────────────────── */}
+      <section className="hero-section">
+        {/* Background decorative elements */}
+        <div className="hero-blob-1" />
+        <div className="hero-blob-2" />
+        <div className="hero-grid-lines" />
 
-        <SwiperSlide>
-          <div className="h-full w-full bg-cover bg-center" style={{ backgroundImage: `url('/photo-1550439062-609e1531270e.avif')` }}>
-            <div className="h-full w-full flex items-center justify-center bg-black/40">
-              <div className="text-center text-white px-4 max-w-3xl">
-                <h1 className="text-4xl md:text-6xl font-extrabold mb-5 leading-tight tracking-tight">
-                  <AnimatedText key={`s1-h-${activeSlide}`} text="Learn from Industry Experts" baseDelay={80} charDelay={22} />
-                </h1>
-                <p className="text-lg md:text-xl mb-9 text-blue-100 font-medium leading-relaxed">
-                  <AnimatedText key={`s1-p-${activeSlide}`} text="Our instructors are professionals with real-world experience." baseDelay={500} charDelay={14} />
-                </p>
-                <div className="hero-btn">
-                  <Link to="/about" className="btn-hero-outline">
-                    Meet Our Team
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </SwiperSlide>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '64px', alignItems: 'center' }}
+               className="hero-grid-layout">
 
-        <SwiperSlide>
-          <div className="h-full w-full bg-cover bg-center" style={{ backgroundImage: `url('/photo-1555949963-ff9fe0c870eb.avif')` }}>
-            <div className="h-full w-full flex items-center justify-center bg-black/40">
-              <div className="text-center text-white px-4 max-w-3xl">
-                <h1 className="text-4xl md:text-6xl font-extrabold mb-5 leading-tight tracking-tight">
-                  <AnimatedText key={`s2-h-${activeSlide}`} text="Build Real-World Projects" baseDelay={80} charDelay={22} />
-                </h1>
-                <p className="text-lg md:text-xl mb-9 text-purple-100 font-medium leading-relaxed">
-                  <AnimatedText key={`s2-p-${activeSlide}`} text="Apply your skills by building a portfolio of impressive projects." baseDelay={500} charDelay={14} />
-                </p>
-                <div className="hero-btn">
-                  <Link to="/register" className="btn-hero-primary">
-                    Sign Up Now
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            {/* ── Left: Text Content ── */}
+            <div>
+              {/* Badge */}
+              <div className="hero-badge">
+                <span className="hero-badge-dot" />
+                #1 Somali Tech Education Platform
+              </div>
+
+              {/* Heading */}
+              <h1 className="hero-heading">
+                Become a{' '}
+                <span className="hero-heading-accent">Full-Stack</span>
+                <br />
+                <span className="hero-heading-accent">Software Engineer</span>
+                <br />
+                in 12 Months
+              </h1>
+
+              {/* Sub */}
+              <p className="hero-sub">
+                Master Web Development, Mobile Apps &amp; AI Engineering —
+                all taught in Somali with weekly mentorship.
+                15 courses included. From HTML to React, Node.js &amp; AI.
+              </p>
+
+              {/* Bullet features */}
+              <div className="hero-bullets">
+                {[
+                  '15 Structured Modules — HTML → JavaScript → React → Node.js → MongoDB',
+                  'Weekly Live Q&A Sessions — Ask questions, get feedback from instructor',
+                  '197+ Hours of Content — 1030 lessons with 15+ real projects for your portfolio',
+                ].map((text, i) => (
+                  <div key={i} className="hero-bullet">
+                    <div className="hero-bullet-icon">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    </div>
+                    <span>{text}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA buttons */}
+              <div className="hero-btn-group">
+                <Link to="/courses" className="btn-hero-primary">
+                  Explore Courses
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn-hero-whatsapp">
+                  {/* WhatsApp icon */}
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                  Contact on WhatsApp
+                </a>
+              </div>
+
+              {/* Stats row */}
+              <div className="hero-stats">
+                {[
+                  { num: '197+',  label: 'Hours of Content' },
+                  { num: '100%',  label: 'Taught in Somali' },
+                ].map((s, i) => (
+                  <div key={i}>
+                    <div className="hero-stat-num">{s.num}</div>
+                    <div className="hero-stat-label">{s.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Right: Visual Card ── */}
+            <div className="hero-visual" style={{ position: 'relative' }}>
+              {/* Floating badge top-left */}
+              <div className="hero-floating-badge" style={{ top: '-18px', left: '-24px', animationDelay: '0s' }}>
+                <div className="hero-floating-badge-icon" style={{ background: '#ede9fe' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#7c3aed">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1a1a1a' }}>Top Rated</div>
+                  <div style={{ fontSize: '0.7rem', color: '#6d28d9', fontWeight: 600 }}>★★★★★ 4.9/5</div>
+                </div>
+              </div>
+
+              {/* Floating badge bottom-right */}
+              <div className="hero-floating-badge" style={{ bottom: '12px', right: '-20px', animationDelay: '1s' }}>
+                <div className="hero-floating-badge-icon" style={{ background: '#dcfce7' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#1a1a1a' }}>Certificate</div>
+                  <div style={{ fontSize: '0.7rem', color: '#16a34a', fontWeight: 600 }}>Included</div>
+                </div>
+              </div>
+
+              <div className="hero-card">
+                {/* Card header */}
+                <div className="hero-card-header">
+                  <div className="hero-card-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                     </svg>
-                  </Link>
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 800, color: '#111827', fontSize: '0.97rem' }}>One Complete Program</div>
+                    <div style={{ fontSize: '0.78rem', color: '#7c3aed', fontWeight: 600, marginTop: 2 }}>15 Courses Included</div>
+                  </div>
+                </div>
+
+                {/* Tech tags */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
+                  {['MongoDB', 'PHP', 'React', 'TailwindCSS'].map(t => (
+                    <span key={t} style={{
+                      background: '#ede9fe', color: '#6d28d9',
+                      fontSize: '0.75rem', fontWeight: 700,
+                      padding: '4px 12px', borderRadius: 20,
+                      border: '1px solid #c4b5fd'
+                    }}>{t}</span>
+                  ))}
+                  <span style={{
+                    background: '#f3f4f6', color: '#6b7280',
+                    fontSize: '0.75rem', fontWeight: 600,
+                    padding: '4px 12px', borderRadius: 20,
+                  }}>+ more modules</span>
+                </div>
+
+                {/* Module list */}
+                {[
+                  { label: 'React.js Module',   sub: 'Modern Frontend Development', badge: 'Included', included: true,  progress: 80 },
+                  { label: 'MongoDB',            sub: 'Database & Data Modeling',    badge: 'Included', included: true,  progress: 70 },
+                  { label: 'PHP Backend',        sub: 'Server-Side Programming',     badge: 'Included', included: true,  progress: 55 },
+                  { label: 'TailwindCSS',        sub: 'Utility-First Styling',       badge: 'Included', included: true,  progress: 65 },
+                ].map((m, i) => (
+                  <div key={i} className="hero-module-item">
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                        <div>
+                          <div className="hero-module-label">{m.label}</div>
+                          <div style={{ fontSize: '0.73rem', color: '#9ca3af', marginTop: 2 }}>{m.sub}</div>
+                        </div>
+                        <span className={`hero-module-badge${m.included ? ' included' : ''}`}>{m.badge}</span>
+                      </div>
+                      <div className="hero-progress-bar-wrap">
+                        <div className="hero-progress-bar" style={{ width: `${m.progress}%` }} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Bottom CTA */}
+                <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                      background: '#25D366', color: '#fff',
+                      padding: '11px 0', borderRadius: 10,
+                      fontSize: '0.88rem', fontWeight: 700,
+                      textDecoration: 'none',
+                      transition: 'opacity 0.2s',
+                    }}
+                    onMouseOver={e => e.currentTarget.style.opacity = '0.9'}
+                    onMouseOut={e => e.currentTarget.style.opacity = '1'}
+                  >
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                    </svg>
+                    Send Message via WhatsApp
+                  </a>
                 </div>
               </div>
             </div>
           </div>
-        </SwiperSlide>
-      </Swiper>
+        </div>
+
+        {/* Scroll down indicator */}
+        <button className="scroll-indicator" onClick={handleScrollDown}>
+          <span className="scroll-indicator-text">Scroll</span>
+          <div className="scroll-indicator-arrow">
+            <svg width="12" height="12" fill="none" stroke="#9ca3af" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </button>
+      </section>
 
       {/* ── Featured Courses Section ─────────────────────────────────────── */}
       <div className="py-20" style={{ background: 'linear-gradient(180deg, #faf5ff 0%, #f8fafc 100%)' }}>
@@ -561,10 +901,7 @@ const Home = () => {
                   const totalVideos = (course.videos?.length || 0) + (course.video1 ? 1 : 0) + (course.video2 ? 1 : 0);
                   const totalSections = course.sections?.length || 0;
 
-                  const levelBadge =
-                    course.level === 'beginner' ? 'badge badge-beginner' :
-                    course.level === 'intermediate' ? 'badge badge-intermediate' :
-                    'badge badge-advanced';
+
 
                   return (
                     <div
@@ -617,8 +954,7 @@ const Home = () => {
 
                         {/* Footer */}
                         <div className="mt-4 pt-4 border-t border-gray-100">
-                          <div className="flex justify-between items-center mb-3">
-                            <span className={levelBadge}>{course.level}</span>
+                          <div className="flex justify-end items-center mb-3">
                             <PriceLabel price={course.price} originalPrice={course.originalPrice} size="sm" />
                           </div>
                           <Link to={linkTo} className={btnClass}>
