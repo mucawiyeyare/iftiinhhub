@@ -1,1 +1,47 @@
 @import "tailwindcss";
+
+/* ── Global Responsive Resets ─────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  min-width: 320px;
+}
+
+/* Prevent images from overflowing their containers */
+img, video, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive iframe (video embeds) */
+iframe {
+  max-width: 100%;
+}
+
+/* Make overflow tables scrollable on mobile */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+}
+
+/* Touch-friendly tap targets */
+button, a, [role="button"] {
+  min-height: 36px;
+}
+
+/* Safe area insets for notched devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

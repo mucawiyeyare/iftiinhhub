@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 py-12">
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-2xl font-bold text-purple-200 mb-4">CourseHub</h3>
+            <h3 className="text-2xl font-bold text-purple-200 mb-4">IftiinHub</h3>
             <p className="text-purple-100 mb-4">
               Empowering learners with quality education and skills for the future. 
               Join our community and advance your career with our comprehensive courses.
@@ -61,7 +61,7 @@ const Footer = () => {
                 <svg className="h-6 w-6 mr-2 text-purple-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span>info@coursehub.com</span>
+                <span>info@iftiinhub.com</span>
               </li>
               <li className="flex items-start">
                 <svg className="h-6 w-6 mr-2 text-purple-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import PageTitle from '../components/PageTitle';
 
 const Contact = () => {
   const location = useLocation();
@@ -56,9 +57,10 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-purple-100">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-purple-800 mb-2">
+      <PageTitle title="Contact Us - IFTIINHUB" />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="text-center mb-8 sm:mb-10">
+          <h1 className="text-2xl sm:text-4xl font-bold text-purple-800 mb-2">
             {isEnrollmentRequest ? 'Course Enrollment Request' : 'Contact Us'}
           </h1>
           <p className="text-purple-700">
@@ -69,7 +71,7 @@ const Contact = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10">
           <div className="bg-white rounded-xl shadow p-6">
             <div className="flex items-center mb-3">
               <svg className="w-6 h-6 text-purple-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -187,7 +189,7 @@ const Contact = () => {
               />
             </div>
             <div>
-              <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-md font-semibold">
+              <button type="submit" className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-md font-semibold transition-colors">
                 {isEnrollmentRequest ? 'Submit Enrollment Request' : 'Send Message'}
               </button>
             </div>

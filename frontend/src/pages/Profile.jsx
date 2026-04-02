@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import PageTitle from '../components/PageTitle';
 
 const Profile = () => {
   const { user, updateProfile } = useAuth();
@@ -49,11 +50,12 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <PageTitle title="My Profile - IFTIINHUB" />
       {/* Header */}
       <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
-          <p className="mt-2 text-gray-600">Manage your account information</p>
+        <div className="max-w-7xl mx-auto py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Profile</h1>
+          <p className="mt-1 text-sm sm:text-base text-gray-600">Manage your account information</p>
         </div>
       </div>
 
@@ -134,7 +136,7 @@ const Profile = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-end space-x-3 pt-4">
+                <div className="flex flex-wrap justify-end gap-3 pt-4">
                   {!isEditing ? (
                     <button
                       type="button"
@@ -174,7 +176,7 @@ const Profile = () => {
           </div>
           <div className="p-6">
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-sm font-medium text-gray-900">Password</h3>
                   <p className="text-sm text-gray-500">Last changed: Never</p>
@@ -187,7 +189,7 @@ const Profile = () => {
                 </button>
               </div>
               
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-sm font-medium text-gray-900">Two-Factor Authentication</h3>
                   <p className="text-sm text-gray-500">Add an extra layer of security</p>
@@ -210,7 +212,7 @@ const Profile = () => {
           </div>
           <div className="p-6">
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-sm font-medium text-gray-900">Export Data</h3>
                   <p className="text-sm text-gray-500">Download your account data</p>
@@ -223,7 +225,7 @@ const Profile = () => {
                 </button>
               </div>
               
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-sm font-medium text-red-900">Delete Account</h3>
                   <p className="text-sm text-gray-500">Permanently delete your account and all data</p>

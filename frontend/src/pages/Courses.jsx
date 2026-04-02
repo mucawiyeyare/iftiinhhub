@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import PriceLabel from '../components/PriceLabel';
+import PageTitle from '../components/PageTitle';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -104,24 +105,25 @@ const Courses = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      <PageTitle title="Courses - IFTIINHUB" />
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg">
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-5xl font-bold mb-4">🎓 IftiinHub</h1>
-            <p className="text-xl text-blue-100 mb-6">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">🎓 IftiinHub</h1>
+            <p className="text-sm sm:text-xl text-blue-100 mb-4 sm:mb-6 max-w-2xl mx-auto px-2">
               Discover, Learn, and Excel with Our Premium Courses
             </p>
-            <div className="flex justify-center space-x-4">
-              <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
+              <span className="bg-white/20 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium">
                 {allCourses.length} Total Courses
               </span>
               {user && user.role === 'student' && (
                 <>
-                  <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm">
+                  <span className="bg-white/20 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium">
                     {assignedCourses.length} Assigned
                   </span>
-                  <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm">
+                  <span className="bg-white/20 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium">
                     {unassignedCourses.length} Available
                   </span>
                 </>
@@ -215,7 +217,7 @@ const Courses = () => {
 
         {/* Course Grid */}
         <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center">
+          <h2 className="text-xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8 flex flex-wrap items-center gap-2">
             {user && user.role === 'admin' ? (
               <>
                 <span className="mr-3">⚙️</span>
@@ -288,34 +290,32 @@ const Courses = () => {
                 return (
                   <div key={course._id} className="bg-white rounded-xl shadow-md ring-1 ring-gray-100 overflow-hidden transform hover:-translate-y-1 hover:shadow-xl transition-all duration-200 flex flex-col">
                     <Link to={linkTo}>
-                      <img 
-                        src={course.imageUrl || 'https://via.placeholder.com/400x225'} 
-                        alt={course.name} 
-                        className="h-44 w-full object-cover"
-                      />
+                      <div className="w-full bg-purple-50 flex items-center justify-center overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                        <img 
+                          src={course.imageUrl || 'https://via.placeholder.com/400x225'} 
+                          alt={course.name} 
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
                     </Link>
-                    <div className="p-4 flex flex-col flex-grow">
+                    <div className="p-3 flex flex-col flex-grow">
                       <div className="flex-grow">
-                        <h3 className="mt-1 text-lg font-semibold text-gray-900 line-clamp-2">{course.name}</h3>
+                        <h3 className="mt-0.5 text-sm font-semibold text-gray-900 line-clamp-1">{course.name}</h3>
                         <p className="mt-0.5 text-xs text-gray-500">By {course.instructor}</p>
-                        <p className="mt-2 text-sm text-gray-600 line-clamp-2">{(course.description || '').substring(0, 90)}</p>
-                        <div className="flex items-center justify-between text-xs text-gray-500 mt-3 border-t border-gray-100 pt-3">
+                        <p className="mt-1 text-xs text-gray-600 line-clamp-2">{(course.description || '').substring(0, 90)}</p>
+                        <div className="flex items-center justify-between text-xs text-gray-500 mt-2 border-t border-gray-100 pt-2">
                           <span className="flex items-center">
-                            <svg className="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                            {totalSections} {totalSections === 1 ? 'Section' : 'Sections'}
-                          </span>
-                          <span className="flex items-center">
-                            <svg className="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                            {totalVideos} {totalVideos === 1 ? 'Video' : 'Videos'}
+                            <svg className="w-3.5 h-3.5 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            {totalVideos} {totalVideos === 1 ? 'Lesson' : 'Lessons'}
                           </span>
                         </div>
                       </div>
                       
-                      <div className="mt-4">
-                        <div className="flex justify-between items-center mb-3">
-                          <PriceLabel price={course.price} originalPrice={course.originalPrice} size="md" />
+                      <div className="mt-3">
+                        <div className="flex justify-between items-center mb-2">
+                          <PriceLabel price={course.price} originalPrice={course.originalPrice} size="sm" />
                         </div>
-                        <Link to={linkTo} className={`w-full flex items-center justify-center px-6 py-2.5 border border-transparent text-sm font-medium rounded-md text-white transition-colors ${buttonClass}`}>
+                        <Link to={linkTo} className={`w-full flex items-center justify-center px-4 py-2 border border-transparent text-xs font-medium rounded-md text-white transition-colors ${buttonClass}`}>
                           {buttonText}
                         </Link>
                       </div>

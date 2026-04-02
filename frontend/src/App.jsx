@@ -22,6 +22,7 @@ import CourseForm from './pages/CourseForm';
 import CourseVideoPlayer from './components/CourseVideoPlayer';
 import Profile from './pages/Profile';
 import Contact from './pages/Contact';
+import StudentRegister from './pages/StudentRegister';
 import './index.css';
 
 /**
@@ -82,13 +83,14 @@ const Layout = () => {
       {/* Hide navbar on app-like full screen pages */}
       {!hideNavAndFooter && <Navbar />}
       
-      {/* Main content area - no container padding for app-like pages */}
-      <main className={`${!hideNavAndFooter ? 'container mx-auto px-4 py-8' : ''}`}>
+      {/* Main content area - each page manages its own layout */}
+      <main>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/student-register" element={<StudentRegister />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/courses/:id" element={<CourseDetail />} />
           <Route 

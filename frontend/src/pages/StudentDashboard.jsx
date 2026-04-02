@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import PageTitle from '../components/PageTitle';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
@@ -97,16 +98,18 @@ const StudentDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      {/* Mobile Menu Button */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
+      <PageTitle title="Student Dashboard - IFTIINHUB" />
+      {/* Mobile Top Bar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm h-14 flex items-center px-4">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="bg-white p-2 rounded-lg shadow-lg border border-gray-200"
+          className="mr-3 p-1.5 rounded-lg border border-gray-200 bg-white"
         >
-          <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
+        <h1 className="text-base font-bold text-gray-800 truncate">Student Dashboard</h1>
       </div>
 
       {/* Mobile Overlay */}
@@ -182,7 +185,7 @@ const StudentDashboard = () => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 ml-0 md:ml-72 min-h-screen">
+      <main className="flex-1 ml-0 md:ml-72 min-h-screen overflow-x-hidden">
         {/* Top Header */}
         <header className="bg-white shadow-sm px-8 py-4 sticky top-0 z-30 flex justify-between items-center hidden md:flex">
           <h2 className="text-2xl font-bold text-gray-800 tracking-tight">
@@ -201,7 +204,7 @@ const StudentDashboard = () => {
           </div>
         </header>
 
-        <div className="p-4 sm:p-8 pt-20 md:pt-8">
+        <div className="p-3 sm:p-6 lg:p-8 pt-16 md:pt-8">
 
           {/* OVERVIEW TAB */}
           {activeTab === 'overview' && (

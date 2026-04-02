@@ -8,6 +8,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import VideoManager from '../components/VideoManager';
+import PageTitle from '../components/PageTitle';
 import PriceLabel from '../components/PriceLabel';
 
 // Helper function to convert YouTube URL to embed URL
@@ -260,6 +261,7 @@ const CourseDetail = () => {
 
   return (
      <div className=" min-h-screen bg-gradient-to-br from-gray-50 to-pink-50">
+      <PageTitle title={course ? `${course.name} - IFTIINHUB` : 'Course - IFTIINHUB'} />
              {/* Header removed as requested */}
 
                                                                                                                <div className="w-full py-4 sm:py-6 px-4 sm:px-6 lg:pl-0 lg:pr-8 max-w-7xl mx-auto">
@@ -283,15 +285,15 @@ const CourseDetail = () => {
 
             {/* Course Details */}
             <div className="lg:col-span-2">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">{course.name}</h1>
-                  <p className="text-lg text-gray-600 mb-4">{course.description}</p>
-                  <div className="flex flex-wrap items-center gap-4 mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 leading-tight">{course.name}</h1>
+                  <p className="text-sm sm:text-lg text-gray-600 mb-3">{course.description}</p>
+                  <div className="flex flex-wrap items-center gap-3 mb-4">
                     <span className="text-sm text-gray-500">👨‍🏫 {course.instructor}</span>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="flex-shrink-0 text-right">
                   <div className="mb-2">
                     <PriceLabel price={course.price} originalPrice={course.originalPrice} size="lg" />
                   </div>
@@ -308,7 +310,7 @@ const CourseDetail = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 {isEnrolled ? (
                   <Link
                     to={`/courses/${id}/learn`}
@@ -360,19 +362,10 @@ const CourseDetail = () => {
                       </button>
                     )}
                     <Link
-                      to="/contact"
-                      state={{
-                        subject: `Enrollment Request for: ${course.name}`,
-                        message: `Hello Admin,\n\nI would like to request enrollment in the following course:\n\nCourse: ${course.name}\nInstructor: ${course.instructor}\nPrice: $${course.price}\n\nPlease let me know the next steps for enrollment.\n\nThank you!`,
-                        courseDetails: {
-                          name: course.name,
-                          instructor: course.instructor,
-                          price: course.price
-                        }
-                      }}
+                      to="/student-register"
                       className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition duration-200 font-medium flex items-center"
                     >
-                      📧 Contact Admin for Enrollment
+                      📝 Register for Access
                     </Link>
                   </>
                 )}
@@ -406,9 +399,9 @@ const CourseDetail = () => {
                     How to Enroll:
                   </h4>
                   <ul className="text-sm text-blue-700 space-y-1">
-                    <li>• Add this course to your cart</li>
-                    <li>• Contact admin using the button above</li>
+                    <li>• Register for a student account</li>
                     <li>• Wait for admin approval</li>
+                    <li>• Contact admin if you have issues</li>
                     <li>• Start learning once enrolled!</li>
                   </ul>
                 </div>
@@ -621,20 +614,10 @@ const CourseDetail = () => {
                                   <button onClick={handleAddToCart} className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm">Add to Cart</button>
                                 )}
                                 <Link
-                                  to="/contact"
-                                  state={{
-                                    subject: `Enrollment Request for: ${course.name}`,
-                                    message: `Hello Admin,\n\nI would like to request enrollment in the following course:\n\nCourse: ${course.name}\nInstructor: ${course.instructor}\nPrice: $${course.price}\n\nPlease let me know the next steps for enrollment.\n\nThank you!`,
-                                    courseDetails: {
-                                      name: course.name,
-                                      instructor: course.instructor,
-                                      price: course.price,
-                                      category: course.category
-                                    }
-                                  }}
+                                  to="/student-register"
                                   className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm"
                                 >
-                                  Contact Admin
+                                  Register to Unlock
                                 </Link>
                               </div>
                             </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import PageTitle from '../components/PageTitle';
 import PriceLabel from '../components/PriceLabel';
 
 // Import Swiper React components
@@ -124,7 +125,7 @@ const styles = `
     display: flex;
     align-items: center;
     overflow: hidden;
-    padding: 0 0 60px 0;
+    padding: 20px 0 60px 0;
     border-bottom: 1px solid #ede9fe;
   }
 
@@ -381,8 +382,14 @@ const styles = `
     box-shadow: 0 16px 40px rgba(124,58,237,0.14);
     border-color: #c4b5fd;
   }
+  .course-card-img-container {
+    width: 100%; aspect-ratio: 16/9;
+    background: #f5f3ff;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
   .course-card img {
-    height: 192px; width: 100%; object-fit: cover;
+    width: 100%; height: 100%; object-fit: contain;
     transition: transform 0.4s ease;
   }
   .course-card:hover img { transform: scale(1.04); }
@@ -537,11 +544,67 @@ const styles = `
     .hero-visual { display: none; }
   }
   @media (max-width: 768px) {
-    .hero-section { padding-top: 80px; padding-bottom: 80px; min-height: auto; }
-    .hero-stats   { gap: 20px; }
-    .hero-heading { margin-bottom: 18px; }
-    .hero-sub     { font-size: 0.97rem; }
+    .hero-section { padding-top: 40px; padding-bottom: 60px; min-height: auto; }
+    .hero-stats   { gap: 16px; }
+    .hero-heading { margin-bottom: 16px; font-size: clamp(1.9rem, 7vw, 2.8rem); }
+    .hero-sub     { font-size: 0.95rem; }
     .hero-btn-group { flex-direction: column; align-items: flex-start; }
+    .hero-badge   { font-size: 0.72rem; padding: 5px 12px; }
+  }
+  @media (max-width: 480px) {
+    .hero-section { padding-top: 24px; padding-bottom: 40px; }
+    .hero-heading { font-size: clamp(1.7rem, 8vw, 2.2rem); }
+    .hero-btn-group { gap: 10px; }
+    .btn-hero-primary, .btn-hero-whatsapp { padding: 13px 24px; font-size: 0.93rem; }
+  }
+  /* Responsive Hero */
+  .hero-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+  @media (max-width: 992px) {
+    .hero-grid-layout {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+    .hero-section {
+      padding: 80px 0 60px 0 !important;
+    }
+    .hero-visual {
+      order: -1;
+    }
+    .hero-heading {
+      font-size: clamp(2.2rem, 6vw, 3rem);
+    }
+    .hero-sub {
+      font-size: 1rem;
+    }
+    .hero-floating-badge {
+      display: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .hero-btn-group {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .btn-hero-primary, .btn-hero-whatsapp {
+      justify-content: center;
+      width: 100%;
+    }
+    .hero-stats {
+      gap: 20px;
+      margin-top: 32px;
+      padding-top: 24px;
+    }
+    .hero-bullet {
+      font-size: 0.85rem;
+    }
+    .hero-card {
+      padding: 24px 20px;
+    }
   }
 `;
 
@@ -624,18 +687,18 @@ const Home = () => {
   const testimonials = [
     {
       quote: "IftiinHub transformed my career. The hands-on projects and expert instructors gave me the confidence to land my dream job as a software engineer.",
-      name: "Sacdiyo Maxamed",
+      name: "Maxamed Abukar",
       title: "Full Stack Developer"
     },
     {
       quote: "The flexible learning schedule allowed me to learn at my own pace. The community is incredibly supportive, and I've made connections that will last a lifetime.",
-      name: "Jamac Xasan",
-      title: "UX/UI Designer"
+      name: "Jamac Osman",
+      title: "Full Stack Developer"
     },
     {
       quote: "I went from a complete beginner to building complex applications. The curriculum is top-notch and always up-to-date with the latest industry trends.",
-      name: "Maxamed Xasan",
-      title: "Mobile App Developer"
+      name: "Muscab Cumar",
+      title: "Full Stack Developer"
     }
   ];
 
@@ -647,6 +710,7 @@ const Home = () => {
 
   return (
     <div className="home-root bg-white">
+      <PageTitle title="Home - IFTIINHUB" />
       <style>{styles}</style>
 
       {/* ── NEW Hero Section ─────────────────────────────────────────────── */}
@@ -656,9 +720,8 @@ const Home = () => {
         <div className="hero-blob-2" />
         <div className="hero-grid-lines" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '64px', alignItems: 'center' }}
-               className="hero-grid-layout">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full relative z-10">
+          <div className="hero-grid-layout">
 
             {/* ── Left: Text Content ── */}
             <div>
@@ -680,17 +743,17 @@ const Home = () => {
 
               {/* Sub */}
               <p className="hero-sub">
-                Master Web Development, Mobile Apps &amp; AI Engineering —
+                Master Web Development —
                 all taught in Somali with weekly mentorship.
-                15 courses included. From HTML to React, Node.js &amp; AI.
+                5 courses included. From HTML to React, Node.js &amp; MongoDb.
               </p>
 
               {/* Bullet features */}
               <div className="hero-bullets">
                 {[
-                  '15 Structured Modules — HTML → JavaScript → React → Node.js → MongoDB',
+                  '5 Structured Modules — HTML → JavaScript → React → Node.js → MongoDB',
                   'Weekly Live Q&A Sessions — Ask questions, get feedback from instructor',
-                  '197+ Hours of Content — 1030 lessons with 15+ real projects for your portfolio',
+                  '120+ Hours of Content — 100 lessons ',
                 ].map((text, i) => (
                   <div key={i} className="hero-bullet">
                     <div className="hero-bullet-icon">
@@ -724,7 +787,7 @@ const Home = () => {
               {/* Stats row */}
               <div className="hero-stats">
                 {[
-                  { num: '197+',  label: 'Hours of Content' },
+                  { num: '100+',  label: 'Hours of Content' },
                   { num: '100%',  label: 'Taught in Somali' },
                 ].map((s, i) => (
                   <div key={i}>
@@ -773,7 +836,7 @@ const Home = () => {
                   </div>
                   <div>
                     <div style={{ fontWeight: 800, color: '#111827', fontSize: '0.97rem' }}>One Complete Program</div>
-                    <div style={{ fontSize: '0.78rem', color: '#7c3aed', fontWeight: 600, marginTop: 2 }}>15 Courses Included</div>
+                    <div style={{ fontSize: '0.78rem', color: '#7c3aed', fontWeight: 600, marginTop: 2 }}>5 Courses Included</div>
                   </div>
                 </div>
 
@@ -798,7 +861,7 @@ const Home = () => {
                 {[
                   { label: 'React.js Module',   sub: 'Modern Frontend Development', badge: 'Included', included: true,  progress: 80 },
                   { label: 'MongoDB',            sub: 'Database & Data Modeling',    badge: 'Included', included: true,  progress: 70 },
-                  { label: 'PHP Backend',        sub: 'Server-Side Programming',     badge: 'Included', included: true,  progress: 55 },
+                  { label: 'Nodejs Backend',        sub: 'Server-Side Programming',     badge: 'Included', included: true,  progress: 55 },
                   { label: 'TailwindCSS',        sub: 'Utility-First Styling',       badge: 'Included', included: true,  progress: 65 },
                 ].map((m, i) => (
                   <div key={i} className="hero-module-item">
@@ -881,7 +944,7 @@ const Home = () => {
                 <div className="text-base font-medium text-gray-500">Loading courses…</div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {courses.map((course, i) => {
                   const isEnrolled = user?.role === 'student' && assignedCourses.some(c => c?._id === course?._id);
                   const isAdmin = user?.role === 'admin';
@@ -913,48 +976,42 @@ const Home = () => {
                         animation: `heroFadeUp 0.55s ease ${i * 90}ms both`,
                       }}
                     >
-                      <Link to={linkTo} className="course-card-img-wrap block">
+                      <Link to={linkTo} className="course-card-img-container">
                         <img
                           src={course.imageUrl || 'https://via.placeholder.com/400x225'}
                           alt={course.name}
                         />
                       </Link>
 
-                      <div className="p-5 flex flex-col flex-grow">
+                      <div className="p-4 flex flex-col flex-grow">
                         <div className="flex-grow">
                           {/* Title */}
-                          <h3 className="text-base font-bold text-gray-900 leading-snug line-clamp-2 mb-1">
+                          <h3 className="text-sm font-bold text-gray-900 leading-snug line-clamp-1 mb-0.5">
                             {course.name}
                           </h3>
                           {/* Instructor */}
-                          <p className="text-xs text-gray-400 font-medium mb-2">
+                          <p className="text-xs text-gray-400 font-medium mb-1">
                             {course.instructor}
                           </p>
                           {/* Description */}
-                          <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 mb-4">
+                          <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-2">
                             {(course.description || '').substring(0, 90)}
                           </p>
 
                           {/* Meta row */}
-                          <div className="flex items-center gap-4 text-xs text-gray-400 font-medium border-t border-gray-100 pt-3">
-                            <span className="flex items-center gap-1.5">
-                              <svg className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                              </svg>
-                              {totalSections} {totalSections === 1 ? 'Section' : 'Sections'}
-                            </span>
+                          <div className="flex items-center gap-4 text-xs text-gray-400 font-medium border-t border-gray-100 pt-2">
                             <span className="flex items-center gap-1.5">
                               <svg className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                               </svg>
-                              {totalVideos} {totalVideos === 1 ? 'Video' : 'Videos'}
+                              {totalVideos} {totalVideos === 1 ? 'Lesson' : 'Lessons'}
                             </span>
                           </div>
                         </div>
 
                         {/* Footer */}
-                        <div className="mt-4 pt-4 border-t border-gray-100">
-                          <div className="flex justify-end items-center mb-3">
+                        <div className="mt-3 pt-3 border-t border-gray-100">
+                          <div className="flex justify-end items-center mb-2">
                             <PriceLabel price={course.price} originalPrice={course.originalPrice} size="sm" />
                           </div>
                           <Link to={linkTo} className={btnClass}>
@@ -1011,7 +1068,7 @@ const Home = () => {
             <div className="section-underline" />
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {/* Card 1 */}
             <AnimatedSection delay={0}>
               <div className="feature-card">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import PageTitle from '../components/PageTitle';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -71,16 +72,28 @@ const AdminDashboard = () => {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h6m5 8l-4-4H7a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v12z" />
       </svg>
     ) },
+    { id: 'registeredStudents', label: 'Registered Students', icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+      </svg>
+    ) },
+    { id: 'notifications', label: 'Notifications', icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
+    ) },
   ];
   
   // Derived counts for sidebar badges
   const sidebarCounts = {
     courses: courses.length,
-    students: users.filter(u => u.role === 'student').length,
+    students: users.filter(u => u.role === 'student' && u.status !== 'pending').length,
     users: users.length,
     enrollments: recentEnrollments.length,
     videos: videoStats.totalVideos,
     messages: messages.length,
+    registeredStudents: users.filter(u => u.role === 'student' && u.status !== 'pending').length,
+    notifications: users.filter(u => u.status === 'pending').length,
   };
   
   // State for edit user modal
@@ -330,6 +343,20 @@ const AdminDashboard = () => {
     }
   };
   
+  // Function to handle approving or declining user registration
+  const handleUpdateUserStatus = async (userId, targetStatus) => {
+    if (!window.confirm(`Are you sure you want to ${targetStatus} this user?`)) return;
+    try {
+      const res = await axios.put(`/users/${userId}/status`, { status: targetStatus });
+      setUsers(users.map(u => u._id === userId ? { ...u, status: targetStatus } : u));
+      setToast(`User ${targetStatus} successfully!`);
+      setTimeout(() => setToast(''), 3000);
+    } catch (error) {
+      console.error('Update status error:', error);
+      alert(error.response?.data?.message || 'Failed to update user status');
+    }
+  };
+  
   // Function to handle student enrollment
   const handleEnrollStudent = async (e) => {
     e.preventDefault();
@@ -574,6 +601,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
+      <PageTitle title="Admin Dashboard - IFTIINHUB" />
       {toast && (
         <div className="fixed top-4 right-4 z-50">
           <div className="bg-green-600 text-white px-4 py-3 rounded shadow-lg">
@@ -582,17 +610,20 @@ const AdminDashboard = () => {
         </div>
       )}
       
-      {/* Mobile Menu Button */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
+
+      {/* Mobile Top Bar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm h-14 flex items-center px-4">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="bg-white p-2 rounded-lg shadow-lg border border-gray-200"
+          className="mr-3 p-1.5 rounded-lg border border-gray-200 bg-white"
         >
-          <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
+        <h1 className="text-base font-bold text-purple-700 truncate">IftiinHub Admin</h1>
       </div>
+
 
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
@@ -603,11 +634,11 @@ const AdminDashboard = () => {
       )}
 
       {/* Professional Sidebar */}
-      <aside className={`w-72 bg-white shadow-lg min-h-screen fixed left-0 top-0 z-40 overflow-y-auto transform transition-transform duration-300 ease-in-out ${
+      <aside className={`w-72 bg-white shadow-lg h-screen fixed left-0 top-0 z-40 flex flex-col transform transition-transform duration-300 ease-in-out ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
       }`}>
         {/* Brand Header */}
-        <div className="px-6 py-8 border-b border-purple-500 bg-purple-500 ">
+        <div className="flex-shrink-0 px-6 py-8 border-b border-purple-500 bg-purple-500 ">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Link
@@ -634,7 +665,7 @@ const AdminDashboard = () => {
 
         
         {/* Navigation */}
-        <nav className="px-4 py-6">
+        <nav className="flex-1 overflow-y-auto px-4 py-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
           <div className="space-y-1">
             {menuItems.map(item => (
               <button
@@ -674,20 +705,20 @@ const AdminDashboard = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 md:ml-72 ml-0">
-        <div className="p-6 md:p-6 pt-16 md:pt-6">
+        <div className="p-4 sm:p-6 pt-16 md:pt-6">
             {/* Overview Section */}
             {activeTab === 'overview' && stats && (
               <div>
                 {/* Header */}
-                <div className="mb-8">
-                  <div className="flex items-center justify-between">
+                <div className="mb-6 sm:mb-8">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
-                      <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
-                      <p className="mt-1 text-gray-600">Welcome back, {user?.name}!</p>
+                      <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Dashboard Overview</h1>
+                      <p className="mt-1 text-sm sm:text-base text-gray-600">Welcome back, {user?.name}!</p>
                     </div>
                     <Link
                       to="/courses"
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition duration-200 font-medium"
+                      className="self-start sm:self-auto bg-purple-600 hover:bg-purple-700 text-white px-3 sm:px-4 py-2 rounded-lg transition duration-200 font-medium text-sm"
                     >
                       View All Courses
                     </Link>
@@ -1005,7 +1036,7 @@ const AdminDashboard = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {users
-                        .filter(user => user.role === 'student')
+                        .filter(user => user.role === 'student' && user.status !== 'pending')
                         .filter(student =>
                           student.name.toLowerCase().includes(studentSearchTerm.toLowerCase()) ||
                           student.email.toLowerCase().includes(studentSearchTerm.toLowerCase())
@@ -1042,6 +1073,261 @@ const AdminDashboard = () => {
                 </div>
               </div>
             )}
+
+            {/* Registered Students Tab */}
+            {activeTab === 'registeredStudents' && (() => {
+              const regStudents = users.filter(u => u.role === 'student' && u.status !== 'pending');
+              const filtered = regStudents.filter(s =>
+                s.name?.toLowerCase().includes(studentSearchTerm.toLowerCase()) ||
+                s.email?.toLowerCase().includes(studentSearchTerm.toLowerCase()) ||
+                (s.phone || '').toLowerCase().includes(studentSearchTerm.toLowerCase())
+              );
+              const recentCount = regStudents.filter(s => {
+                const d = new Date(s.createdAt);
+                const ago = Date.now() - d.getTime();
+                return ago < 7 * 24 * 60 * 60 * 1000;
+              }).length;
+
+              return (
+                <div>
+                  {/* Header */}
+                  <div style={{ marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                      <div>
+                        <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#1e1b4b', margin: '0 0 4px' }}>Registered Students</h2>
+                        <p style={{ color: '#6b7280', fontSize: '0.875rem', margin: 0 }}>All students who registered through the public form</p>
+                      </div>
+                      <a
+                        href="/student-register"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          background: 'linear-gradient(135deg,#7c3aed,#9333ea)',
+                          color: '#fff',
+                          padding: '9px 18px',
+                          borderRadius: '10px',
+                          textDecoration: 'none',
+                          fontSize: '0.85rem',
+                          fontWeight: 600,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          boxShadow: '0 3px 10px rgba(124,58,237,0.25)',
+                        }}
+                      >
+                        🔗 View Registration Page
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Stats row */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+                    {[
+                      { label: 'Total Students', value: regStudents.length, color: '#7c3aed', bg: '#f5f3ff', icon: '🎓' },
+                      { label: 'Joined This Week', value: recentCount, color: '#059669', bg: '#ecfdf5', icon: '🆕' },
+                      { label: 'Showing Now', value: filtered.length, color: '#2563eb', bg: '#eff6ff', icon: '👁️' },
+                    ].map(s => (
+                      <div key={s.label} style={{ background: s.bg, border: `1px solid ${s.color}22`, borderRadius: '12px', padding: '16px 20px' }}>
+                        <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>{s.icon}</div>
+                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: s.color }}>{s.value}</div>
+                        <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 500 }}>{s.label}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Search */}
+                  <div style={{ position: 'relative', marginBottom: '20px' }}>
+                    <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontSize: '1rem', pointerEvents: 'none' }}>🔍</span>
+                    <input
+                      type="text"
+                      placeholder="Search by name, email or phone…"
+                      value={studentSearchTerm}
+                      onChange={e => setStudentSearchTerm(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '11px 14px 11px 42px',
+                        border: '1.5px solid #e5e7eb',
+                        borderRadius: '10px',
+                        fontSize: '0.9rem',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                        background: '#fafafa',
+                      }}
+                    />
+                  </div>
+
+                  {/* Student Cards */}
+                  {filtered.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '60px 20px', color: '#9ca3af' }}>
+                      <div style={{ fontSize: '3rem', marginBottom: '12px' }}>🎓</div>
+                      <p style={{ fontWeight: 600, fontSize: '1rem' }}>
+                        {studentSearchTerm ? 'No students match your search.' : 'No students registered yet.'}
+                      </p>
+                      {!studentSearchTerm && (
+                        <p style={{ fontSize: '0.875rem', marginTop: '6px' }}>
+                          Share the <a href="/student-register" target="_blank" rel="noopener noreferrer" style={{ color: '#7c3aed', fontWeight: 600 }}>registration link</a> with students.
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+                      {filtered.map((student, idx) => {
+                        const initials = student.name
+                          ? student.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+                          : student.email[0].toUpperCase();
+                        const colors = ['#7c3aed','#0284c7','#059669','#dc2626','#d97706','#db2777'];
+                        const color = colors[idx % colors.length];
+                        const joinDate = new Date(student.createdAt);
+                        const daysAgo = Math.floor((Date.now() - joinDate.getTime()) / (1000 * 60 * 60 * 24));
+                        const isNew = daysAgo <= 7;
+
+                        return (
+                          <div key={student._id} style={{
+                            background: '#fff',
+                            border: '1.5px solid #f3f4f6',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                            transition: 'box-shadow 0.2s, border-color 0.2s',
+                            position: 'relative',
+                          }}>
+                            {isNew && (
+                              <span style={{
+                                position: 'absolute', top: '14px', right: '14px',
+                                background: '#dcfce7', color: '#16a34a',
+                                fontSize: '0.7rem', fontWeight: 700,
+                                padding: '2px 8px', borderRadius: '999px',
+                                border: '1px solid #bbf7d0',
+                              }}>NEW</span>
+                            )}
+
+                            {/* Avatar + Name */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+                              <div style={{
+                                width: '48px', height: '48px', borderRadius: '50%',
+                                background: `linear-gradient(135deg, ${color}, ${color}cc)`,
+                                color: '#fff', fontSize: '1.1rem', fontWeight: 700,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                flexShrink: 0,
+                              }}>{initials}</div>
+                              <div style={{ minWidth: 0 }}>
+                                <div style={{ fontWeight: 700, color: '#111827', fontSize: '0.95rem', lineHeight: 1.2,
+                                  whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                  {student.name}
+                                </div>
+                                <div style={{ fontSize: '0.78rem', color: '#7c3aed', fontWeight: 500, marginTop: '2px' }}>Student</div>
+                              </div>
+                            </div>
+
+                            {/* Details */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#374151' }}>
+                                <span>✉️</span>
+                                <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{student.email}</span>
+                              </div>
+                              {student.phone && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#374151' }}>
+                                  <span>📱</span>
+                                  <span>{student.phone}</span>
+                                </div>
+                              )}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#6b7280' }}>
+                                <span>📅</span>
+                                <span>
+                                  {joinDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                  <span style={{ marginLeft: '6px', color: '#9ca3af' }}>({daysAgo === 0 ? 'today' : `${daysAgo}d ago`})</span>
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid #f3f4f6', paddingTop: '14px' }}>
+                              <button
+                                onClick={() => handleEditUser(student)}
+                                style={{
+                                  flex: 1, padding: '8px', borderRadius: '8px',
+                                  border: '1.5px solid #e5e7eb', background: '#fff',
+                                  color: '#374151', fontSize: '0.8rem', fontWeight: 600,
+                                  cursor: 'pointer', transition: 'all 0.2s',
+                                }}
+                              >
+                                ✏️ Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteUser(student._id)}
+                                style={{
+                                  flex: 1, padding: '8px', borderRadius: '8px',
+                                  border: '1.5px solid #fecaca', background: '#fef2f2',
+                                  color: '#dc2626', fontSize: '0.8rem', fontWeight: 600,
+                                  cursor: 'pointer', transition: 'all 0.2s',
+                                }}
+                              >
+                                🗑️ Delete
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* Notifications Tab */}
+            {activeTab === 'notifications' && (() => {
+              const pendingUsers = users.filter(u => u.status === 'pending');
+              return (
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-4">Registration Notifications</h2>
+                  <p className="text-sm text-gray-600 mb-6">Review and approve or decline students who registered via the public registration page.</p>
+                  
+                  {pendingUsers.length === 0 ? (
+                    <div className="bg-white p-6 rounded-lg shadow text-center text-gray-500">
+                      No pending registrations at this time.
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto shadow-sm rounded-lg border border-gray-200">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Registered</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {pendingUsers.map(user => (
+                            <tr key={user._id}>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.email}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.phone || 'N/A'}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(user.createdAt).toLocaleDateString()}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
+                                <button
+                                  onClick={() => handleUpdateUserStatus(user._id, 'approved')}
+                                  className="bg-green-100 text-green-700 px-3 py-1 rounded hover:bg-green-200 transition-colors"
+                                >
+                                  Accept
+                                </button>
+                                <button
+                                  onClick={() => handleUpdateUserStatus(user._id, 'declined')}
+                                  className="bg-red-100 text-red-700 px-3 py-1 rounded hover:bg-red-200 transition-colors"
+                                >
+                                  Decline
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Users Tab */}
             {activeTab === 'users' && (

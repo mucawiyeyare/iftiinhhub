@@ -54,6 +54,16 @@ const CourseVideoPlayer = () => {
           } else if (response.data.video1) {
             setCurrentVideoIndex(0);
           }
+          
+          // Fetch progress for any authorized user (admin or student)
+          try {
+            const progressRes = await axios.get(`/enrollments/course/${id}`);
+            if (progressRes.data && progressRes.data.completedVideos) {
+              setCompletedVideos(new Set(progressRes.data.completedVideos));
+            }
+          } catch (pErr) {
+            console.error('Could not fetch course progress', pErr);
+          }
         }
 
       } catch (err) {
@@ -174,8 +184,14 @@ const CourseVideoPlayer = () => {
     setCurrentVideoIndex(index);
   };
 
-  const markAsComplete = () => {
-    setCompletedVideos(prev => new Set([...prev, currentVideoIndex]));
+  const markAsComplete = async () => {
+    try {
+      await axios.post(`/enrollments/course/${id}/complete`, { videoIndex: currentVideoIndex });
+      setCompletedVideos(prev => new Set([...prev, currentVideoIndex]));
+    } catch (error) {
+      console.error('Failed to mark video as complete', error);
+      alert('Failed to save progress.');
+    }
   };
 
   const toggleSection = (sectionId) => {
@@ -295,7 +311,7 @@ const CourseVideoPlayer = () => {
               )}
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 <Link
-                  to="/contact"
+                  to="/student-register"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#fff', color: '#4338ca', borderRadius: '10px', padding: '12px 28px', fontWeight: 700, fontSize: '15px', textDecoration: 'none', boxShadow: '0 4px 14px rgba(0,0,0,0.2)', transition: 'transform 0.15s' }}
                   onMouseOver={e => e.currentTarget.style.transform = 'translateY(-1px)'}
                   onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
@@ -303,7 +319,7 @@ const CourseVideoPlayer = () => {
                   <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
-                  Enroll Now
+                  Register Now
                 </Link>
                 {!user && (
                   <Link
@@ -402,7 +418,7 @@ const CourseVideoPlayer = () => {
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link
-                to="/contact"
+                to="/student-register"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#4f46e5', color: '#fff', borderRadius: '10px', padding: '12px 32px', fontWeight: 700, fontSize: '15px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(79,70,229,0.3)', transition: 'background 0.15s' }}
                 onMouseOver={e => e.currentTarget.style.background = '#4338ca'}
                 onMouseOut={e => e.currentTarget.style.background = '#4f46e5'}
@@ -410,7 +426,7 @@ const CourseVideoPlayer = () => {
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                Get Access Now
+                Register to Get Access
               </Link>
               <button
                 onClick={goBack}

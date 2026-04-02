@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import PageTitle from '../components/PageTitle';
 
 const About = () => {
   const [stats, setStats] = useState({ students: '10K+', courses: '500+' });
@@ -24,16 +25,17 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-purple-100">
+      <PageTitle title="About Us - IFTIINHUB" />
       {/* Hero Section with background pattern */}
-      <section className="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20 overflow-hidden">
+      <section className="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12 sm:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="absolute inset-0 pattern-dots-lg text-white/10"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center relative">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6">
               About IftiinHub
             </h1>
-            <p className="text-xl md:text-2xl max-w-3xl mx-auto">
+            <p className="text-base sm:text-xl md:text-2xl max-w-3xl mx-auto px-2">
               Empowering learners worldwide with quality education and innovative learning experiences
             </p>
           </div>
@@ -54,14 +56,14 @@ const About = () => {
               <p className="text-lg text-gray-600 mb-6">
                 We partner with industry experts and experienced instructors to create comprehensive learning experiences that are both engaging and practical. Our platform is designed to support learners at every stage of their educational journey.
               </p>
-              <div className="grid grid-cols-2 gap-6 mt-8">
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-blue-600 mb-2">{stats.students}</div>
-                  <div className="text-gray-600 font-medium">Students Enrolled</div>
+              <div className="grid grid-cols-2 gap-4 sm:gap-6 mt-6 sm:mt-8">
+                <div className="text-center p-3 sm:p-0">
+                  <div className="text-2xl sm:text-4xl font-bold text-blue-600 mb-1 sm:mb-2">{stats.students}</div>
+                  <div className="text-sm sm:text-base text-gray-600 font-medium">Students Enrolled</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-blue-600 mb-2">{stats.courses}</div>
-                  <div className="text-gray-600 font-medium">Courses Available</div>
+                <div className="text-center p-3 sm:p-0">
+                  <div className="text-2xl sm:text-4xl font-bold text-blue-600 mb-1 sm:mb-2">{stats.courses}</div>
+                  <div className="text-sm sm:text-base text-gray-600 font-medium">Courses Available</div>
                 </div>
               </div>
             </div>
@@ -183,7 +185,7 @@ const About = () => {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Phone</h3>
-              <a href="tel:+15551234567" className="text-blue-600 hover:underline">+1 (555) 123-4567</a>
+              <a href="tel:+15551234567" className="text-blue-600 hover:underline">+252616408886</a>
             </div>
 
             <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -193,7 +195,7 @@ const About = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Address</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Mogdisho,somalia</h3>
               <p className="text-gray-600">123 Learning St, Education City</p>
             </div>
           </div>

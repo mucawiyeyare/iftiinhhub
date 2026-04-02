@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import AdminLayout from '../components/AdminLayout';
+import PageTitle from '../components/PageTitle';
 
 const Register = () => {
   const { user } = useAuth();
@@ -86,6 +87,7 @@ const Register = () => {
 
   return (
     <AdminLayout activeTab="register">
+      <PageTitle title="Register User - IFTIINHUB" />
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>

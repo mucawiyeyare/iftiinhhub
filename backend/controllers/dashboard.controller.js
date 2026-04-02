@@ -4,8 +4,8 @@ import Enrollment from '../models/Enrollment.js';
 
 export const getDashboardStats = async (req, res) => {
   try {
-    const totalUsers = await User.countDocuments();
-    const totalStudents = await User.countDocuments({ role: 'student' });
+    const totalUsers = await User.countDocuments({ status: { $ne: 'pending' } });
+    const totalStudents = await User.countDocuments({ role: 'student', status: { $ne: 'pending' } });
     const totalCourses = await Course.countDocuments();
     const totalEnrollments = await Enrollment.countDocuments();
 

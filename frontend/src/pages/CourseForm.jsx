@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import AdminLayout from '../components/AdminLayout';
 import ImageUpload from '../components/ImageUpload';
+import PageTitle from '../components/PageTitle';
 
 const CourseForm = () => {
   const { id } = useParams();
@@ -206,6 +207,7 @@ const CourseForm = () => {
 
   return (
     <AdminLayout activeTab="courses">
+      <PageTitle title={id ? 'Edit Course - IFTIINHUB' : 'Add Course - IFTIINHUB'} />
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-md p-6">

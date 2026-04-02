@@ -10,7 +10,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, phone } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -22,7 +22,8 @@ export const register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: role || 'student'
+      role: role || 'student',
+      phone: phone || '',
     });
 
     await user.save();
@@ -70,6 +71,16 @@ export const login = async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    if (user.role !== 'admin') {
+      if (user.status === 'pending') {
+        return res.status(403).json({ message: 'Your account is pending admin approval' });
+      }
+
+      if (user.status === 'declined') {
+        return res.status(403).json({ message: 'Your registration was declined. Please contact support.' });
+      }
     }
 
     // Ensure JWT_SECRET is defined
