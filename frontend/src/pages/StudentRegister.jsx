@@ -12,9 +12,9 @@ const StudentRegister = () => {
     password: '',
     confirmPassword: '',
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState('');
-  const [success, setSuccess] = useState(false);
+  const [loading, setLoading]       = useState(false);
+  const [error, setError]           = useState('');
+  const [success, setSuccess]       = useState(false);
   const [showPass, setShowPass]     = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -24,13 +24,13 @@ const StudentRegister = () => {
   };
 
   const validate = () => {
-    if (!formData.name.trim())           return 'Full name is required.';
-    if (!formData.email.trim())          return 'Email address is required.';
+    if (!formData.name.trim())    return 'Full name is required.';
+    if (!formData.email.trim())   return 'Email address is required.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-                                         return 'Please enter a valid email address.';
-    if (formData.password.length < 6)   return 'Password must be at least 6 characters.';
+                                  return 'Please enter a valid email address.';
+    if (formData.password.length < 6) return 'Password must be at least 6 characters.';
     if (formData.password !== formData.confirmPassword)
-                                         return 'Passwords do not match.';
+                                  return 'Passwords do not match.';
     return null;
   };
 
@@ -38,7 +38,6 @@ const StudentRegister = () => {
     e.preventDefault();
     const err = validate();
     if (err) { setError(err); return; }
-
     setLoading(true);
     setError('');
     try {
@@ -61,461 +60,251 @@ const StudentRegister = () => {
     }
   };
 
-  /* ─── Strength meter ─── */
+  /* Strength meter */
   const getStrength = (pw) => {
     let s = 0;
-    if (pw.length >= 6)  s++;
-    if (pw.length >= 10) s++;
-    if (/[A-Z]/.test(pw)) s++;
-    if (/[0-9]/.test(pw)) s++;
-    if (/[^A-Za-z0-9]/.test(pw)) s++;
+    if (pw.length >= 6)            s++;
+    if (pw.length >= 10)           s++;
+    if (/[A-Z]/.test(pw))         s++;
+    if (/[0-9]/.test(pw))         s++;
+    if (/[^A-Za-z0-9]/.test(pw))  s++;
     return s;
   };
-  const strength = getStrength(formData.password);
+  const strength      = getStrength(formData.password);
   const strengthLabel = ['', 'Weak', 'Fair', 'Good', 'Strong', 'Very Strong'][strength];
-  const strengthColor = ['', '#ef4444', '#f97316', '#eab308', '#22c55e', '#10b981'][strength];
+  const strengthColorMap = ['', 'bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500', 'bg-emerald-500'];
 
-  /* ════════════════════ SUCCESS POPUP WILL RENDER AT THE END ════════════════════ */
   return (
-    <div style={styles.page}>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-white flex items-center justify-center p-4 py-8">
       <PageTitle title="Student Registration – IftiinHub" />
 
-      <div style={styles.container}>
-        {/* Left panel */}
-        <div style={styles.leftPanel}>
-          <div style={styles.leftContent}>
-            <div style={styles.leftLogo}>🎓</div>
-            <h2 style={styles.leftTitle}>Join IftiinHub Today</h2>
-            <p style={styles.leftSub}>
-              Create your free student account and unlock a world of high-quality courses.
-            </p>
-            <ul style={styles.featureList}>
-              {[
-                ['📚', 'Access all available courses'],
-                ['🎥', 'Watch HD video lessons'],
-                ['📊', 'Track your learning progress'],
-                ['🏆', 'Earn completion certificates'],
-                ['💬', 'Community support & Q&A'],
-              ].map(([icon, text]) => (
-                <li key={text} style={styles.featureItem}>
-                  <span style={styles.featureIcon}>{icon}</span>
-                  <span>{text}</span>
-                </li>
-              ))}
-            </ul>
-            <p style={styles.leftLogin}>
-              Already have an account?{' '}
-              <Link to="/login" style={styles.leftLoginLink}>Log in →</Link>
-            </p>
+      {/* ── Outer card ── */}
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden">
+        {/* ── RIGHT: Registration form ── */}
+        <main className="px-6 py-10 sm:px-10 lg:px-12">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-extrabold text-[#1a1a2e] mb-2">Create Student Account</h1>
+            <p className="text-gray-500 text-sm">Fill in your details to get started for free</p>
           </div>
-        </div>
 
-        {/* Right panel – form */}
-        <div style={styles.rightPanel}>
-          <div style={styles.formCard}>
-            <div style={styles.formHeader}>
-              <h1 style={styles.formTitle}>Create Student Account</h1>
-              <p style={styles.formSub}>Fill in your details to get started for free</p>
+          {/* Error banner */}
+          {error && (
+            <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 mb-5 text-sm">
+              <span>⚠️</span>
+              <span>{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+
+            {/* Full Name */}
+            <div>
+              <label htmlFor="sr-name" className="block text-sm font-semibold text-gray-700 mb-1">
+                Full Name <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base pointer-events-none">👤</span>
+                <input
+                  id="sr-name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  placeholder="e.g. Abdullahi Hassan"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                />
+              </div>
             </div>
 
-            {error && (
-              <div style={styles.errorBanner}>
-                <span>⚠️</span> {error}
+            {/* Email */}
+            <div>
+              <label htmlFor="sr-email" className="block text-sm font-semibold text-gray-700 mb-1">
+                Email Address <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base pointer-events-none">✉️</span>
+                <input
+                  id="sr-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  placeholder="you@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                />
               </div>
-            )}
+            </div>
 
-            <form onSubmit={handleSubmit} style={styles.form} noValidate>
+            {/* Phone (optional) */}
+            <div>
+              <label htmlFor="sr-phone" className="block text-sm font-semibold text-gray-700 mb-1">
+                Phone / WhatsApp <span className="text-gray-400 font-normal">(optional)</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base pointer-events-none">📱</span>
+                <input
+                  id="sr-phone"
+                  name="phone"
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="+252 61 000 0000"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                />
+              </div>
+            </div>
 
-              {/* Full Name */}
-              <div style={styles.fieldGroup}>
-                <label style={styles.label} htmlFor="sr-name">Full Name <span style={styles.req}>*</span></label>
-                <div style={styles.inputWrap}>
-                  <span style={styles.inputIcon}>👤</span>
-                  <input
-                    id="sr-name"
-                    name="name"
-                    type="text"
-                    placeholder="e.g. Abdullahi Hassan"
-                    value={formData.name}
-                    onChange={handleChange}
-                    style={styles.input}
-                    autoComplete="name"
-                    required
-                  />
-                </div>
+            {/* Password */}
+            <div>
+              <label htmlFor="sr-password" className="block text-sm font-semibold text-gray-700 mb-1">
+                Password <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base pointer-events-none">🔒</span>
+                <input
+                  id="sr-password"
+                  name="password"
+                  type={showPass ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  required
+                  placeholder="Min. 6 characters"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPass(p => !p)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition p-1"
+                  aria-label={showPass ? 'Hide password' : 'Show password'}
+                >
+                  {showPass ? '🙈' : '👁️'}
+                </button>
               </div>
 
-              {/* Email */}
-              <div style={styles.fieldGroup}>
-                <label style={styles.label} htmlFor="sr-email">Email Address <span style={styles.req}>*</span></label>
-                <div style={styles.inputWrap}>
-                  <span style={styles.inputIcon}>✉️</span>
-                  <input
-                    id="sr-email"
-                    name="email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={formData.email}
-                    onChange={handleChange}
-                    style={styles.input}
-                    autoComplete="email"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Phone (optional) */}
-              <div style={styles.fieldGroup}>
-                <label style={styles.label} htmlFor="sr-phone">
-                  Phone / WhatsApp <span style={styles.optional}>(optional)</span>
-                </label>
-                <div style={styles.inputWrap}>
-                  <span style={styles.inputIcon}>📱</span>
-                  <input
-                    id="sr-phone"
-                    name="phone"
-                    type="tel"
-                    placeholder="+252 61 000 0000"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    style={styles.input}
-                    autoComplete="tel"
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div style={styles.fieldGroup}>
-                <label style={styles.label} htmlFor="sr-password">Password <span style={styles.req}>*</span></label>
-                <div style={styles.inputWrap}>
-                  <span style={styles.inputIcon}>🔒</span>
-                  <input
-                    id="sr-password"
-                    name="password"
-                    type={showPass ? 'text' : 'password'}
-                    placeholder="Min. 6 characters"
-                    value={formData.password}
-                    onChange={handleChange}
-                    style={{ ...styles.input, paddingRight: '44px' }}
-                    autoComplete="new-password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPass(p => !p)}
-                    style={styles.eyeBtn}
-                    aria-label={showPass ? 'Hide password' : 'Show password'}
-                  >
-                    {showPass ? '🙈' : '👁️'}
-                  </button>
-                </div>
-                {/* Strength bar */}
-                {formData.password && (
-                  <div style={styles.strengthWrap}>
-                    <div style={styles.strengthTrack}>
-                      {[1,2,3,4,5].map(i => (
-                        <div key={i} style={{
-                          ...styles.strengthSeg,
-                          background: i <= strength ? strengthColor : '#e5e7eb',
-                        }} />
-                      ))}
-                    </div>
-                    <span style={{ ...styles.strengthLabel, color: strengthColor }}>
-                      {strengthLabel}
-                    </span>
+              {/* Strength bar */}
+              {formData.password && (
+                <div className="mt-2 flex items-center gap-2">
+                  <div className="flex gap-1 flex-1">
+                    {[1,2,3,4,5].map(i => (
+                      <div
+                        key={i}
+                        className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${i <= strength ? strengthColorMap[strength] : 'bg-gray-200'}`}
+                      />
+                    ))}
                   </div>
-                )}
-              </div>
-
-              {/* Confirm Password */}
-              <div style={styles.fieldGroup}>
-                <label style={styles.label} htmlFor="sr-confirm">Confirm Password <span style={styles.req}>*</span></label>
-                <div style={styles.inputWrap}>
-                  <span style={styles.inputIcon}>🔐</span>
-                  <input
-                    id="sr-confirm"
-                    name="confirmPassword"
-                    type={showConfirm ? 'text' : 'password'}
-                    placeholder="Re-enter your password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    style={{ ...styles.input, paddingRight: '44px' }}
-                    autoComplete="new-password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirm(p => !p)}
-                    style={styles.eyeBtn}
-                    aria-label={showConfirm ? 'Hide password' : 'Show password'}
-                  >
-                    {showConfirm ? '🙈' : '👁️'}
-                  </button>
-                  {formData.confirmPassword && formData.password === formData.confirmPassword && (
-                    <span style={styles.matchTick}>✅</span>
-                  )}
+                  <span className="text-xs font-semibold text-gray-500 min-w-[60px] text-right">{strengthLabel}</span>
                 </div>
-              </div>
-
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={loading}
-                style={{ ...styles.submitBtn, opacity: loading ? 0.75 : 1, cursor: loading ? 'wait' : 'pointer' }}
-                id="sr-submit"
-              >
-                {loading ? (
-                  <span style={styles.spinnerWrap}>
-                    <span style={styles.spinner} /> Creating account…
-                  </span>
-                ) : (
-                  '🎓 Create My Student Account'
-                )}
-              </button>
-
-              <p style={styles.terms}>
-                By registering you agree to our{' '}
-                <Link to="/about" style={styles.termsLink}>Terms of Service</Link> and{' '}
-                <Link to="/about" style={styles.termsLink}>Privacy Policy</Link>.
-              </p>
-            </form>
-
-            <div style={styles.loginPrompt}>
-              Already have an account?{' '}
-              <Link to="/login" style={styles.loginLink}>Sign in →</Link>
+              )}
             </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label htmlFor="sr-confirm" className="block text-sm font-semibold text-gray-700 mb-1">
+                Confirm Password <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base pointer-events-none">🔒</span>
+                <input
+                  id="sr-confirm"
+                  name="confirmPassword"
+                  type={showConfirm ? 'text' : 'password'}
+                  autoComplete="new-password"
+                  required
+                  placeholder="Re-enter your password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(p => !p)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition p-1"
+                  aria-label={showConfirm ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirm ? '🙈' : '👁️'}
+                </button>
+                {formData.confirmPassword && (
+                  <span className="absolute right-10 top-1/2 -translate-y-1/2 text-sm">
+                    {formData.password === formData.confirmPassword ? '✅' : '❌'}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-base shadow-lg hover:from-purple-700 hover:to-indigo-700 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 mt-2"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Creating account...
+                </span>
+              ) : '🎓 Create My Student Account'}
+            </button>
+
+            <p className="text-center text-xs text-gray-400 mt-1">
+              By registering you agree to our{' '}
+              <Link to="/about" className="text-purple-600 hover:underline font-medium">Terms of Service</Link>
+              {' '}and{' '}
+              <Link to="/about" className="text-purple-600 hover:underline font-medium">Privacy Policy</Link>.
+            </p>
+          </form>
+
+          {/* "Already have an account" */}
+          <div className="mt-8 pt-6 border-t border-gray-100 text-center text-sm text-gray-500">
+            Already have an account?{' '}
+            <Link to="/login" className="text-purple-700 font-bold hover:underline">Sign in →</Link>
           </div>
-        </div>
+        </main>
       </div>
 
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes fadeIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
-        .sr-input:focus { outline: none; border-color: #7c3aed !important; box-shadow: 0 0 0 3px rgba(124,58,237,0.12) !important; }
-        .sr-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(124,58,237,0.4) !important; }
-      `}</style>
-      
-      {/* SUCCESS MODAL POPUP */}
+      {/* ── SUCCESS MODAL ── */}
       {success && (
-        <div style={{
-          position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.6)', 
-          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px',
-          backdropFilter: 'blur(4px)'
-        }}>
-          <div style={{
-            background: '#fff', borderRadius: '16px', padding: '40px', maxWidth: '440px', 
-            width: '100%', textAlign: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-            animation: 'fadeIn 0.3s ease-out'
-          }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
-            <h2 style={{ fontSize: '24px', fontWeight: 800, color: '#111827', marginBottom: '12px', fontFamily: "'Inter', sans-serif" }}>Registration Pending</h2>
-            <p style={{ fontSize: '15px', color: '#4b5563', marginBottom: '28px', lineHeight: 1.6, fontFamily: "'Inter', sans-serif" }}>
-              Your student account has been successfully created! However, an <strong>Admin must approve your registration</strong> before you can log in. Please wait for authorization.
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center animate-[fadeIn_0.3s_ease-out]">
+            <div className="text-5xl mb-4">⏳</div>
+            <h2 className="text-2xl font-extrabold text-gray-900 mb-3">Registration Pending</h2>
+            <p className="text-gray-500 text-sm leading-relaxed mb-7">
+              Your student account has been successfully created! However, an{' '}
+              <strong className="text-gray-800">Admin must approve your registration</strong>{' '}
+              before you can log in. Please wait for authorization.
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-              <button 
-                onClick={() => navigate('/')} 
-                style={{
-                  ...styles.btnOutline, flex: 1, textAlign: 'center', border: '1.5px solid #e5e7eb',
-                  color: '#374151', background: '#fff', padding: '12px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer'
-                }}>
+            <div className="flex gap-3">
+              <button
+                onClick={() => navigate('/')}
+                className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition"
+              >
                 Go to Home
               </button>
-              <Link to="/login" style={{...styles.btnPrimary, flex: 1, textAlign: 'center', textDecoration: 'none', background: '#4f46e5', color: '#fff', padding: '12px', borderRadius: '12px', fontWeight: 'bold'}}>
+              <Link
+                to="/login"
+                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold hover:from-purple-700 hover:to-indigo-700 transition text-center"
+              >
                 🔑 Log In
               </Link>
             </div>
           </div>
         </div>
       )}
+
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+      `}</style>
     </div>
   );
-};
-
-/* ─── Styles ─── */
-const styles = {
-  page: {
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 40%, #faf5ff 100%)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '24px 16px',
-    fontFamily: "'Inter', sans-serif",
-  },
-
-  /* Success */
-  successWrap: {
-    background: '#fff',
-    borderRadius: '24px',
-    padding: '60px 48px',
-    textAlign: 'center',
-    maxWidth: '480px',
-    width: '100%',
-    boxShadow: '0 20px 60px rgba(124,58,237,0.12)',
-    animation: 'fadeUp 0.5s ease',
-  },
-  successIcon:  { fontSize: '4rem', marginBottom: '16px' },
-  successTitle: { fontSize: '2rem', fontWeight: 800, color: '#1e1b4b', margin: '0 0 12px' },
-  successSub:   { color: '#6b7280', fontSize: '1rem', lineHeight: 1.6, margin: '0 0 32px' },
-  successBtns:  { display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' },
-  btnPrimary: {
-    background: 'linear-gradient(135deg,#7c3aed,#9333ea)',
-    color: '#fff',
-    padding: '12px 28px',
-    borderRadius: '999px',
-    textDecoration: 'none',
-    fontWeight: 700,
-    fontSize: '0.95rem',
-    boxShadow: '0 4px 14px rgba(124,58,237,0.3)',
-  },
-  btnOutline: {
-    border: '2px solid #7c3aed',
-    color: '#7c3aed',
-    padding: '12px 28px',
-    borderRadius: '999px',
-    textDecoration: 'none',
-    fontWeight: 600,
-    fontSize: '0.95rem',
-    background: 'transparent',
-  },
-
-  /* Layout */
-  container: {
-    display: 'flex',
-    maxWidth: '1000px',
-    width: '100%',
-    boxShadow: '0 24px 80px rgba(124,58,237,0.13)',
-    borderRadius: '24px',
-    overflow: 'hidden',
-    animation: 'fadeUp 0.4s ease',
-  },
-
-  /* Left panel */
-  leftPanel: {
-    background: 'linear-gradient(160deg,#4c1d95 0%,#7c3aed 60%,#a855f7 100%)',
-    padding: '48px 40px',
-    flex: '0 0 360px',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-  leftContent: { color: '#fff' },
-  leftLogo:    { fontSize: '3rem', marginBottom: '20px' },
-  leftTitle:   { fontSize: '1.6rem', fontWeight: 800, margin: '0 0 12px', lineHeight: 1.2 },
-  leftSub:     { fontSize: '0.9rem', opacity: 0.82, margin: '0 0 28px', lineHeight: 1.6 },
-  featureList: { listStyle: 'none', padding: 0, margin: '0 0 32px', display: 'flex', flexDirection: 'column', gap: '12px' },
-  featureItem: { display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.875rem', opacity: 0.92 },
-  featureIcon: { fontSize: '1.1rem', width: '24px', textAlign: 'center', flexShrink: 0 },
-  leftLogin:   { fontSize: '0.85rem', opacity: 0.78 },
-  leftLoginLink: { color: '#e9d5ff', fontWeight: 600, textDecoration: 'none' },
-
-  /* Right panel */
-  rightPanel: {
-    background: '#fff',
-    flex: 1,
-    padding: '48px 40px',
-    overflowY: 'auto',
-  },
-  formCard: { maxWidth: '440px', margin: '0 auto' },
-  formHeader: { marginBottom: '28px' },
-  formTitle:  { fontSize: '1.6rem', fontWeight: 800, color: '#1e1b4b', margin: '0 0 6px' },
-  formSub:    { color: '#6b7280', fontSize: '0.875rem', margin: 0 },
-
-  errorBanner: {
-    background: '#fef2f2',
-    border: '1px solid #fecaca',
-    color: '#dc2626',
-    padding: '12px 16px',
-    borderRadius: '10px',
-    fontSize: '0.875rem',
-    marginBottom: '20px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-  },
-
-  form:       { display: 'flex', flexDirection: 'column', gap: '18px' },
-  fieldGroup: { display: 'flex', flexDirection: 'column', gap: '6px' },
-  label:      { fontSize: '0.83rem', fontWeight: 600, color: '#374151' },
-  req:        { color: '#ef4444' },
-  optional:   { color: '#9ca3af', fontWeight: 400 },
-
-  inputWrap: { position: 'relative', display: 'flex', alignItems: 'center' },
-  inputIcon: {
-    position: 'absolute',
-    left: '12px',
-    fontSize: '1rem',
-    pointerEvents: 'none',
-  },
-  input: {
-    width: '100%',
-    padding: '11px 12px 11px 40px',
-    border: '1.5px solid #e5e7eb',
-    borderRadius: '10px',
-    fontSize: '0.9rem',
-    color: '#111827',
-    background: '#fafafa',
-    transition: 'border-color 0.2s, box-shadow 0.2s',
-    outline: 'none',
-    boxSizing: 'border-box',
-  },
-  eyeBtn: {
-    position: 'absolute',
-    right: '10px',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    padding: '4px',
-    lineHeight: 1,
-    minHeight: 'unset',
-  },
-  matchTick: { position: 'absolute', right: '36px', fontSize: '0.9rem' },
-
-  strengthWrap:  { display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' },
-  strengthTrack: { display: 'flex', gap: '4px', flex: 1 },
-  strengthSeg:   { height: '4px', flex: 1, borderRadius: '99px', transition: 'background 0.3s' },
-  strengthLabel: { fontSize: '0.75rem', fontWeight: 600, minWidth: '70px', textAlign: 'right' },
-
-  submitBtn: {
-    background: 'linear-gradient(135deg,#7c3aed,#9333ea)',
-    color: '#fff',
-    padding: '14px',
-    borderRadius: '12px',
-    border: 'none',
-    fontWeight: 700,
-    fontSize: '1rem',
-    cursor: 'pointer',
-    transition: 'all 0.22s',
-    boxShadow: '0 4px 14px rgba(124,58,237,0.3)',
-    marginTop: '4px',
-  },
-  spinnerWrap: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' },
-  spinner: {
-    display: 'inline-block',
-    width: '16px',
-    height: '16px',
-    border: '2.5px solid rgba(255,255,255,0.4)',
-    borderTopColor: '#fff',
-    borderRadius: '50%',
-    animation: 'spin 0.7s linear infinite',
-  },
-
-  terms:     { textAlign: 'center', fontSize: '0.78rem', color: '#9ca3af', margin: '4px 0 0' },
-  termsLink: { color: '#7c3aed', textDecoration: 'none', fontWeight: 500 },
-
-  loginPrompt: {
-    textAlign: 'center',
-    marginTop: '24px',
-    fontSize: '0.875rem',
-    color: '#6b7280',
-    borderTop: '1px solid #f3f4f6',
-    paddingTop: '20px',
-  },
-  loginLink: { color: '#7c3aed', fontWeight: 700, textDecoration: 'none' },
 };
 
 export default StudentRegister;
