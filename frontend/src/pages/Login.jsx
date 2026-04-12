@@ -129,12 +129,7 @@ const Login = () => {
                   </div>
                   
                   <div className="text-center mt-4">
-                    <p className="text-sm text-gray-600">
-                      Don't have an account?{' '}
-                      <Link to="/student-register" className="font-medium text-purple-600 hover:text-purple-500 transition-colors">
-                        Register
-                      </Link>
-                    </p>
+                
                     <p className="mt-2 text-xs text-gray-500">
                       <Link to="/" className="border-b border-gray-300 hover:border-purple-500 hover:text-purple-600 transition-colors">
                         Back to Home
