@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import PageTitle from '../components/PageTitle';
 import fullstackImg from '../assets/program-fullstack.png';
@@ -43,15 +43,11 @@ const customerLogos = [
     url: 'https://dhiigkaal.iftiinhub.com',
     domain: 'dhiigkaal.iftiinhub.com',
     category: 'Healthcare & Blood Bank ERP',
-    tagline: 'Electronic Blood Donor Registry, Emergency Blood Match & Lab Screening Workflows',
-    desc: 'Mission-critical healthcare system engineered for hospitals and blood banks. Features real-time donor tracking, emergency blood requests, screening workflows, and stock tracking.',
-    features: [
-      'Digital Donor Registration & Blood Type Matching',
-      'Emergency Blood Match & Real-time Request Dispatch',
-      'Hospital & Laboratory Screening Workflows',
-      'Automated SMS Notifications & Blood Stock Tracking'
-    ],
-    tech: ['React.js', 'Node.js', 'Express', 'MongoDB', 'REST APIs', 'Tailwind CSS']
+    systemColor: '#e11d48',
+    cardBg: 'bg-rose-50/30 hover:bg-rose-50/60',
+    borderColor: 'border-rose-200/80 hover:border-rose-400',
+    tabColor: '#e11d48',
+    pillColor: 'bg-rose-100 text-rose-800 border-rose-200'
   },
   {
     id: 'snabdental',
@@ -61,15 +57,11 @@ const customerLogos = [
     url: 'https://snabdental.iftiinhub.com',
     domain: 'snabdental.iftiinhub.com',
     category: 'Dental & Clinical EHR System',
-    tagline: 'Complete Dental Clinic EHR, Online Appointment Booking, Tooth Charting & Invoicing',
-    desc: 'Specialized enterprise clinical management suite for modern dental clinics. Streamlines patient intake, medical history, dental procedure charting, prescriptions, and financial billing.',
-    features: [
-      'Interactive Dental Treatment & Tooth Charting System',
-      'Online Patient Booking & Doctor Schedule Manager',
-      'Laboratory Test Requests & Results Management',
-      'Point of Sale, Medical Invoicing & Payment Receipts'
-    ],
-    tech: ['React.js', 'Node.js', 'Express', 'MongoDB', 'JWT Auth', 'Tailwind CSS']
+    systemColor: '#d97706',
+    cardBg: 'bg-amber-50/30 hover:bg-amber-50/60',
+    borderColor: 'border-amber-200/80 hover:border-amber-400',
+    tabColor: '#f59e0b',
+    pillColor: 'bg-amber-100 text-amber-900 border-amber-200'
   },
   {
     id: 'ntw',
@@ -79,15 +71,11 @@ const customerLogos = [
     url: 'https://ntw.hu.edu.so',
     domain: 'ntw.hu.edu.so',
     category: 'Higher Education Management System',
-    tagline: 'Official University Portal, Student Admissions, Semester Grading & Academic Records',
-    desc: 'High-performance university management portal powering student lifecycles, faculty course allocations, interactive student grade books, and official credential verifications.',
-    features: [
-      'Comprehensive Student Admission & Enrollment Hub',
-      'Automated Semester Grade Books & Transcript Generation',
-      'Course Syllabus, Lecture Notes & Video Materials',
-      'Online Certificate & Credential Verification Portal'
-    ],
-    tech: ['React.js', 'Node.js', 'Express', 'Linux VPS', 'SSL Hardened']
+    systemColor: '#16a34a',
+    cardBg: 'bg-emerald-50/30 hover:bg-emerald-50/60',
+    borderColor: 'border-emerald-200/80 hover:border-emerald-400',
+    tabColor: '#16a34a',
+    pillColor: 'bg-emerald-100 text-emerald-800 border-emerald-200'
   }
 ];
 
@@ -113,18 +101,6 @@ const testimonials = [
 ];
 
 const Home = () => {
-  const [activeCustomerIndex, setActiveCustomerIndex] = useState(0);
-
-  // Auto-cycle through the 3 customer systems
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveCustomerIndex((prev) => (prev + 1) % customerLogos.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const activeCustomer = customerLogos[activeCustomerIndex];
-
   return (
     <div className="min-h-screen bg-white text-slate-900 transition-colors duration-300">
       <PageTitle title="IftiinHub - Live Zoom Tech Training & Custom ICT Systems" />
@@ -286,31 +262,31 @@ const Home = () => {
       </section>
 
       {/* ═════════════════════════════════════════════════════════════════════
-          OUR CUSTOMERS SECTION (Exact Tabaarak ICT Design with Real Logos)
+          OUR CUSTOMERS SECTION (System Color Accents, No Blue)
       ═════════════════════════════════════════════════════════════════════ */}
-      <section id="our-customers" className="py-16 sm:py-24 bg-gradient-to-b from-slate-50/70 via-white to-slate-50/50 border-y border-slate-200 relative overflow-hidden">
+      <section id="our-customers" className="py-16 sm:py-24 bg-gradient-to-b from-slate-50/80 via-white to-slate-50/60 border-y border-slate-200 relative overflow-hidden">
         
-        {/* Subtle Map / Dot Pattern Background like Tabaarak */}
-        <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:24px_24px] opacity-15 pointer-events-none"></div>
+        {/* Subtle Background Pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] opacity-20 pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           
-          {/* Header (Exact Typography from Tabaarak ICT Screenshot) */}
+          {/* Header (IftiinHub Brand Gold/Amber Style) */}
           <div className="text-center sm:text-left mb-12">
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-950 tracking-tight flex items-baseline justify-center sm:justify-start gap-2.5">
               <span>Our</span>
-              <span className="text-blue-600 relative inline-block">
+              <span className="text-amber-500 relative inline-block">
                 Customer
-                {/* Hand-drawn blue underline matching Tabaarak ICT */}
+                {/* Hand-drawn Amber/Gold Underline */}
                 <svg
-                  className="absolute -bottom-2.5 left-0 w-full h-3.5 text-blue-500 overflow-visible"
+                  className="absolute -bottom-2.5 left-0 w-full h-3.5 text-amber-500 overflow-visible"
                   viewBox="0 0 100 12"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
                     d="M2 9C28 2 72 2 98 9"
-                    stroke="#2563eb"
+                    stroke="#f59e0b"
                     strokeWidth="4"
                     strokeLinecap="round"
                   />
@@ -322,30 +298,38 @@ const Home = () => {
             </p>
           </div>
 
-          {/* ── 3 CUSTOMER LOGO CARDS (Exact Tabaarak Style with Real Logos) ── */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 mb-10">
-            {customerLogos.map((cust, idx) => (
-              <div
+          {/* ── 3 CUSTOMER LOGO CARDS WITH SYSTEM IDENTITY COLORS ── */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 mb-12">
+            {customerLogos.map((cust) => (
+              <a
                 key={cust.id}
-                onClick={() => setActiveCustomerIndex(idx)}
-                className={`relative group cursor-pointer transition-all duration-300 ${
-                  activeCustomerIndex === idx ? 'scale-102' : 'hover:-translate-y-1.5'
-                }`}
+                href={cust.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative group cursor-pointer transition-all duration-300 hover:-translate-y-2 block"
               >
-                {/* Tabaarak Signature Blue Shadow / Accent Tab Underneath */}
-                <div className={`absolute -bottom-2.5 right-6 w-24 h-4 bg-blue-600 rounded-full transition-all duration-300 ${
-                  activeCustomerIndex === idx ? 'opacity-100 w-32 bg-blue-600 shadow-md shadow-blue-500/40' : 'opacity-70 group-hover:opacity-100 group-hover:w-28'
-                }`}></div>
+                {/* System Color Shadow / Bottom Accent Tab */}
+                <div
+                  className="absolute -bottom-2.5 right-6 w-24 h-4 rounded-full transition-all duration-300 opacity-80 group-hover:opacity-100 group-hover:w-32 shadow-md"
+                  style={{ backgroundColor: cust.tabColor }}
+                ></div>
 
-                {/* White Logo Card Container */}
-                <div className={`relative bg-white rounded-2xl border-2 p-6 sm:p-8 flex flex-col items-center justify-center h-44 shadow-lg transition-all duration-300 ${
-                  activeCustomerIndex === idx
-                    ? 'border-blue-500 ring-4 ring-blue-500/10 shadow-xl'
-                    : 'border-slate-200/90 group-hover:border-blue-300'
-                }`}>
+                {/* White Logo Card with System Color Accents */}
+                <div className={`relative bg-white rounded-2xl border-2 p-6 sm:p-8 flex flex-col items-center justify-between h-56 shadow-lg transition-all duration-300 ${cust.borderColor} ${cust.cardBg}`}>
                   
+                  {/* Category Pill with System Color */}
+                  <div className="w-full flex items-center justify-between mb-2">
+                    <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${cust.pillColor}`}>
+                      {cust.category}
+                    </span>
+                    <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                      Live
+                    </span>
+                  </div>
+
                   {/* Real Customer Logo Image */}
-                  <div className="w-full h-24 flex items-center justify-center p-1">
+                  <div className="w-full h-24 flex items-center justify-center p-2">
                     <img
                       src={cust.logo}
                       alt={cust.name}
@@ -353,127 +337,34 @@ const Home = () => {
                     />
                   </div>
 
-                  {/* Domain tag & Live status */}
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span className="font-mono text-xs font-bold text-slate-700 group-hover:text-blue-600 transition-colors">
+                  {/* Domain & Visit Link with System Color */}
+                  <div className="w-full pt-3 border-t border-slate-200/80 flex items-center justify-between text-xs font-mono font-bold text-slate-800">
+                    <span className="group-hover:text-slate-950 transition-colors">
                       {cust.domain}
                     </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Slider / Pagination Indicator Dots */}
-          <div className="flex items-center justify-center gap-2.5 mb-10">
-            {customerLogos.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActiveCustomerIndex(idx)}
-                className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  activeCustomerIndex === idx ? 'w-8 bg-blue-600 shadow-xs' : 'w-2.5 bg-slate-300 hover:bg-slate-400'
-                }`}
-                title={`View customer ${idx + 1}`}
-              />
-            ))}
-          </div>
-
-          {/* ── EXPANDED DETAILS OF SELECTED CUSTOMER SYSTEM ── */}
-          {activeCustomer && (
-            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-6 sm:p-10 transition-all duration-300">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                
-                {/* Left System Info */}
-                <div className="lg:col-span-8">
-                  <div className="flex flex-wrap items-center gap-3 mb-3">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold uppercase tracking-wider">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                      Live Production System
-                    </span>
-                    <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-                      {activeCustomer.category}
+                    <span
+                      className="font-sans font-bold flex items-center gap-1 transition-transform group-hover:translate-x-1"
+                      style={{ color: cust.systemColor }}
+                    >
+                      Visit System →
                     </span>
                   </div>
 
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight mb-2">
-                    {activeCustomer.name}
-                  </h3>
-
-                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-6 font-medium">
-                    {activeCustomer.desc}
-                  </p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-6">
-                    {activeCustomer.features.map((feat, fIdx) => (
-                      <div key={fIdx} className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-start gap-2 text-xs font-semibold text-slate-800">
-                        <span className="text-emerald-600 font-black">✓</span>
-                        <span>{feat}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 items-center pt-4 border-t border-slate-100">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mr-2">Tech Stack:</span>
-                    {activeCustomer.tech.map((t, idx) => (
-                      <span key={idx} className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 text-xs font-mono font-semibold">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
                 </div>
-
-                {/* Right Action Card */}
-                <div className="lg:col-span-4 bg-gradient-to-br from-slate-950 to-slate-900 rounded-2xl p-6 sm:p-8 text-white flex flex-col justify-between h-full text-center sm:text-left">
-                  <div>
-                    <div className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">
-                      Client Domain
-                    </div>
-                    <div className="text-lg font-mono font-black text-white break-all mb-4">
-                      {activeCustomer.domain}
-                    </div>
-                    <p className="text-xs text-slate-300 leading-relaxed mb-6">
-                      Click below to test and browse this live production system directly.
-                    </p>
-                  </div>
-
-                  <div className="space-y-3 pt-4 border-t border-white/10">
-                    <a
-                      href={activeCustomer.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-sm transition-all shadow-md flex items-center justify-center gap-2"
-                    >
-                      <span>🚀 Visit Live System</span>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
-                    <a
-                      href="https://wa.me/616408886?text=Salaan!%20Waxaan%20doonayaa%20in%20aan%20ka%20hadalno%20dhismaha%20nidaam%20software%20oo%20la%20mid%20ah%20nidaamyada%20IftiinHub."
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 font-bold text-xs transition-all flex items-center justify-center gap-1.5"
-                    >
-                      <span>💬 Request Similar System</span>
-                    </a>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          )}
+              </a>
+            ))}
+          </div>
 
           {/* Consultation Banner */}
-          <div className="mt-12 bg-gradient-to-r from-slate-950 via-slate-900 to-zinc-950 rounded-3xl p-8 sm:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl border border-slate-800">
+          <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-orange-500 rounded-3xl p-8 sm:p-12 text-slate-950 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
             <div>
-              <span className="inline-block px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-400 text-xs font-black uppercase tracking-wider mb-2">
+              <span className="inline-block px-3 py-1 rounded-full bg-black/10 text-slate-950 text-xs font-black uppercase tracking-wider mb-2">
                 Enterprise Custom Engineering
               </span>
-              <h3 className="text-2xl sm:text-3xl font-black mb-2 text-white">
+              <h3 className="text-2xl sm:text-3xl font-black mb-2">
                 Need a Custom ICT Software System for Your Organization?
               </h3>
-              <p className="text-slate-300 font-medium text-sm sm:text-base max-w-xl">
+              <p className="text-slate-950/90 font-medium text-sm sm:text-base max-w-xl">
                 We engineer scalable hospital software, school and university portals, blood bank ERPs, and cloud database solutions. Let's build your system today.
               </p>
             </div>
@@ -482,13 +373,13 @@ const Home = () => {
                 href="https://wa.me/616408886?text=Salaan!%20Waxaan%20doonayaa%20in%20aan%20wada%20hadalno%20ku%20saabsan%20dhismaha%20nidaam%20ICT."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm transition-all shadow-md inline-flex items-center gap-2"
+                className="px-6 py-3.5 rounded-xl bg-slate-950 text-white font-bold text-sm hover:bg-zinc-800 transition-all shadow-md inline-flex items-center gap-2"
               >
                 💬 WhatsApp Consultation
               </a>
               <Link
                 to="/contact"
-                className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm transition-all"
+                className="px-6 py-3.5 rounded-xl bg-white/50 backdrop-blur-sm border border-slate-950/20 text-slate-950 font-bold text-sm hover:bg-white/70 transition-all"
               >
                 ✉️ Contact Engineering Team
               </Link>
