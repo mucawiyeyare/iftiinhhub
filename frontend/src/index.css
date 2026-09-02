@@ -212,3 +212,59 @@ button, a, [role="button"] {
 ::-webkit-scrollbar-thumb:hover {
   background: #f59e0b;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CUSTOMER LOGO SLIDER / MARQUEE (Tabaarak ICT Style)
+══════════════════════════════════════════════════════════════════════════ */
+@keyframes client-marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-client-marquee {
+  display: flex;
+  width: max-content;
+  animation: client-marquee 28s linear infinite;
+}
+
+.animate-client-marquee:hover {
+  animation-play-state: paused;
+}
+
+.client-logo-card {
+  position: relative;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.client-logo-card:hover {
+  transform: translateY(-4px);
+  border-color: #3b82f6;
+  box-shadow: 0 12px 28px rgba(59, 130, 246, 0.12);
+}
+
+.client-logo-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 1.25rem;
+  width: 4rem;
+  height: 0.35rem;
+  background: #3b82f6;
+  border-top-left-radius: 9999px;
+  border-top-right-radius: 9999px;
+  transition: all 0.3s ease;
+}
+
+.client-logo-card:hover::after {
+  width: 6rem;
+  background: #2563eb;
+}
