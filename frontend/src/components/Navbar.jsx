@@ -45,7 +45,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [certSearchId, setCertSearchId] = useState('');
   const navRef = useRef(null);
 
   // Ensure pure white light mode globally
@@ -83,18 +82,6 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
-  const handleCertSubmit = (e) => {
-    e.preventDefault();
-    if (certSearchId.trim()) {
-      navigate(`/verify-certificate?id=${encodeURIComponent(certSearchId.trim())}`);
-      setCertSearchId('');
-      setIsMenuOpen(false);
-    } else {
-      navigate('/verify-certificate');
-      setIsMenuOpen(false);
-    }
-  };
-
   const isActive = (path) => {
     if (path === '/verify-certificate') {
       return location.pathname === '/verify-certificate' || location.pathname === '/certificate' || location.pathname === '/certificates';
@@ -124,8 +111,8 @@ const Navbar = () => {
           position: relative;
           color: #1e293b;
           font-weight: 600;
-          font-size: 0.90rem;
-          padding: 8px 14px;
+          font-size: 0.92rem;
+          padding: 8px 16px;
           border-radius: 10px;
           transition: all 0.2s;
           text-decoration: none;
@@ -136,7 +123,7 @@ const Navbar = () => {
         .nav-link::after {
           content: '';
           position: absolute;
-          bottom: 2px; left: 14px;
+          bottom: 2px; left: 16px;
           width: 0; height: 2px;
           background: #f59e0b;
           border-radius: 2px;
@@ -146,73 +133,13 @@ const Navbar = () => {
           color: #d97706;
           background: #fffbeb;
         }
-        .nav-link:hover::after { width: calc(100% - 28px); }
+        .nav-link:hover::after { width: calc(100% - 32px); }
         .nav-link.active {
           color: #b45309;
           background: #fef3c7;
           font-weight: 700;
         }
-        .nav-link.active::after { width: calc(100% - 28px); }
-
-        /* ═══════════════════════════════════════════
-           NAVBAR CERTIFICATE SEARCH BOX
-        ═══════════════════════════════════════════ */
-        .navbar-cert-form {
-          display: inline-flex;
-          align-items: center;
-          position: relative;
-          background: #f8fafc;
-          border: 1.5px solid #cbd5e1;
-          border-radius: 10px;
-          padding: 3px 6px 3px 10px;
-          transition: all 0.2s ease;
-        }
-        .navbar-cert-form:focus-within {
-          border-color: #10b981;
-          background: #ffffff;
-          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
-        }
-        .navbar-cert-icon {
-          color: #64748b;
-          width: 15px;
-          height: 15px;
-          margin-right: 6px;
-          flex-shrink: 0;
-        }
-        .navbar-cert-input {
-          border: none;
-          background: transparent;
-          font-size: 0.80rem;
-          font-weight: 600;
-          color: #0f172a;
-          outline: none;
-          width: 125px;
-          padding: 3px 0;
-          text-transform: uppercase;
-        }
-        .navbar-cert-input::placeholder {
-          color: #94a3b8;
-          text-transform: none;
-          font-weight: 500;
-        }
-        .navbar-cert-btn {
-          background: #10b981;
-          color: #ffffff;
-          border: none;
-          border-radius: 6px;
-          padding: 4px 9px;
-          font-size: 0.72rem;
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.15s ease;
-          display: inline-flex;
-          align-items: center;
-          gap: 3px;
-          margin-left: 4px;
-        }
-        .navbar-cert-btn:hover {
-          background: #059669;
-        }
+        .nav-link.active::after { width: calc(100% - 32px); }
 
         /* ═══════════════════════════════════════════
            AUTH BUTTONS
@@ -221,7 +148,7 @@ const Navbar = () => {
           color: #1e293b;
           font-weight: 700;
           font-size: 0.875rem;
-          padding: 8px 16px;
+          padding: 8px 18px;
           border-radius: 10px;
           border: 1.5px solid #cbd5e1;
           background: #ffffff;
@@ -242,7 +169,7 @@ const Navbar = () => {
           color: #09090b !important;
           font-weight: 800;
           font-size: 0.875rem;
-          padding: 8px 18px;
+          padding: 8px 20px;
           border-radius: 10px;
           border: none;
           box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
@@ -265,11 +192,11 @@ const Navbar = () => {
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          padding: 5px 12px 5px 8px;
+          padding: 5px 14px 5px 8px;
           background: #fef3c7;
           border: 1px solid #fde68a;
           border-radius: 9999px;
-          font-size: 0.82rem;
+          font-size: 0.84rem;
           font-weight: 700;
           color: #92400e;
         }
@@ -287,9 +214,9 @@ const Navbar = () => {
         }
         .btn-logout {
           color: #ef4444;
-          font-size: 0.82rem;
+          font-size: 0.84rem;
           font-weight: 600;
-          padding: 6px 12px;
+          padding: 6px 14px;
           border-radius: 8px;
           border: 1px solid rgba(239, 68, 68, 0.3);
           background: #fef2f2;
@@ -341,7 +268,7 @@ const Navbar = () => {
         .mobile-nav-link {
           display: flex;
           align-items: center;
-          padding: 11px 16px;
+          padding: 12px 16px;
           border-radius: 12px;
           font-weight: 600;
           font-size: 0.95rem;
@@ -366,17 +293,17 @@ const Navbar = () => {
       )}
 
       <nav className="navbar-root" ref={navRef} role="navigation" aria-label="Main navigation">
-        <div style={{ maxWidth: '1360px', margin: '0 auto', padding: '0 16px' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '70px', gap: '12px' }}>
 
             {/* ── Brand Logo ── */}
             <Link to="/" className="navbar-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', flexShrink: 0 }}
               onClick={() => setIsMenuOpen(false)}>
-              <IftiinLogo size={46} />
+              <IftiinLogo size={48} />
             </Link>
 
             {/* ── Desktop Navigation Links ── */}
-            <div className="hidden lg:flex" style={{ alignItems: 'center', gap: '4px' }}>
+            <div className="hidden md:flex" style={{ alignItems: 'center', gap: '6px' }}>
               <Link to="/"                  className={`nav-link${isActive('/')                  ? ' active' : ''}`}>Home</Link>
               <Link to="/about"             className={`nav-link${isActive('/about')             ? ' active' : ''}`}>About</Link>
               <Link to="/training-programs" className={`nav-link${isActive('/training-programs') ? ' active' : ''}`}>Training Programs</Link>
@@ -384,31 +311,11 @@ const Navbar = () => {
                 Certificates
               </Link>
               <Link to="/contact"           className={`nav-link${isActive('/contact')           ? ' active' : ''}`}>Contact</Link>
-            </div>
 
-            {/* ── Desktop Quick Search Box & Auth ── */}
-            <div className="hidden md:flex" style={{ alignItems: 'center', gap: '10px' }}>
-              {/* Small Certificate Search Box */}
-              <form onSubmit={handleCertSubmit} className="navbar-cert-form" title="Verify Certificate ID">
-                <svg className="navbar-cert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  value={certSearchId}
-                  onChange={(e) => setCertSearchId(e.target.value)}
-                  placeholder="Cert ID..."
-                  className="navbar-cert-input"
-                />
-                <button type="submit" className="navbar-cert-btn">
-                  Verify
-                </button>
-              </form>
-
-              <div style={{ width: '1px', height: '24px', background: '#e2e8f0', margin: '0 4px' }} />
+              <div style={{ width: '1px', height: '24px', background: '#e2e8f0', margin: '0 8px' }} />
 
               {user ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   {/* User chip */}
                   <span className="user-chip">
                     <span className="user-avatar">
@@ -417,16 +324,16 @@ const Navbar = () => {
                     {user.name?.split(' ')[0] || user.email?.split('@')[0]}
                   </span>
                   {user.role === 'admin' && (
-                    <Link to="/admin-dashboard" className={`nav-link${isActive('/admin-dashboard') ? ' active' : ''}`}>Admin</Link>
+                    <Link to="/admin-dashboard" className={`nav-link${isActive('/admin-dashboard') ? ' active' : ''}`}>Admin Dashboard</Link>
                   )}
                   {user.role === 'student' && (
-                    <Link to="/student-dashboard" className={`nav-link${isActive('/student-dashboard') ? ' active' : ''}`}>Dashboard</Link>
+                    <Link to="/student-dashboard" className={`nav-link${isActive('/student-dashboard') ? ' active' : ''}`}>My Dashboard</Link>
                   )}
                   <Link to="/profile" className={`nav-link${isActive('/profile') ? ' active' : ''}`}>Profile</Link>
                   <button onClick={handleLogout} className="btn-logout">Logout</button>
                 </div>
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <Link to="/login" className="btn-navbar-signin">Sign In</Link>
                   <Link to="/student-register" className="btn-navbar-signup">Sign Up</Link>
                 </div>
@@ -434,7 +341,7 @@ const Navbar = () => {
             </div>
 
             {/* ── Mobile: hamburger ── */}
-            <div className="flex lg:hidden" style={{ alignItems: 'center', gap: '8px' }}>
+            <div className="flex md:hidden" style={{ alignItems: 'center', gap: '8px' }}>
               <button
                 id="navbar-hamburger"
                 className="hamburger-btn"
@@ -451,12 +358,12 @@ const Navbar = () => {
 
         {/* ── Mobile Drawer ── */}
         {isMenuOpen && (
-          <div id="mobile-menu" className="mobile-drawer lg:hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <div id="mobile-menu" className="mobile-drawer md:hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
 
               {/* User info (if logged in) */}
               {user && (
-                <div style={{ padding: '10px 14px', marginBottom: '4px', borderRadius: '10px', background: '#fef3c7', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ padding: '10px 14px', marginBottom: '8px', borderRadius: '10px', background: '#fef3c7', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <span className="user-avatar" style={{ width: '32px', height: '32px', fontSize: '0.9rem' }}>
                     {(user.name || user.email || 'U')[0].toUpperCase()}
                   </span>
@@ -466,24 +373,6 @@ const Navbar = () => {
                   </div>
                 </div>
               )}
-
-              {/* Mobile Quick Certificate Search Bar */}
-              <form onSubmit={handleCertSubmit} className="navbar-cert-form" style={{ width: '100%', marginBottom: '8px', padding: '6px 10px' }}>
-                <svg className="navbar-cert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  value={certSearchId}
-                  onChange={(e) => setCertSearchId(e.target.value)}
-                  placeholder="Enter Certificate ID (e.g. NTW-...)"
-                  className="navbar-cert-input"
-                  style={{ width: '100%', fontSize: '0.88rem' }}
-                />
-                <button type="submit" className="navbar-cert-btn" style={{ padding: '6px 12px', fontSize: '0.8rem' }}>
-                  Verify
-                </button>
-              </form>
 
               {/* Main Links */}
               <Link to="/" className={`mobile-nav-link${isActive('/') ? ' active' : ''}`} onClick={() => setIsMenuOpen(false)}>
