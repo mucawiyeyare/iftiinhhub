@@ -21,6 +21,7 @@ import profileRoutes from './routes/profile.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import cartRoutes from './routes/cart.routes.js';
 import messageRoutes from './routes/message.routes.js';
+import certificateRoutes from './routes/certificate.routes.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -72,6 +73,7 @@ app.use('/api/profile', profileRoutes);      // User profile routes
 app.use('/api/dashboard', dashboardRoutes);  // Dashboard statistics routes
 app.use('/api/cart', cartRoutes);            // Shopping cart routes
 app.use('/api/messages', messageRoutes);     // Contact message routes
+app.use('/api/certificates', certificateRoutes); // Certificate verification and management routes
 
 /**
  * Error Handling Middleware

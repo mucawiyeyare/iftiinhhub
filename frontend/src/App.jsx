@@ -23,6 +23,8 @@ import CourseVideoPlayer from './components/CourseVideoPlayer';
 import Profile from './pages/Profile';
 import Contact from './pages/Contact';
 import StudentRegister from './pages/StudentRegister';
+import TrainingPrograms from './pages/TrainingPrograms';
+import VerifyCertificate from './pages/VerifyCertificate';
 import './index.css';
 
 /**
@@ -79,16 +81,20 @@ const Layout = () => {
   const hideNavAndFooter = isAdminDashboard || isStudentDashboard || isCoursePlayer;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white flex flex-col justify-between">
       {/* Hide navbar on app-like full screen pages */}
       {!hideNavAndFooter && <Navbar />}
       
       {/* Main content area - each page manages its own layout */}
-      <main>
+      <main className="flex-1 bg-white">
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/training-programs" element={<TrainingPrograms />} />
+          <Route path="/verify-certificate" element={<VerifyCertificate />} />
+          <Route path="/certificate" element={<VerifyCertificate />} />
+          <Route path="/certificates" element={<VerifyCertificate />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/student-register" element={<StudentRegister />} />
           <Route path="/courses" element={<Courses />} />

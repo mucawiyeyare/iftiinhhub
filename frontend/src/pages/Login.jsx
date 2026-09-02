@@ -1,105 +1,103 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import logoImage from '../assets/iftiin.png';
 import PageTitle from '../components/PageTitle';
+import logoImage from '../assets/logo-transparent.png';
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
+    if (!formData.email || !formData.password) {
+      setError('Please fill in all fields');
+      return;
+    }
 
     try {
-      const result = await login(formData.email, formData.password);
-      if (result.success) {
-        navigate('/');
+      setLoading(true);
+      setError('');
+      const user = await login(formData.email, formData.password);
+      if (user.role === 'admin') {
+        navigate('/admin-dashboard');
       } else {
-        setError(result.message);
+        navigate('/student-dashboard');
       }
     } catch (err) {
-      setError('An error occurred during login');
+      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 py-6 flex flex-col justify-center px-4 sm:px-6">
+    <div className="min-h-screen bg-white py-12 flex flex-col justify-center px-4 sm:px-6">
       <PageTitle title="Login - IFTIINHUB" />
       <div className="relative py-3 w-full sm:max-w-xl sm:mx-auto">
-        <div className="hidden sm:block absolute inset-0 bg-gradient-to-r from-purple-400 to-indigo-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
-        <div className="relative px-4 py-8 bg-white shadow-lg rounded-2xl sm:rounded-3xl sm:p-20">
+        <div className="relative px-6 py-10 bg-white shadow-xl rounded-3xl sm:p-14 border border-slate-200">
           <div className="max-w-md mx-auto">
             <div className="flex justify-center mb-6">
-              <img src={logoImage} className="h-16 w-auto" alt="IftiinHub Logo" />
+              <img src={logoImage} className="h-16 w-auto object-contain" alt="IftiinHub Logo" />
             </div>
-            <div className="divide-y divide-gray-200">
-              <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
+            <div>
+              <div className="py-2 text-base leading-6 space-y-4 text-slate-700 sm:text-lg sm:leading-7">
                 <div className="text-center mb-8">
-                  <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome Back!</h1>
-                  <p className="text-gray-500 text-sm mt-2">Sign in to continue to IftiinHub</p>
+                  <h1 className="text-3xl font-black text-slate-950 tracking-tight">Welcome Back!</h1>
+                  <p className="text-slate-500 text-sm mt-2">Sign in to continue to IftiinHub</p>
                 </div>
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="relative">
+                  <div>
+                    <label 
+                      htmlFor="email" 
+                      className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2"
+                    >
+                      Email Address
+                    </label>
                     <input
                       id="email"
                       name="email"
                       type="email"
                       autoComplete="email"
                       required
-                      className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:border-purple-600"
-                      placeholder="Email address"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition"
+                      placeholder="you@example.com"
                       value={formData.email}
                       onChange={handleChange}
                     />
-                    <label 
-                      htmlFor="email" 
-                      className="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm"
-                    >
-                      Email Address
-                    </label>
                   </div>
                   
-                  <div className="relative">
+                  <div>
+                    <label 
+                      htmlFor="password" 
+                      className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2"
+                    >
+                      Password
+                    </label>
                     <input
                       id="password"
                       name="password"
                       type="password"
                       autoComplete="current-password"
                       required
-                      className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:border-purple-600"
-                      placeholder="Password"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition"
+                      placeholder="••••••••"
                       value={formData.password}
                       onChange={handleChange}
                     />
-                    <label 
-                      htmlFor="password" 
-                      className="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm"
-                    >
-                      Password
-                    </label>
                   </div>
 
                   {error && (
-                    <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+                    <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl">
                       <div className="flex">
                         <div className="flex-shrink-0">
                           <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -117,10 +115,10 @@ const Login = () => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+                      className="w-full flex justify-center py-3.5 px-4 rounded-xl shadow-md text-sm font-black text-slate-950 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 transition-all duration-200 disabled:opacity-70"
                     >
                       {loading ? (
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-950" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -128,11 +126,16 @@ const Login = () => {
                     </button>
                   </div>
                   
-                  <div className="text-center mt-4">
-                
-                    <p className="mt-2 text-xs text-gray-500">
-                      <Link to="/" className="border-b border-gray-300 hover:border-purple-500 hover:text-purple-600 transition-colors">
-                        Back to Home
+                  <div className="text-center mt-6 flex flex-col gap-2">
+                    <p className="text-xs text-slate-500">
+                      Don't have an account yet?{' '}
+                      <Link to="/student-register" className="font-bold text-amber-600 hover:underline">
+                        Sign Up as Student
+                      </Link>
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      <Link to="/" className="hover:underline">
+                        ← Back to Home
                       </Link>
                     </p>
                   </div>

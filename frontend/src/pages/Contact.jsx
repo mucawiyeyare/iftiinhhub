@@ -10,12 +10,13 @@ const Contact = () => {
   const [form, setForm] = useState({ name: '', email: '', whatsapp: '', message: '' });
   const [sent, setSent] = useState(false);
   const [isEnrollmentRequest, setIsEnrollmentRequest] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // Pre-fill form if coming from course enrollment request
   useEffect(() => {
     if (location.state) {
       const { subject, message, courseDetails } = location.state;
-      if (subject && message && courseDetails) {
+      if (subject && message) {
         setIsEnrollmentRequest(true);
         setForm({
           name: user?.name || '',
@@ -27,15 +28,12 @@ const Contact = () => {
     }
   }, [location.state, user]);
 
-  const [error, setError] = useState('');
-
   const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
   const onSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (!window.confirm('Are you sure to send message? (Yes or No)')) {
-      return;
-    }
+    setLoading(true);
     
     try {
       await axios.post('/messages', {
@@ -45,154 +43,171 @@ const Contact = () => {
         message: form.message,
         type: isEnrollmentRequest ? 'enrollment_request' : 'general',
         courseDetails: isEnrollmentRequest ? location.state?.courseDetails : null,
-        subject: isEnrollmentRequest ? location.state?.subject : 'General Inquiry',
+        subject: isEnrollmentRequest ? location.state?.subject : 'General Inquiry / ICT Consultation',
       });
       setSent(true);
-      setTimeout(() => setSent(false), 4000);
+      setTimeout(() => setSent(false), 5000);
       setForm({ name: '', email: '', whatsapp: '', message: '' });
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to send message. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-purple-100">
-      <PageTitle title="Contact Us - IFTIINHUB" />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <div className="text-center mb-8 sm:mb-10">
-          <h1 className="text-2xl sm:text-4xl font-bold text-purple-800 mb-2">
-            {isEnrollmentRequest ? 'Course Enrollment Request' : 'Contact Us'}
+    <div className="min-h-screen bg-white text-slate-900">
+      <PageTitle title="Contact & Consultation - IFTIINHUB" />
+
+      {/* ── Header Banner (Pure White with Light Gold Accent) ── */}
+      <section className="py-12 sm:py-16 bg-gradient-to-b from-amber-500/10 via-white to-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-300 text-amber-800 text-xs sm:text-sm font-bold uppercase tracking-wider mb-4 shadow-sm">
+            <span>📩</span> Get In Touch
+          </div>
+          <h1 className="text-3xl sm:text-5xl font-black text-slate-950 tracking-tight">
+            Contact &amp; <span className="text-amber-500">ICT Consultation</span>
           </h1>
-          <p className="text-purple-700">
-            {isEnrollmentRequest 
-              ? 'Submit your enrollment request and we\'ll get back to you soon.' 
-              : 'We\'d love to hear from you. Send us a message and we\'ll respond soon.'
-            }
+          <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-xl mx-auto">
+            Have questions regarding our live Zoom training programs or need a custom enterprise software system? Send us a message or chat with us on WhatsApp.
           </p>
         </div>
+      </section>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10">
-          <div className="bg-white rounded-xl shadow p-6">
-            <div className="flex items-center mb-3">
-              <svg className="w-6 h-6 text-purple-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              <h3 className="font-semibold text-purple-900">Email</h3>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Contact Info Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center text-2xl shrink-0">
+              ✉️
             </div>
-            <p className="text-purple-700">Iftiinhub@gmail.com</p>
+            <div>
+              <h3 className="text-sm font-bold text-slate-950">Email Address</h3>
+              <p className="text-sm text-slate-600">info@iftiinhub.com</p>
+            </div>
           </div>
-          <div className="bg-white rounded-xl shadow p-6">
-            <div className="flex items-center mb-3">
-              <svg className="w-6 h-6 text-purple-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-              <h3 className="font-semibold text-purple-900">Phone</h3>
+
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center text-2xl shrink-0">
+              💬
             </div>
-            <p className="text-purple-700">616408886</p>
+            <div>
+              <h3 className="text-sm font-bold text-slate-950">WhatsApp &amp; Phone</h3>
+              <a
+                href="https://wa.me/616408886?text=Salaan!%20Waxaan%20doonayaa%20in%20aan%20la%20xiriiro%20IftiinHub."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-bold text-amber-600 hover:underline"
+              >
+                +252 61 6408886
+              </a>
+            </div>
           </div>
-          <div className="bg-white rounded-xl shadow p-6">
-            <div className="flex items-center mb-3">
-              <svg className="w-6 h-6 text-purple-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <h3 className="font-semibold text-purple-900">Address</h3>
+
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center text-2xl shrink-0">
+              📍
             </div>
-            <p className="text-purple-700">Mogdisho,somlia</p>
+            <div>
+              <h3 className="text-sm font-bold text-slate-950">Location</h3>
+              <p className="text-sm text-slate-600">Mogadishu, Somalia</p>
+            </div>
           </div>
         </div>
 
-        {/* Course Details Card for Enrollment Requests */}
-        {isEnrollmentRequest && location.state?.courseDetails && (
-          <div className="bg-white rounded-xl shadow p-6 mb-6">
-            <h2 className="text-2xl font-semibold text-purple-900 mb-4 flex items-center">
-              📚 Course Details
+        {/* Message Form Card */}
+        <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-8 sm:p-12 max-w-3xl mx-auto">
+          <div className="mb-8">
+            <h2 className="text-2xl font-black text-slate-950 mb-2">
+              {isEnrollmentRequest ? 'Program Enrollment / Consultation Form' : 'Send Us a Direct Message'}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-600">Course Name</p>
-                <p className="font-semibold text-gray-900">{location.state.courseDetails.name}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Instructor</p>
-                <p className="font-semibold text-gray-900">{location.state.courseDetails.instructor}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Price</p>
-                <p className="font-semibold text-blue-600">${location.state.courseDetails.price}</p>
-              </div>
-            </div>
+            <p className="text-sm text-slate-600">
+              Fill out the form below and our team will get back to you promptly.
+            </p>
           </div>
-        )}
 
-        <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-2xl font-semibold text-purple-900 mb-4">
-            {isEnrollmentRequest ? 'Enrollment Request Form' : 'Send a Message'}
-          </h2>
           {sent && (
-            <div className="mb-4 p-3 rounded bg-purple-50 border border-purple-200 text-purple-700">
-              {isEnrollmentRequest 
-                ? "message send succesfully ,Admin will contact you" 
-                : 'message send succesfully ,Admin will contact you'
-              }
+            <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-sm flex items-center gap-3">
+              <span>✅</span>
+              <span>Your message was sent successfully! Our administration will contact you shortly.</span>
             </div>
           )}
+
           {error && (
-            <div className="mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-700">
-              {error}
+            <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-300 text-red-800 text-sm flex items-center gap-3">
+              <span>⚠️</span>
+              <span>{error}</span>
             </div>
           )}
-          <form onSubmit={onSubmit} className="grid grid-cols-1 gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="relative">
+
+          <form onSubmit={onSubmit} className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                  Full Name *
+                </label>
                 <input
                   name="name"
                   value={form.name}
                   onChange={onChange}
-                  placeholder="Your Name"
-                  className="w-full pl-4 pr-3 py-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="e.g. Hassan Mohamed"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition"
                   required
                 />
               </div>
-              <div className="relative">
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                  Email Address *
+                </label>
                 <input
                   type="email"
                   name="email"
                   value={form.email}
                   onChange={onChange}
-                  placeholder="Your Email"
-                  className="w-full pl-4 pr-3 py-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="you@example.com"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition"
                   required
                 />
               </div>
             </div>
-            <div className="relative flex items-center">
-              <span className="absolute left-3 text-green-600 font-bold text-lg select-none" style={{ lineHeight: 1 }}>📱</span>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                WhatsApp / Phone Number
+              </label>
               <input
                 type="tel"
                 name="whatsapp"
                 value={form.whatsapp}
                 onChange={onChange}
-                placeholder="Geli WhatsApp Numberkada"
-                className="w-full pl-10 pr-3 py-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="+252 61 XXX XXXX"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition"
               />
             </div>
-            <div className="relative">
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                Message / Inquired Service *
+              </label>
               <textarea
                 name="message"
                 value={form.message}
                 onChange={onChange}
-                placeholder="Your Message"
                 rows={5}
-                className="w-full pl-4 pr-3 py-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Tell us what you want to learn or the ICT system specifications you need..."
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition"
                 required
               />
             </div>
-            <div>
-              <button type="submit" className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-md font-semibold transition-colors">
-                {isEnrollmentRequest ? 'Submit Enrollment Request' : 'Send Message'}
-              </button>
-            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full btn-brand-primary py-3.5 text-center text-sm font-bold justify-center"
+            >
+              {loading ? 'Sending Message...' : '🚀 Submit Message'}
+            </button>
           </form>
         </div>
       </div>
@@ -201,5 +216,3 @@ const Contact = () => {
 };
 
 export default Contact;
-
-

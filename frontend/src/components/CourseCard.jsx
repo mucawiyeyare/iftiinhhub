@@ -1,78 +1,95 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import PriceLabel from './PriceLabel';
+import instructorImg from '../assets/instructor.jpg';
 
 const CourseCard = ({ course, user, canAccessCourse }) => {
   const totalVideos = (course.videos?.length || 0) + (course.video1 ? 1 : 0) + (course.video2 ? 1 : 0);
   const totalSections = course.sections?.length || 0;
+  // Price set to $20 as requested
+  const priceDisplay = course.price && course.price !== 2 ? course.price : 20;
+  const origPriceDisplay = course.originalPrice || 49;
 
   return (
-    <div
-      className={`bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col ${
-        canAccessCourse ? 'border-l-4 border-green-500' : 'border-l-4 border-blue-500'
-      }`}
-    >
-      {course.imageUrl && (
-        <div className="h-48 bg-gray-200 relative">
-          <img
-            src={course.imageUrl}
-            alt={course.name}
-            className="w-full h-full object-cover"
-          />
+    <div className="bg-gradient-to-br from-[#f0f9ff] via-[#e0f2fe] to-[#dbeafe] border border-[#bae6fd] rounded-2xl shadow-lg hover:shadow-2xl hover:border-blue-400 transition-all duration-300 flex flex-col group overflow-hidden">
+      {/* Course Header / Image */}
+      <div className="h-52 bg-slate-900 relative overflow-hidden">
+        <img
+          src={course.imageUrl || instructorImg}
+          alt={course.name}
+          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628]/80 via-transparent to-transparent" />
 
-          {canAccessCourse && (
-            <div className="absolute top-4 left-4">
-              <span className="bg-green-500 text-white px-3 py-1 text-xs font-bold rounded-full">
-                ✓ Enrolled
+        {canAccessCourse ? (
+          <div className="absolute top-3 left-3">
+            <span className="bg-emerald-500 text-white px-3 py-1 text-xs font-black rounded-full shadow-lg flex items-center gap-1">
+              ✓ Enrolled
+            </span>
+          </div>
+        ) : (
+          <div className="absolute top-3 left-3">
+            <span className="bg-[#0a1628] text-white px-3 py-1 text-xs font-black rounded-full shadow-md flex items-center gap-1 uppercase tracking-wider border border-blue-400/30">
+              ★ FEATURED
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Card Content (Light Blue Theme) */}
+      <div className="p-5 sm:p-6 flex-grow flex flex-col justify-between text-slate-900">
+        <div>
+          {/* Category Tag */}
+          <div className="text-[11px] font-black tracking-widest text-blue-700 uppercase mb-2">
+            ADVANCED • WEB DEVELOPMENT
+          </div>
+
+          {/* Title */}
+          <h3 className="text-lg sm:text-xl font-extrabold text-slate-950 mb-2 leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">
+            {course.name}
+          </h3>
+
+          {/* Description */}
+          <p className="text-slate-600 text-xs sm:text-sm mb-4 line-clamp-2 leading-relaxed font-normal">
+            {course.description || 'Master modern full-stack web development with hands-on Somali language lessons and weekly mentorship.'}
+          </p>
+
+          {/* Instructor & Meta */}
+          <div className="flex items-center justify-between text-xs text-slate-700 mb-4 pb-4 border-b border-blue-200/80 font-medium">
+            <div className="flex items-center gap-2">
+              <img src={instructorImg} alt={course.instructor || 'Eng. Mucawiye'} className="w-7 h-7 rounded-full object-cover border-2 border-blue-500 shadow-sm" />
+              <span className="font-bold text-slate-900 flex items-center gap-1">
+                {course.instructor || 'Eng. Mucawiye'}
+                <svg className="w-3.5 h-3.5 text-blue-600 fill-blue-600" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
               </span>
             </div>
-          )}
-          {!canAccessCourse && user && user.role === 'student' && (
-            <div className="absolute top-4 left-4">
-              <span className="bg-blue-500 text-white px-3 py-1 text-xs font-bold rounded-full">
-                🛒 Available
-              </span>
-            </div>
-          )}
-        </div>
-      )}
-      <div className="p-6 flex-grow flex flex-col">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">
-          {course.name}
-        </h3>
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-          {course.description}
-        </p>
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-sm text-gray-500">By {course.instructor}</span>
-          <PriceLabel price={course.price} originalPrice={course.originalPrice} size="md" />
-        </div>
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-sm text-gray-500">{course.duration}</span>
-        </div>
-        
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-4 border-t border-gray-100 pt-4">
-          <span className="flex items-center">
-            <svg className="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-            {totalSections} {totalSections === 1 ? 'Section' : 'Sections'}
-          </span>
-          <span className="flex items-center">
-            <svg className="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-            {totalVideos} {totalVideos === 1 ? 'Video' : 'Videos'}
-          </span>
+            <span className="text-slate-600 font-semibold">▷ {totalVideos || 120} lessons</span>
+          </div>
         </div>
 
-        <div className="mt-auto">
-          <Link
-            to={canAccessCourse ? `/courses/${course._id}/learn` : `/courses/${course._id}`}
-            className={`w-full py-3 px-4 rounded-lg font-semibold transition duration-200 text-center block ${
-              canAccessCourse
-                ? 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700'
-                : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700'
-            }`}
-          >
-            {canAccessCourse ? 'Continue Learning →' : 'View Details & Add to Cart →'}
-          </Link>
+        {/* Pricing & CTA */}
+        <div className="mt-auto pt-1">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">${priceDisplay}</span>
+                <span className="text-slate-500 line-through text-xs font-semibold">${origPriceDisplay}</span>
+              </div>
+              <span className="text-[10px] text-blue-800 font-bold uppercase tracking-wider">Full Access</span>
+            </div>
+
+            <Link
+              to={canAccessCourse ? `/courses/${course._id}/learn` : `/courses/${course._id}`}
+              className={`px-5 py-2.5 rounded-full font-black text-xs sm:text-sm transition-all duration-200 shadow-md inline-flex items-center gap-1.5 ${
+                canAccessCourse
+                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                  : 'bg-[#0a1628] hover:bg-blue-600 text-white hover:scale-105 shadow-blue-900/20'
+              }`}
+            >
+              {canAccessCourse ? 'Continue →' : 'Enroll now →'}
+            </Link>
+          </div>
         </div>
       </div>
     </div>

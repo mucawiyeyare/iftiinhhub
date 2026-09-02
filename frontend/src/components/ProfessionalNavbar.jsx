@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import logoImg from '../assets/logo-transparent.png';
 
 const ProfessionalNavbar = () => {
   const { user, logout } = useAuth();
@@ -37,14 +38,7 @@ const ProfessionalNavbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">C</span>
-            </div>
-            <span className={`font-bold text-xl transition-colors duration-300 ${
-              isScrolled ? 'text-gray-900' : 'text-white'
-            }`}>
-              CodeHub
-            </span>
+            <img src={logoImg} alt="IftiinHub Logo" className="h-10 w-auto object-contain" />
           </Link>
 
           {/* Desktop Navigation */}

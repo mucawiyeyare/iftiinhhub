@@ -77,6 +77,11 @@ const AdminDashboard = () => {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
       </svg>
     ) },
+    { id: 'certificates', label: 'Certificates', icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+      </svg>
+    ) },
     { id: 'notifications', label: 'Notifications', icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -92,6 +97,7 @@ const AdminDashboard = () => {
     enrollments: recentEnrollments.length,
     videos: videoStats.totalVideos,
     messages: messages.length,
+    certificates: certificates.length,
     registeredStudents: users.filter(u => u.role === 'student' && u.status !== 'pending').length,
     notifications: users.filter(u => u.status === 'pending').length,
   };
@@ -140,6 +146,22 @@ const AdminDashboard = () => {
   const [editingSection, setEditingSection] = useState(null);
   const [editSectionName, setEditSectionName] = useState('');
 
+  // Certificate management state
+  const [certificates, setCertificates] = useState([]);
+  const [loadingCertificates, setLoadingCertificates] = useState(false);
+  const [certSearchTerm, setCertSearchTerm] = useState('');
+  const [showIssueCertModal, setShowIssueCertModal] = useState(false);
+  const [issuingCert, setIssuingCert] = useState(false);
+  const [newCert, setNewCert] = useState({
+    studentName: '',
+    studentEmail: '',
+    courseTitle: '',
+    certificateId: '',
+    grade: 'Passed',
+    instructor: 'Eng. Mucawiye & IftiinHub Academic Team',
+    skills: ''
+  });
+
   useEffect(() => {
     // Handle redirect toast from Register page
     const state = location.state;
@@ -157,8 +179,65 @@ const AdminDashboard = () => {
 
     fetchDashboardData();
     fetchMessages();
+    fetchCertificates();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const fetchCertificates = async () => {
+    setLoadingCertificates(true);
+    try {
+      const res = await axios.get('/certificates');
+      setCertificates(res.data);
+    } catch (error) {
+      console.error('Failed to fetch certificates:', error);
+    } finally {
+      setLoadingCertificates(false);
+    }
+  };
+
+  const handleIssueCertificate = async (e) => {
+    e.preventDefault();
+    if (!newCert.studentName.trim() || !newCert.courseTitle.trim()) {
+      setToast('Student Name and Course Title are required');
+      setTimeout(() => setToast(''), 3000);
+      return;
+    }
+    setIssuingCert(true);
+    try {
+      const res = await axios.post('/certificates', newCert);
+      setCertificates([res.data.certificate, ...certificates]);
+      setShowIssueCertModal(false);
+      setNewCert({
+        studentName: '',
+        studentEmail: '',
+        courseTitle: '',
+        certificateId: '',
+        grade: 'Passed',
+        instructor: 'Eng. Mucawiye & IftiinHub Academic Team',
+        skills: ''
+      });
+      setToast('Certificate issued successfully!');
+      setTimeout(() => setToast(''), 3000);
+    } catch (error) {
+      setToast(error.response?.data?.message || 'Failed to issue certificate');
+      setTimeout(() => setToast(''), 3000);
+    } finally {
+      setIssuingCert(false);
+    }
+  };
+
+  const handleDeleteCertificate = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this certificate?')) return;
+    try {
+      await axios.delete(`/certificates/${id}`);
+      setCertificates(certificates.filter(c => c._id !== id));
+      setToast('Certificate deleted successfully');
+      setTimeout(() => setToast(''), 3000);
+    } catch (error) {
+      setToast('Failed to delete certificate');
+      setTimeout(() => setToast(''), 3000);
+    }
+  };
 
 
   const fetchMessages = async () => {
@@ -2034,6 +2113,296 @@ const AdminDashboard = () => {
                     </table>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* Certificates Management Tab */}
+            {activeTab === 'certificates' && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">Certificate Management</h2>
+                    <p className="text-sm text-gray-500 mt-1">Issue, view, and manage student certificates of completion</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Link
+                      to="/verify-certificate"
+                      target="_blank"
+                      className="px-4 py-2 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200 transition text-sm flex items-center gap-1.5"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      Open Verification Portal
+                    </Link>
+                    <button
+                      onClick={() => setShowIssueCertModal(true)}
+                      className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition text-sm flex items-center gap-1.5 shadow-sm"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                      Issue New Certificate
+                    </button>
+                  </div>
+                </div>
+
+                {/* Search Bar */}
+                <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3">
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <input
+                    type="text"
+                    value={certSearchTerm}
+                    onChange={(e) => setCertSearchTerm(e.target.value)}
+                    placeholder="Search by Certificate ID, Student Name, Email, or Course..."
+                    className="w-full text-sm outline-none text-gray-700 placeholder-gray-400"
+                  />
+                  {certSearchTerm && (
+                    <button onClick={() => setCertSearchTerm('')} className="text-xs text-gray-400 hover:text-gray-600">
+                      Clear
+                    </button>
+                  )}
+                </div>
+
+                {/* Certificates Table */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <tr>
+                          <th className="px-6 py-3.5">Certificate ID</th>
+                          <th className="px-6 py-3.5">Student Name</th>
+                          <th className="px-6 py-3.5">Course / Program</th>
+                          <th className="px-6 py-3.5">Issue Date</th>
+                          <th className="px-6 py-3.5">Grade</th>
+                          <th className="px-6 py-3.5">Status</th>
+                          <th className="px-6 py-3.5 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-100 text-sm">
+                        {loadingCertificates ? (
+                          <tr>
+                            <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-2"></div>
+                              Loading certificates...
+                            </td>
+                          </tr>
+                        ) : certificates.filter(c => {
+                          const s = certSearchTerm.toLowerCase();
+                          return (
+                            c.certificateId?.toLowerCase().includes(s) ||
+                            c.studentName?.toLowerCase().includes(s) ||
+                            c.studentEmail?.toLowerCase().includes(s) ||
+                            c.courseTitle?.toLowerCase().includes(s)
+                          );
+                        }).length === 0 ? (
+                          <tr>
+                            <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
+                              <div className="text-3xl mb-2">📜</div>
+                              <p className="font-medium text-gray-700">No certificates found</p>
+                              <p className="text-xs text-gray-400 mt-1">Issue a new certificate or adjust your search filter</p>
+                            </td>
+                          </tr>
+                        ) : (
+                          certificates
+                            .filter(c => {
+                              const s = certSearchTerm.toLowerCase();
+                              return (
+                                c.certificateId?.toLowerCase().includes(s) ||
+                                c.studentName?.toLowerCase().includes(s) ||
+                                c.studentEmail?.toLowerCase().includes(s) ||
+                                c.courseTitle?.toLowerCase().includes(s)
+                              );
+                            })
+                            .map((cert) => (
+                              <tr key={cert._id} className="hover:bg-gray-50 transition">
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-mono font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200 text-xs">
+                                      {cert.certificateId}
+                                    </span>
+                                    <button
+                                      onClick={() => {
+                                        navigator.clipboard.writeText(cert.certificateId);
+                                        setToast(`Copied ${cert.certificateId}`);
+                                        setTimeout(() => setToast(''), 2000);
+                                      }}
+                                      title="Copy ID"
+                                      className="text-gray-400 hover:text-gray-600"
+                                    >
+                                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="font-semibold text-gray-900">{cert.studentName}</div>
+                                  {cert.studentEmail && (
+                                    <div className="text-xs text-gray-400">{cert.studentEmail}</div>
+                                  )}
+                                </td>
+                                <td className="px-6 py-4">
+                                  <div className="font-medium text-gray-800 line-clamp-1">{cert.courseTitle}</div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
+                                  {new Date(cert.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <span className="text-xs font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                                    {cert.grade || 'Passed'}
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                                    cert.status === 'valid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                  }`}>
+                                    {cert.status === 'valid' ? 'Active' : 'Revoked'}
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium space-x-2">
+                                  <Link
+                                    to={`/verify-certificate?id=${encodeURIComponent(cert.certificateId)}`}
+                                    target="_blank"
+                                    className="text-indigo-600 hover:text-indigo-900 font-semibold"
+                                  >
+                                    View
+                                  </Link>
+                                  <button
+                                    onClick={() => handleDeleteCertificate(cert._id)}
+                                    className="text-red-600 hover:text-red-900 font-semibold"
+                                  >
+                                    Delete
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Issue Certificate Modal */}
+                {showIssueCertModal && (
+                  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+                      <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-900">Issue New Certificate</h3>
+                          <p className="text-xs text-gray-500">Create an official certificate record for a student</p>
+                        </div>
+                        <button
+                          onClick={() => setShowIssueCertModal(false)}
+                          className="text-gray-400 hover:text-gray-600"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      <form onSubmit={handleIssueCertificate} className="mt-4 space-y-4 text-sm">
+                        <div>
+                          <label className="block font-semibold text-gray-700 mb-1">Student Full Name *</label>
+                          <input
+                            type="text"
+                            required
+                            value={newCert.studentName}
+                            onChange={(e) => setNewCert({ ...newCert, studentName: e.target.value })}
+                            placeholder="e.g. Abdirahman Mohamed Ali"
+                            className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block font-semibold text-gray-700 mb-1">Student Email (Optional)</label>
+                          <input
+                            type="email"
+                            value={newCert.studentEmail}
+                            onChange={(e) => setNewCert({ ...newCert, studentEmail: e.target.value })}
+                            placeholder="student@example.com"
+                            className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block font-semibold text-gray-700 mb-1">Course / Program Title *</label>
+                          <input
+                            type="text"
+                            required
+                            value={newCert.courseTitle}
+                            onChange={(e) => setNewCert({ ...newCert, courseTitle: e.target.value })}
+                            placeholder="e.g. Associate Full-Stack Web Developer"
+                            className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block font-semibold text-gray-700 mb-1">Custom Cert ID (Optional)</label>
+                            <input
+                              type="text"
+                              value={newCert.certificateId}
+                              onChange={(e) => setNewCert({ ...newCert, certificateId: e.target.value })}
+                              placeholder="Auto-generated if empty"
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none uppercase font-mono text-xs"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-semibold text-gray-700 mb-1">Grade / Performance</label>
+                            <input
+                              type="text"
+                              value={newCert.grade}
+                              onChange={(e) => setNewCert({ ...newCert, grade: e.target.value })}
+                              placeholder="e.g. Distinction (98%)"
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block font-semibold text-gray-700 mb-1">Instructor / Signatory</label>
+                          <input
+                            type="text"
+                            value={newCert.instructor}
+                            onChange={(e) => setNewCert({ ...newCert, instructor: e.target.value })}
+                            placeholder="Eng. Mucawiye & IftiinHub Academic Team"
+                            className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block font-semibold text-gray-700 mb-1">Key Skills (Comma separated)</label>
+                          <input
+                            type="text"
+                            value={newCert.skills}
+                            onChange={(e) => setNewCert({ ...newCert, skills: e.target.value })}
+                            placeholder="React.js, Node.js, Express, MongoDB, Tailwind CSS"
+                            className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+                          <button
+                            type="button"
+                            onClick={() => setShowIssueCertModal(false)}
+                            className="px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={issuingCert}
+                            className="px-5 py-2.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50"
+                          >
+                            {issuingCert ? 'Issuing...' : 'Issue Certificate'}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

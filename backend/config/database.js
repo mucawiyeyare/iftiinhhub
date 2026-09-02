@@ -2,11 +2,25 @@ import mongoose from 'mongoose';
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/coursehub');
-
+    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      autoIndex: true,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+    
+    mongoose.connection.on('disconnected', () => {
+      console.warn('MongoDB disconnected. Attempting to reconnect...');
+    });
+    
+    mongoose.connection.on('reconnected', () => {
+      console.log('MongoDB reconnected');
+    });
+
   } catch (error) {
-    console.error('MongoDB connection error:', error.message);
+    console.error(`Error: ${error.message}`);
     process.exit(1);
   }
 };

@@ -1,110 +1,163 @@
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { validationResult } from 'express-validator';
+import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
+import { logAudit } from '../utils/auditLogger.js';
 
+const signToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET || 'secret_key', { expiresIn: process.env.JWT_EXPIRE || '30d' });
+
+// POST /api/auth/register
 export const register = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { name, email, password, role, phone } = req.body;
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Email and password are required' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'User with this email already exists' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    const username = email.split('@')[0] + Math.floor(1000 + Math.random() * 9000);
+
     const user = new User({
-      name,
-      email,
-      password: hashedPassword,
+      name: name || username,
+      username: username,
+      email: email.toLowerCase(),
+      passwordHash,
       role: role || 'student',
       phone: phone || '',
+      isActive: true,
+      status: 'active'
     });
 
     await user.save();
 
-    // Ensure JWT_SECRET is defined
-    if (!process.env.JWT_SECRET) {
-      throw new Error('JWT_SECRET is not defined in environment variables');
-    }
-
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
+    const token = signToken(user._id);
 
     res.status(201).json({
-      message: 'User created successfully',
+      success: true,
       token,
       user: {
-        id: user._id,
+        _id: user._id,
         name: user.name,
+        username: user.username,
         email: user.email,
-        role: user.role
+        role: user.role,
+        isActive: user.isActive
       }
     });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
+// POST /api/auth/login
 export const login = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    const { username, email, password } = req.body;
+    const identifier = email || username;
+
+    if (!identifier || !password) {
+      return res.status(400).json({ success: false, message: 'Email/Username and password are required' });
     }
 
-    const { email, password } = req.body;
+    const user = await User.findOne({
+      $or: [
+        { email: identifier.toLowerCase() },
+        { username: identifier }
+      ]
+    }).populate('employee');
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+    if (!user || user.isActive === false) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
-    if (user.role !== 'admin') {
-      if (user.status === 'pending') {
-        return res.status(403).json({ message: 'Your account is pending admin approval' });
-      }
+    user.lastLogin = new Date();
+    await user.save();
 
-      if (user.status === 'declined') {
-        return res.status(403).json({ message: 'Your registration was declined. Please contact support.' });
-      }
+    try {
+      await logAudit(user._id, 'LOGIN', 'User', user._id, { username: user.username }, req.ip);
+    } catch (e) {
+      // Ignore audit log error if not configured
     }
 
-    // Ensure JWT_SECRET is defined
-    if (!process.env.JWT_SECRET) {
-      throw new Error('JWT_SECRET is not defined in environment variables');
-    }
-
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
+    const token = signToken(user._id);
     res.json({
-      message: 'Login successful',
+      success: true,
       token,
       user: {
-        id: user._id,
-        name: user.name,
+        _id: user._id,
+        name: user.name || user.username,
+        username: user.username,
         email: user.email,
-        role: user.role
+        role: user.role,
+        employee: user.employee,
+        isActive: user.isActive
       }
     });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// POST /api/auth/logout
+export const logout = async (req, res) => {
+  try {
+    if (req.user && req.user._id) {
+      await logAudit(req.user._id, 'LOGOUT', 'User', req.user._id, {}, req.ip);
+    }
+  } catch (e) {}
+  res.json({ success: true, message: 'Logged out successfully' });
+};
+
+// GET /api/auth/me
+export const getMe = async (req, res) => {
+  const user = await User.findById(req.user._id).select('-passwordHash -password').populate('employee');
+  res.json({ success: true, user });
+};
+
+// POST /api/auth/change-password
+export const changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const user = await User.findById(req.user._id);
+    const isMatch = await user.comparePassword(oldPassword);
+    if (!isMatch) return res.status(400).json({ success: false, message: 'Current password is incorrect' });
+    user.passwordHash = await bcrypt.hash(newPassword, 12);
+    await user.save();
+    try {
+      await logAudit(user._id, 'CHANGE_PASSWORD', 'User', user._id, {}, req.ip);
+    } catch (e) {}
+    res.json({ success: true, message: 'Password updated successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// Called on server startup to ensure at least one admin exists
+export const createDefaultAdmin = async () => {
+  try {
+    const adminExists = await User.findOne({ role: 'admin' });
+    if (!adminExists) {
+      const passwordHash = await bcrypt.hash('Admin@1234', 12);
+      await User.create({
+        name: 'Super Admin',
+        username: 'admin',
+        email: 'admin@iftiinhhub.com',
+        passwordHash,
+        role: 'admin',
+        isActive: true
+      });
+      console.log('✅ Default admin created: email=admin@iftiinhhub.com, password=Admin@1234');
+    }
+  } catch (err) {
+    console.error('Error creating default admin:', err.message);
   }
 };
