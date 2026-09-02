@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import PageTitle from '../components/PageTitle';
-import logoImg from '../assets/logo-transparent.png';
+import IftiinCertificate from '../components/IftiinCertificate';
 
 const VerifyCertificate = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -77,31 +77,36 @@ const VerifyCertificate = () => {
     <div className="min-h-screen bg-white text-slate-800 py-12 px-4 sm:px-6 lg:px-8 selection:bg-amber-500 selection:text-black">
       <PageTitle title="Verify Certificate - IftiinHub" />
 
-      {/* Print Stylesheet */}
+      {/* Print Stylesheet for Exact Dark-Gold Certificate PDF Output */}
       <style>{`
         @media print {
-          body {
-            background: white !important;
-            color: black !important;
+          @page {
+            size: landscape;
+            margin: 0;
+          }
+          html, body {
+            background: #0A0E1A !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            margin: 0 !important;
+            padding: 0 !important;
           }
           .no-print {
             display: none !important;
           }
-          .print-container {
+          .print-certificate-container {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            border-radius: 0 !important;
+            border: none !important;
             box-shadow: none !important;
-            border: 2px solid #b45309 !important;
-            background: #ffffff !important;
-            color: #0f172a !important;
             margin: 0 !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            page-break-inside: avoid;
-          }
-          .print-text-dark {
-            color: #0f172a !important;
-          }
-          .print-text-muted {
-            color: #475569 !important;
+            padding: 3rem !important;
+            page-break-inside: avoid !important;
+            page-break-after: avoid !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
         }
       `}</style>
@@ -142,7 +147,7 @@ const VerifyCertificate = () => {
                 value={certificateId}
                 onChange={(e) => setCertificateId(e.target.value)}
                 placeholder="E.G. NTW-YEAR-A1B2C3D4"
-                className="w-full pl-11 pr-10 py-3.5 bg-slate-50 text-slate-900 placeholder-slate-400 rounded-xl border border-slate-300 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none transition duration-200 font-mono text-sm tracking-wider uppercase font-semibold"
+                className="w-full pl-11 pr-10 py-3.5 bg-slate-50 text-slate-900 placeholder-slate-400 rounded-xl border border-slate-300 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition duration-200 font-mono text-sm tracking-wider uppercase font-semibold"
               />
               {certificateId && (
                 <button
@@ -160,11 +165,11 @@ const VerifyCertificate = () => {
             <button
               type="submit"
               disabled={loading}
-              className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold px-7 py-3.5 rounded-xl transition duration-200 shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 text-sm sm:text-base whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+              className="bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-black px-7 py-3.5 rounded-xl transition duration-200 shadow-md shadow-amber-500/20 flex items-center justify-center gap-2 text-sm sm:text-base whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               {loading ? (
                 <>
-                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin h-5 w-5 text-slate-950" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
@@ -240,7 +245,7 @@ const VerifyCertificate = () => {
               <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
                 <button
                   onClick={handleCopyLink}
-                  className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer"
+                  className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer"
                   title="Copy verification link"
                 >
                   <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -251,7 +256,7 @@ const VerifyCertificate = () => {
 
                 <button
                   onClick={handlePrint}
-                  className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer"
+                  className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 text-xs font-black flex items-center justify-center gap-1.5 transition shadow-md cursor-pointer"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -261,106 +266,9 @@ const VerifyCertificate = () => {
               </div>
             </div>
 
-            {/* ── OFFICIAL CERTIFICATE DOCUMENT CARD (PRINTABLE) ── */}
-            <div className="print-container bg-gradient-to-b from-white via-amber-50/20 to-white text-slate-900 border-8 border-amber-600/30 rounded-3xl p-8 sm:p-12 shadow-xl relative overflow-hidden">
-              {/* Outer Golden Border Corner Accents */}
-              <div className="absolute top-3 left-3 w-10 h-10 border-t-2 border-l-2 border-amber-600 pointer-events-none"></div>
-              <div className="absolute top-3 right-3 w-10 h-10 border-t-2 border-r-2 border-amber-600 pointer-events-none"></div>
-              <div className="absolute bottom-3 left-3 w-10 h-10 border-b-2 border-l-2 border-amber-600 pointer-events-none"></div>
-              <div className="absolute bottom-3 right-3 w-10 h-10 border-b-2 border-r-2 border-amber-600 pointer-events-none"></div>
-
-              {/* Watermark Background Seal */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
-                <img src={logoImg} alt="IftiinHub Seal" className="w-[500px] h-[500px] object-contain" />
-              </div>
-
-              {/* Certificate Header */}
-              <div className="text-center relative z-10">
-                <div className="flex items-center justify-center gap-3 mb-3">
-                  <img src={logoImg} alt="IftiinHub Logo" className="h-14 sm:h-16 w-auto object-contain" />
-                </div>
-                <div className="uppercase tracking-[0.25em] text-xs font-bold text-amber-700 mb-1">
-                  IftiinHub Academy & Professional Training
-                </div>
-                <h2 className="text-2xl sm:text-4xl font-serif font-black text-slate-900 tracking-wide mt-2 mb-3">
-                  CERTIFICATE OF COMPLETION
-                </h2>
-                <div className="w-36 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mb-6"></div>
-              </div>
-
-              {/* Certificate Body */}
-              <div className="text-center my-6 relative z-10 max-w-2xl mx-auto space-y-4">
-                <p className="text-xs sm:text-sm uppercase tracking-widest text-slate-600 print-text-muted">
-                  This is proudly presented to
-                </p>
-                <h3 className="text-2xl sm:text-4xl font-bold font-serif text-slate-950 border-b-2 border-amber-300/80 pb-3 mx-4 sm:mx-12">
-                  {result.studentName}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 print-text-muted leading-relaxed pt-2">
-                  for successfully completing all curriculum requirements, rigorous hands-on projects, and practical assessments in
-                </p>
-                <div className="text-lg sm:text-2xl font-extrabold text-amber-800 bg-amber-100/50 py-2.5 px-6 rounded-xl inline-block border border-amber-200">
-                  {result.courseTitle}
-                </div>
-              </div>
-
-              {/* Skills / Covered Topics (if any) */}
-              {result.skills && result.skills.length > 0 && (
-                <div className="relative z-10 max-w-xl mx-auto text-center my-4">
-                  <div className="flex flex-wrap justify-center gap-1.5">
-                    {result.skills.map((skill, idx) => (
-                      <span key={idx} className="text-[11px] font-semibold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md border border-slate-200">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Certificate Footer / Signatures & Seal */}
-              <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-6 items-end mt-12 pt-8 border-t border-amber-200/80 text-center sm:text-left">
-                {/* Left: Issue Date & ID */}
-                <div className="space-y-1">
-                  <div className="text-xs text-slate-500 font-medium uppercase">Date of Issue</div>
-                  <div className="text-sm font-bold text-slate-900">
-                    {new Date(result.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                  </div>
-                  <div className="text-xs text-slate-500 font-medium uppercase pt-2">Certificate ID</div>
-                  <div className="text-sm font-mono font-bold text-amber-700 tracking-wider">
-                    {result.certificateId}
-                  </div>
-                </div>
-
-                {/* Center: Official Verified Stamp / Seal */}
-                <div className="flex flex-col items-center justify-center">
-                  <div className="w-20 h-20 rounded-full border-4 border-double border-amber-600 bg-amber-50 flex flex-col items-center justify-center shadow-md p-1">
-                    <span className="text-amber-800 text-[9px] font-black uppercase tracking-tighter text-center">
-                      IFTIINHUB
-                    </span>
-                    <span className="text-lg font-black text-amber-600">★ ★ ★</span>
-                    <span className="text-amber-900 text-[8px] font-bold uppercase tracking-tight">
-                      VERIFIED
-                    </span>
-                  </div>
-                  <span className="text-[10px] text-amber-800 font-bold uppercase mt-1 tracking-wider">
-                    Official Credential
-                  </span>
-                </div>
-
-                {/* Right: Academic Director Signature */}
-                <div className="text-center sm:text-right space-y-1">
-                  <div className="font-serif italic text-lg sm:text-xl text-slate-800 tracking-wide font-bold">
-                    {result.instructor || 'Eng. Mucawiye'}
-                  </div>
-                  <div className="w-32 border-t border-slate-400 mx-auto sm:ml-auto sm:mr-0 pt-1"></div>
-                  <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                    Academic Director
-                  </div>
-                  <div className="text-[10px] text-slate-500">
-                    IftiinHub Training Academy
-                  </div>
-                </div>
-              </div>
+            {/* ── OFFICIAL LUXURY CERTIFICATE CARD (Matching certificate Iftiin Hub (1).pdf) ── */}
+            <div className="print-certificate-container">
+              <IftiinCertificate certificate={result} isPrintMode={true} />
             </div>
 
             {/* Bottom Navigation */}
