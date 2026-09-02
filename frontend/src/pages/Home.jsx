@@ -1,8 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PageTitle from '../components/PageTitle';
 import fullstackImg from '../assets/program-fullstack.png';
 import dataAnalysisImg from '../assets/program-data-analysis.png';
+
+// Real customer logos provided by user
+import snabDentalLogo from '../assets/customers/snab-dental-logo.png';
+import dhiigkaalLogo from '../assets/customers/dhiigkaal-logo.png';
+import ntwHuLogo from '../assets/customers/ntw-hu-logo.png';
 
 const programs = [
   {
@@ -29,11 +34,12 @@ const programs = [
   }
 ];
 
-const allCustomers = [
+const customerLogos = [
   {
     id: 'dhiigkaal',
-    name: 'Dhiigkaal Blood Bank',
-    systemName: 'Dhiigkaal Healthcare & Blood Management System',
+    name: 'Dhiigkaal Blood Bank & Healthcare System',
+    shortName: 'Dhiigkaal Blood Bank',
+    logo: dhiigkaalLogo,
     url: 'https://dhiigkaal.iftiinhub.com',
     domain: 'dhiigkaal.iftiinhub.com',
     category: 'Healthcare & Blood Bank ERP',
@@ -45,14 +51,13 @@ const allCustomers = [
       'Hospital & Laboratory Screening Workflows',
       'Automated SMS Notifications & Blood Stock Tracking'
     ],
-    tech: ['React.js', 'Node.js', 'Express', 'MongoDB', 'REST APIs', 'Tailwind CSS'],
-    type: 'dhiigkaal',
-    accentColor: '#e11d48'
+    tech: ['React.js', 'Node.js', 'Express', 'MongoDB', 'REST APIs', 'Tailwind CSS']
   },
   {
     id: 'snabdental',
-    name: 'SNAB Dental Clinic',
-    systemName: 'SNAB Dental Clinic & Clinical Management System',
+    name: 'SNAB Dental Clinic & Healthcare Management',
+    shortName: 'SNAB Dental Clinic',
+    logo: snabDentalLogo,
     url: 'https://snabdental.iftiinhub.com',
     domain: 'snabdental.iftiinhub.com',
     category: 'Dental & Clinical EHR System',
@@ -64,14 +69,13 @@ const allCustomers = [
       'Laboratory Test Requests & Results Management',
       'Point of Sale, Medical Invoicing & Payment Receipts'
     ],
-    tech: ['React.js', 'Node.js', 'Express', 'MongoDB', 'JWT Auth', 'Tailwind CSS'],
-    type: 'snabdental',
-    accentColor: '#0d9488'
+    tech: ['React.js', 'Node.js', 'Express', 'MongoDB', 'JWT Auth', 'Tailwind CSS']
   },
   {
     id: 'ntw',
-    name: 'Hormuud University (HU)',
-    systemName: 'NTW Academic & University Portal (Hormuud University)',
+    name: 'NTW Academic & University Portal (Hormuud University)',
+    shortName: 'Hormuud University (NTW)',
+    logo: ntwHuLogo,
     url: 'https://ntw.hu.edu.so',
     domain: 'ntw.hu.edu.so',
     category: 'Higher Education Management System',
@@ -83,82 +87,7 @@ const allCustomers = [
       'Course Syllabus, Lecture Notes & Video Materials',
       'Online Certificate & Credential Verification Portal'
     ],
-    tech: ['React.js', 'Node.js', 'Express', 'Linux VPS', 'SSL Hardened'],
-    type: 'ntw',
-    accentColor: '#2563eb'
-  },
-  {
-    id: 'elmiportal',
-    name: 'Mr. Elmi Portal',
-    systemName: 'Mr. Elmi Institutional Document Management Portal',
-    url: 'https://mr.elmiportal.iftiinhub.com',
-    domain: 'mr.elmiportal.iftiinhub.com',
-    category: 'Enterprise Document Archive',
-    tagline: 'High-Security Cloud Document Archiving, Permission Access & File Verification',
-    desc: 'Enterprise document filing and records portal engineered for institutions. Provides secure cloud storage, digital document verification, granular permission policies, and audit logs.',
-    features: [
-      'Digital Records Archive & Document Filing Architecture',
-      'Role-based Secure Document Permissions & Access Control',
-      'Document Authenticity Verification & Watermarking',
-      'Automated Activity Logs & Enterprise Auditing'
-    ],
-    tech: ['React.js', 'Node.js', 'Express', 'MongoDB', 'Cloud Storage'],
-    type: 'elmiportal',
-    accentColor: '#d97706'
-  },
-  {
-    id: 'bbbank',
-    name: 'BB Bank (Bushra Business Bank)',
-    systemName: 'Bushra Business Bank Core Financial Gateway',
-    url: 'https://iftiinhub.com',
-    domain: 'bbbank.so',
-    category: 'Banking & Financial Systems',
-    tagline: 'Digital Core Banking Interfaces, Client Portals & Transaction Reporting',
-    desc: 'Engineered high-security financial portals, merchant integration endpoints, and institutional client service dashboards.',
-    features: [
-      'Secure Banking Portals & Two-Factor Authentication',
-      'Merchant API Integrations & Transaction Logs',
-      'Real-Time Balance & Institutional Reporting'
-    ],
-    tech: ['React.js', 'Node.js', 'PostgreSQL', 'Cloud Infrastructure'],
-    type: 'bbbank',
-    accentColor: '#be123c'
-  },
-  {
-    id: 'beco',
-    name: 'BECO (Banaadir Electric Company)',
-    systemName: 'BECO Energy Utility & Meter Billing Management',
-    url: 'https://iftiinhub.com',
-    domain: 'beco.so',
-    category: 'Energy & Utility Automation',
-    tagline: 'Smart Utility Billing Interfaces, Customer Portals & Automated Power Telemetry',
-    desc: 'Custom software infrastructure for utility metering, payment tracking, customer helpdesk ticketing, and power grid analytics.',
-    features: [
-      'Customer Meter Billing & Invoice Generation',
-      'Online Payment Receipts & Account History',
-      'Field Support & Service Outage Dispatch'
-    ],
-    tech: ['React.js', 'Express', 'MongoDB', 'Enterprise VPS'],
-    type: 'beco',
-    accentColor: '#dc2626'
-  },
-  {
-    id: 'bluecom',
-    name: 'Bluecom Telecom',
-    systemName: 'Bluecom Fiber & Cloud Network Management',
-    url: 'https://iftiinhub.com',
-    domain: 'bluecom.so',
-    category: 'Telecommunications & Network',
-    tagline: 'Enterprise ISP Client Management, Bandwidth Billing & Network Health Monitor',
-    desc: 'High-availability software portals for enterprise Internet subscribers, fiber billing, and bandwidth provisioning monitoring.',
-    features: [
-      'Subscriber Bandwidth Account Provisioning',
-      'Automated Invoicing & Service Ticket Automation',
-      'Real-Time Uptime & SLA Performance Tracking'
-    ],
-    tech: ['Next.js', 'Node.js', 'Cloud Networks', 'Docker'],
-    type: 'bluecom',
-    accentColor: '#0284c7'
+    tech: ['React.js', 'Node.js', 'Express', 'Linux VPS', 'SSL Hardened']
   }
 ];
 
@@ -184,153 +113,17 @@ const testimonials = [
 ];
 
 const Home = () => {
-  const [selectedCustomer, setSelectedCustomer] = useState(allCustomers[0]);
-  const sliderRef = useRef(null);
+  const [activeCustomerIndex, setActiveCustomerIndex] = useState(0);
 
-  const scrollSlider = (direction) => {
-    if (sliderRef.current) {
-      const scrollAmount = 300;
-      sliderRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  };
+  // Auto-cycle through the 3 customer systems
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveCustomerIndex((prev) => (prev + 1) % customerLogos.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
-  // Render logo badge according to company identity (like Tabaarak ICT logo cards)
-  const renderCustomerLogo = (item) => {
-    switch (item.type) {
-      case 'dhiigkaal':
-        return (
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-xl shadow-2xs">
-              🩸
-            </div>
-            <div className="text-left">
-              <div className="font-black text-slate-950 tracking-tight text-base leading-none">
-                <span className="text-rose-600">DHIIG</span>KAAL
-              </div>
-              <div className="text-[10px] text-slate-500 font-mono font-bold mt-1">
-                {item.domain}
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'snabdental':
-        return (
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center text-xl shadow-2xs">
-              🦷
-            </div>
-            <div className="text-left">
-              <div className="font-black text-slate-950 tracking-tight text-base leading-none">
-                <span className="text-teal-600">SNAB</span> DENTAL
-              </div>
-              <div className="text-[10px] text-slate-500 font-mono font-bold mt-1">
-                {item.domain}
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'ntw':
-        return (
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-xl shadow-2xs">
-              🎓
-            </div>
-            <div className="text-left">
-              <div className="font-black text-slate-950 tracking-tight text-base leading-none">
-                <span className="text-blue-600">HORMUUD</span> UNIV
-              </div>
-              <div className="text-[10px] text-slate-500 font-mono font-bold mt-1">
-                {item.domain}
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'elmiportal':
-        return (
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-xl shadow-2xs">
-              📑
-            </div>
-            <div className="text-left">
-              <div className="font-black text-slate-950 tracking-tight text-base leading-none">
-                <span className="text-amber-600">MR. ELMI</span> PORTAL
-              </div>
-              <div className="text-[10px] text-slate-500 font-mono font-bold mt-1">
-                {item.domain}
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'bbbank':
-        return (
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center shadow-2xs">
-              <svg className="w-6 h-6 text-rose-700" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M4 10h3v7H4zm6.5 0h3v7h-3zM2 19h20v3H2zm15-9h3v7h-3zM12 1 2 6v2h20V6z"/>
-              </svg>
-            </div>
-            <div className="text-left">
-              <div className="font-black text-rose-800 tracking-tight text-base leading-none">
-                BB <span className="text-slate-950">Bank</span>
-              </div>
-              <div className="text-[9px] text-slate-500 font-bold tracking-wider uppercase mt-1">
-                Bushra Business Bank
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'beco':
-        return (
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-slate-950 flex items-center justify-center text-yellow-400 font-black text-sm shadow-2xs">
-              ⚡
-            </div>
-            <div className="text-left">
-              <div className="font-black text-slate-950 tracking-tighter text-2xl leading-none lowercase">
-                bec<span className="text-red-600 inline-block font-black">o</span>
-              </div>
-              <div className="text-[9px] text-slate-500 font-bold tracking-wider uppercase mt-1">
-                Powering Energy
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'bluecom':
-        return (
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 font-bold shadow-2xs">
-              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
-              </svg>
-            </div>
-            <div className="text-left">
-              <div className="font-black text-blue-700 tracking-tight text-base leading-none">
-                Blue<span className="text-slate-950">com</span>
-              </div>
-              <div className="text-[9px] text-slate-500 font-bold tracking-wider uppercase mt-1">
-                Fiber &amp; Cloud Network
-              </div>
-            </div>
-          </div>
-        );
-
-      default:
-        return (
-          <div className="font-bold text-slate-900 text-sm">
-            {item.name}
-          </div>
-        );
-    }
-  };
+  const activeCustomer = customerLogos[activeCustomerIndex];
 
   return (
     <div className="min-h-screen bg-white text-slate-900 transition-colors duration-300">
@@ -493,9 +286,9 @@ const Home = () => {
       </section>
 
       {/* ═════════════════════════════════════════════════════════════════════
-          OUR CUSTOMERS SECTION (Exact Tabaarak ICT Design with Live Logo Cards)
+          OUR CUSTOMERS SECTION (Exact Tabaarak ICT Design with Real Logos)
       ═════════════════════════════════════════════════════════════════════ */}
-      <section id="our-customers" className="py-16 sm:py-24 bg-gradient-to-b from-slate-50/80 via-white to-slate-50/60 border-y border-slate-200 relative overflow-hidden">
+      <section id="our-customers" className="py-16 sm:py-24 bg-gradient-to-b from-slate-50/70 via-white to-slate-50/50 border-y border-slate-200 relative overflow-hidden">
         
         {/* Subtle Map / Dot Pattern Background like Tabaarak */}
         <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:24px_24px] opacity-15 pointer-events-none"></div>
@@ -503,89 +296,92 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           
           {/* Header (Exact Typography from Tabaarak ICT Screenshot) */}
-          <div className="text-center sm:text-left mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-            <div>
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-950 tracking-tight flex items-baseline justify-center sm:justify-start gap-2.5">
-                <span>Our</span>
-                <span className="text-blue-600 relative inline-block">
-                  Customer
-                  {/* Hand-drawn blue underline matching Tabaarak ICT */}
-                  <svg
-                    className="absolute -bottom-2.5 left-0 w-full h-3.5 text-blue-500 overflow-visible"
-                    viewBox="0 0 100 12"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M2 9C28 2 72 2 98 9"
-                      stroke="#2563eb"
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </span>
-              </h2>
-              <p className="mt-5 text-slate-600 text-sm sm:text-base max-w-2xl leading-relaxed">
-                Our customers are our top priority we are dedicated to providing tailored solutions and exceptional services
-              </p>
-            </div>
-
-            {/* Slider Navigation Buttons (Prev / Next) */}
-            <div className="flex items-center justify-center sm:justify-end gap-2.5 shrink-0">
-              <button
-                onClick={() => scrollSlider('left')}
-                className="w-11 h-11 rounded-full bg-white border border-slate-200 shadow-sm hover:border-blue-500 hover:text-blue-600 text-slate-700 font-bold flex items-center justify-center transition-all cursor-pointer"
-                title="Previous customer"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
+          <div className="text-center sm:text-left mb-12">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-950 tracking-tight flex items-baseline justify-center sm:justify-start gap-2.5">
+              <span>Our</span>
+              <span className="text-blue-600 relative inline-block">
+                Customer
+                {/* Hand-drawn blue underline matching Tabaarak ICT */}
+                <svg
+                  className="absolute -bottom-2.5 left-0 w-full h-3.5 text-blue-500 overflow-visible"
+                  viewBox="0 0 100 12"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M2 9C28 2 72 2 98 9"
+                    stroke="#2563eb"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                  />
                 </svg>
-              </button>
-              <button
-                onClick={() => scrollSlider('right')}
-                className="w-11 h-11 rounded-full bg-white border border-slate-200 shadow-sm hover:border-blue-500 hover:text-blue-600 text-slate-700 font-bold flex items-center justify-center transition-all cursor-pointer"
-                title="Next customer"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
+              </span>
+            </h2>
+            <p className="mt-5 text-slate-600 text-sm sm:text-base max-w-2xl leading-relaxed">
+              Our customers are our top priority we are dedicated to providing tailored solutions and exceptional services
+            </p>
           </div>
 
-          {/* ── LOGO CARDS SLIDER ROW (Matching Tabaarak ICT Card Style) ── */}
-          <div
-            ref={sliderRef}
-            className="flex items-center gap-5 overflow-x-auto pb-6 pt-2 scrollbar-none scroll-smooth snap-x"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {allCustomers.map((cust) => (
+          {/* ── 3 CUSTOMER LOGO CARDS (Exact Tabaarak Style with Real Logos) ── */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 mb-10">
+            {customerLogos.map((cust, idx) => (
               <div
                 key={cust.id}
-                onClick={() => setSelectedCustomer(cust)}
-                className={`snap-start shrink-0 relative bg-white rounded-2xl border-2 transition-all duration-300 p-5 flex flex-col items-center justify-center h-32 w-64 sm:w-72 cursor-pointer group shadow-sm hover:shadow-md ${
-                  selectedCustomer.id === cust.id
-                    ? 'border-blue-500 shadow-md ring-2 ring-blue-500/20'
-                    : 'border-slate-200/90 hover:border-slate-300'
+                onClick={() => setActiveCustomerIndex(idx)}
+                className={`relative group cursor-pointer transition-all duration-300 ${
+                  activeCustomerIndex === idx ? 'scale-102' : 'hover:-translate-y-1.5'
                 }`}
               >
-                {/* Colored Bottom-Right Accent Cutout (Tabaarak signature style) */}
-                <div
-                  className="absolute bottom-0 right-4 w-16 h-2 rounded-t-full transition-all duration-300 group-hover:w-24 group-hover:h-2.5"
-                  style={{ backgroundColor: cust.accentColor || '#2563eb' }}
-                ></div>
+                {/* Tabaarak Signature Blue Shadow / Accent Tab Underneath */}
+                <div className={`absolute -bottom-2.5 right-6 w-24 h-4 bg-blue-600 rounded-full transition-all duration-300 ${
+                  activeCustomerIndex === idx ? 'opacity-100 w-32 bg-blue-600 shadow-md shadow-blue-500/40' : 'opacity-70 group-hover:opacity-100 group-hover:w-28'
+                }`}></div>
 
-                {/* Card Logo Content */}
-                <div className="w-full flex items-center justify-center">
-                  {renderCustomerLogo(cust)}
+                {/* White Logo Card Container */}
+                <div className={`relative bg-white rounded-2xl border-2 p-6 sm:p-8 flex flex-col items-center justify-center h-44 shadow-lg transition-all duration-300 ${
+                  activeCustomerIndex === idx
+                    ? 'border-blue-500 ring-4 ring-blue-500/10 shadow-xl'
+                    : 'border-slate-200/90 group-hover:border-blue-300'
+                }`}>
+                  
+                  {/* Real Customer Logo Image */}
+                  <div className="w-full h-24 flex items-center justify-center p-1">
+                    <img
+                      src={cust.logo}
+                      alt={cust.name}
+                      className="max-h-20 max-w-[200px] w-auto h-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+
+                  {/* Domain tag & Live status */}
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="font-mono text-xs font-bold text-slate-700 group-hover:text-blue-600 transition-colors">
+                      {cust.domain}
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
 
+          {/* Slider / Pagination Indicator Dots */}
+          <div className="flex items-center justify-center gap-2.5 mb-10">
+            {customerLogos.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveCustomerIndex(idx)}
+                className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                  activeCustomerIndex === idx ? 'w-8 bg-blue-600 shadow-xs' : 'w-2.5 bg-slate-300 hover:bg-slate-400'
+                }`}
+                title={`View customer ${idx + 1}`}
+              />
+            ))}
+          </div>
+
           {/* ── EXPANDED DETAILS OF SELECTED CUSTOMER SYSTEM ── */}
-          {selectedCustomer && (
-            <div className="mt-8 bg-white rounded-3xl border border-slate-200/90 shadow-lg p-6 sm:p-10 transition-all duration-300">
+          {activeCustomer && (
+            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-6 sm:p-10 transition-all duration-300">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 
                 {/* Left System Info */}
@@ -593,23 +389,23 @@ const Home = () => {
                   <div className="flex flex-wrap items-center gap-3 mb-3">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold uppercase tracking-wider">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                      Live in Production
+                      Live Production System
                     </span>
                     <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-                      {selectedCustomer.category}
+                      {activeCustomer.category}
                     </span>
                   </div>
 
                   <h3 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight mb-2">
-                    {selectedCustomer.systemName}
+                    {activeCustomer.name}
                   </h3>
 
                   <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-6 font-medium">
-                    {selectedCustomer.desc}
+                    {activeCustomer.desc}
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-6">
-                    {selectedCustomer.features.map((feat, fIdx) => (
+                    {activeCustomer.features.map((feat, fIdx) => (
                       <div key={fIdx} className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-start gap-2 text-xs font-semibold text-slate-800">
                         <span className="text-emerald-600 font-black">✓</span>
                         <span>{feat}</span>
@@ -619,7 +415,7 @@ const Home = () => {
 
                   <div className="flex flex-wrap gap-2 items-center pt-4 border-t border-slate-100">
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mr-2">Tech Stack:</span>
-                    {selectedCustomer.tech.map((t, idx) => (
+                    {activeCustomer.tech.map((t, idx) => (
                       <span key={idx} className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 text-xs font-mono font-semibold">
                         {t}
                       </span>
@@ -634,7 +430,7 @@ const Home = () => {
                       Client Domain
                     </div>
                     <div className="text-lg font-mono font-black text-white break-all mb-4">
-                      {selectedCustomer.domain}
+                      {activeCustomer.domain}
                     </div>
                     <p className="text-xs text-slate-300 leading-relaxed mb-6">
                       Click below to test and browse this live production system directly.
@@ -643,7 +439,7 @@ const Home = () => {
 
                   <div className="space-y-3 pt-4 border-t border-white/10">
                     <a
-                      href={selectedCustomer.url}
+                      href={activeCustomer.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-sm transition-all shadow-md flex items-center justify-center gap-2"
