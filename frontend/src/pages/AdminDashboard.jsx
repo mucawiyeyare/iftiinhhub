@@ -25,6 +25,68 @@ const AdminDashboard = () => {
   const [toast, setToast] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
+  // State for edit user modal
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showPasswordFields, setShowPasswordFields] = useState(false);
+  const [editUserData, setEditUserData] = useState({
+    name: '',
+    email: '',
+    role: 'student',
+    password: '',
+    confirmPassword: ''
+  });
+  
+  // State for search terms
+  const [courseSearchTerm, setCourseSearchTerm] = useState('');
+  const [studentSearchTerm, setStudentSearchTerm] = useState('');
+  const [userSearchTerm, setUserSearchTerm] = useState('');
+  const [studentCourseSearchTerm, setStudentCourseSearchTerm] = useState('');
+  
+  // State for enrollment functionality
+  const [enrollStudentId, setEnrollStudentId] = useState('');
+  const [enrollCourseId, setEnrollCourseId] = useState('');
+  const [enrollmentMessage, setEnrollmentMessage] = useState('');
+  const [enrollStudentSearch, setEnrollStudentSearch] = useState('');
+  
+  // Video management state
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [selectedCourseForVideo, setSelectedCourseForVideo] = useState(null);
+  const [videoData, setVideoData] = useState({
+    title: '',
+    url: '',
+    duration: '',
+    section: ''
+  });
+  const [addingVideo, setAddingVideo] = useState(false);
+  
+  // Section management state
+  const [showSectionModal, setShowSectionModal] = useState(false);
+  const [newSectionName, setNewSectionName] = useState('');
+  const [addingSection, setAddingSection] = useState(false);
+  const [showSectionsView, setShowSectionsView] = useState(false);
+  const [selectedCourseForSections, setSelectedCourseForSections] = useState(null);
+  const [editingSection, setEditingSection] = useState(null);
+  const [editSectionName, setEditSectionName] = useState('');
+
+  // Certificate management state
+  const [certificates, setCertificates] = useState([]);
+  const [loadingCertificates, setLoadingCertificates] = useState(false);
+  const [certSearchTerm, setCertSearchTerm] = useState('');
+  const [showIssueCertModal, setShowIssueCertModal] = useState(false);
+  const [issuingCert, setIssuingCert] = useState(false);
+  const [newCert, setNewCert] = useState({
+    studentId: '',
+    courseId: '',
+    studentName: '',
+    studentEmail: '',
+    courseTitle: '',
+    certificateId: '',
+    grade: 'Distinction (98%)',
+    instructor: 'Eng. Mucawiye & IftiinHub Academic Team',
+    skills: 'HTML5 & CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js & Express, MongoDB'
+  });
+
   // Sidebar menu items
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: (
@@ -91,78 +153,16 @@ const AdminDashboard = () => {
   
   // Derived counts for sidebar badges
   const sidebarCounts = {
-    courses: courses.length,
-    students: users.filter(u => u.role === 'student' && u.status !== 'pending').length,
-    users: users.length,
-    enrollments: recentEnrollments.length,
-    videos: videoStats.totalVideos,
-    messages: messages.length,
-    certificates: certificates.length,
-    registeredStudents: users.filter(u => u.role === 'student' && u.status !== 'pending').length,
-    notifications: users.filter(u => u.status === 'pending').length,
+    courses: (courses || []).length,
+    students: (users || []).filter(u => u.role === 'student' && u.status !== 'pending').length,
+    users: (users || []).length,
+    enrollments: (recentEnrollments || []).length,
+    videos: videoStats.totalVideos || 0,
+    messages: (messages || []).length,
+    certificates: (certificates || []).length,
+    registeredStudents: (users || []).filter(u => u.role === 'student' && u.status !== 'pending').length,
+    notifications: (users || []).filter(u => u.status === 'pending').length,
   };
-  
-  // State for edit user modal
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [showPasswordFields, setShowPasswordFields] = useState(false);
-  const [editUserData, setEditUserData] = useState({
-    name: '',
-    email: '',
-    role: 'student',
-    password: '',
-    confirmPassword: ''
-  });
-  
-  // State for search terms
-  const [courseSearchTerm, setCourseSearchTerm] = useState('');
-  const [studentSearchTerm, setStudentSearchTerm] = useState('');
-  const [userSearchTerm, setUserSearchTerm] = useState('');
-  const [studentCourseSearchTerm, setStudentCourseSearchTerm] = useState('');
-  
-  // State for enrollment functionality
-  const [enrollStudentId, setEnrollStudentId] = useState('');
-  const [enrollCourseId, setEnrollCourseId] = useState('');
-  const [enrollmentMessage, setEnrollmentMessage] = useState('');
-  const [enrollStudentSearch, setEnrollStudentSearch] = useState('');
-  
-  // Video management state
-  const [showVideoModal, setShowVideoModal] = useState(false);
-  const [selectedCourseForVideo, setSelectedCourseForVideo] = useState(null);
-  const [videoData, setVideoData] = useState({
-    title: '',
-    url: '',
-    duration: '',
-    section: ''
-  });
-  const [addingVideo, setAddingVideo] = useState(false);
-  
-  // Section management state
-  const [showSectionModal, setShowSectionModal] = useState(false);
-  const [newSectionName, setNewSectionName] = useState('');
-  const [addingSection, setAddingSection] = useState(false);
-  const [showSectionsView, setShowSectionsView] = useState(false);
-  const [selectedCourseForSections, setSelectedCourseForSections] = useState(null);
-  const [editingSection, setEditingSection] = useState(null);
-  const [editSectionName, setEditSectionName] = useState('');
-
-  // Certificate management state
-  const [certificates, setCertificates] = useState([]);
-  const [loadingCertificates, setLoadingCertificates] = useState(false);
-  const [certSearchTerm, setCertSearchTerm] = useState('');
-  const [showIssueCertModal, setShowIssueCertModal] = useState(false);
-  const [issuingCert, setIssuingCert] = useState(false);
-  const [newCert, setNewCert] = useState({
-    studentId: '',
-    courseId: '',
-    studentName: '',
-    studentEmail: '',
-    courseTitle: '',
-    certificateId: '',
-    grade: 'Distinction (98%)',
-    instructor: 'Eng. Mucawiye & IftiinHub Academic Team',
-    skills: 'HTML5 & CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js & Express, MongoDB'
-  });
 
   const handleStudentSelect = (selectedStudentId) => {
     const selected = users.find(u => u._id === selectedStudentId);
