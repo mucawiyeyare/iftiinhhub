@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PageTitle from '../components/PageTitle';
 import fullstackImg from '../assets/program-fullstack.png';
@@ -29,34 +29,90 @@ const programs = [
   }
 ];
 
-const ictProjects = [
+const clientSystems = [
   {
-    title: 'University & School Management Portals',
-    category: 'Education Systems',
-    desc: 'Complete student lifecycle management, attendance tracking, tuition billing, exam grading, and parent/teacher communication portals.',
-    icon: '🏫',
-    tech: ['React.js', 'Node.js', 'PostgreSQL', 'MongoDB']
+    id: 'dhiigkaal',
+    name: 'Dhiigkaal Blood Bank & Healthcare System',
+    url: 'https://dhiigkaal.iftiinhub.com',
+    domain: 'dhiigkaal.iftiinhub.com',
+    badge: 'Healthcare & Blood Bank ERP',
+    tagline: 'Electronic Blood Donor Registry, Emergency Blood Match & Laboratory Screening System',
+    desc: 'A mission-critical healthcare application engineered for hospitals and blood banks. Features real-time donor tracking, blood unit inventories, emergency request broadcast, and lab results.',
+    features: [
+      'Digital Donor Registration & Blood Type Database',
+      'Emergency Blood Match & Real-time Request Dispatch',
+      'Hospital & Laboratory Screening Workflows',
+      'Automated SMS Notifications & Blood Stock Tracking'
+    ],
+    tech: ['React.js', 'Node.js', 'Express', 'MongoDB', 'Tailwind CSS', 'REST APIs'],
+    color: 'from-rose-500 to-red-600',
+    iconBg: 'bg-rose-50 text-rose-600 border-rose-200',
+    icon: '🩸',
+    logoText: 'DHIIGKAAL HEALTH',
+    status: 'Live in Production'
   },
   {
-    title: 'Hospital & Clinic Information Systems',
-    category: 'Healthcare Systems',
-    desc: 'Electronic Health Records (EHR), patient appointments, digital doctor consultations, laboratory test workflows, and pharmacy billing.',
-    icon: '🏥',
-    tech: ['React.js', 'Express', 'Cloud Databases', 'Role Security']
+    id: 'snabdental',
+    name: 'SNAB Dental Clinic & Healthcare Management',
+    url: 'https://snabdental.iftiinhub.com',
+    domain: 'snabdental.iftiinhub.com',
+    badge: 'Dental & Clinical EHR System',
+    tagline: 'Complete Dental Clinic EHR, Online Appointment Booking, Tooth Charting & Invoicing',
+    desc: 'Specialized enterprise clinical management suite for modern dental clinics. Streamlines patient intake, medical history, dental procedure charting, prescriptions, and financial billing.',
+    features: [
+      'Interactive Dental Treatment & Tooth Charting System',
+      'Online Patient Booking & Doctor Schedule Manager',
+      'Laboratory Test Requests & Results Management',
+      'Point of Sale, Medical Invoicing & Payment Receipts'
+    ],
+    tech: ['React.js', 'Node.js', 'Express', 'MongoDB', 'JWT Auth', 'Tailwind CSS'],
+    color: 'from-emerald-500 to-teal-600',
+    iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+    icon: '🦷',
+    logoText: 'SNAB DENTAL CLINIC',
+    status: 'Live in Production'
   },
   {
-    title: 'Enterprise ERP & Inventory Portals',
-    category: 'Business Systems',
-    desc: 'Stock tracking, point-of-sale (POS), invoice generation, expense monitoring, staff payroll, and real-time financial reporting.',
-    icon: '📊',
-    tech: ['Next.js / React', 'Node.js', 'REST APIs', 'Cloud Backups']
+    id: 'ntw',
+    name: 'NTW Academic & University Portal (Hormuud University)',
+    url: 'https://ntw.hu.edu.so',
+    domain: 'ntw.hu.edu.so',
+    badge: 'Higher Education Management System',
+    tagline: 'Official University Portal, Student Admissions, Semester Grading & Academic Records',
+    desc: 'High-performance university management portal powering student lifecycles, faculty course allocations, interactive student grade books, and official credential verifications.',
+    features: [
+      'Comprehensive Student Admission & Enrollment Hub',
+      'Automated Semester Grade Books & Transcript Generation',
+      'Course Syllabus, Lecture Notes & Video Materials',
+      'Online Certificate & Credential Verification Portal'
+    ],
+    tech: ['React.js', 'Node.js', 'Express', 'Linux VPS', 'SSL Hardened'],
+    color: 'from-blue-600 to-indigo-700',
+    iconBg: 'bg-blue-50 text-blue-600 border-blue-200',
+    icon: '🎓',
+    logoText: 'HORMUUD UNIV - NTW',
+    status: 'Live in Production'
   },
   {
-    title: 'Cloud Infrastructure & Database Solutions',
-    category: 'Infrastructure',
-    desc: 'Linux VPS administration, Nginx load balancing, SSL hardening, automated nightly backups, and multi-tenant database optimization.',
-    icon: '☁️',
-    tech: ['Linux', 'Nginx', 'Docker', 'MongoDB', 'PostgreSQL']
+    id: 'elmiportal',
+    name: 'Mr. Elmi Institutional Document Management Portal',
+    url: 'https://mr.elmiportal.iftiinhub.com',
+    domain: 'mr.elmiportal.iftiinhub.com',
+    badge: 'Enterprise Document Archive',
+    tagline: 'High-Security Cloud Document Archiving, Permission Access & File Verification',
+    desc: 'Enterprise document filing and records portal engineered for institutions. Provides secure cloud storage, digital document verification, granular permission policies, and audit logs.',
+    features: [
+      'Digital Records Archive & Document Filing Architecture',
+      'Role-based Secure Document Permissions & Access Control',
+      'Document Authenticity Verification & Watermarking',
+      'Automated Activity Logs & Enterprise Auditing'
+    ],
+    tech: ['React.js', 'Node.js', 'Express', 'MongoDB', 'Cloud Storage'],
+    color: 'from-amber-500 to-amber-700',
+    iconBg: 'bg-amber-50 text-amber-700 border-amber-200',
+    icon: '📑',
+    logoText: 'ELMI ENTERPRISE PORTAL',
+    status: 'Live in Production'
   }
 ];
 
@@ -82,6 +138,18 @@ const testimonials = [
 ];
 
 const Home = () => {
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  // Auto-play slider every 5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % clientSystems.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const currentSystem = clientSystems[activeSlide];
+
   return (
     <div className="min-h-screen bg-white text-slate-900 transition-colors duration-300">
       <PageTitle title="IftiinHub - Live Zoom Tech Training & Custom ICT Systems" />
@@ -116,10 +184,10 @@ const Home = () => {
                 🚀 Explore Live Zoom Programs
               </a>
               <a
-                href="#ict-showcase"
+                href="#our-customers"
                 className="btn-brand-dark text-sm sm:text-base px-8 py-3.5"
               >
-                🏢 Build Custom ICT Systems
+                🏢 View Our Live Customer Systems
               </a>
             </div>
 
@@ -138,8 +206,8 @@ const Home = () => {
                 <div className="text-xs font-semibold text-slate-600 mt-0.5">Bilingual Instruction</div>
               </div>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                <div className="text-xl sm:text-2xl font-black text-slate-900">Enterprise</div>
-                <div className="text-xs font-semibold text-slate-600 mt-0.5">Custom Software Systems</div>
+                <div className="text-xl sm:text-2xl font-black text-slate-900">Real Systems</div>
+                <div className="text-xs font-semibold text-slate-600 mt-0.5">Deployed in Production</div>
               </div>
             </div>
           </div>
@@ -243,66 +311,217 @@ const Home = () => {
       </section>
 
       {/* ═════════════════════════════════════════════════════════════════════
-          ICT & ENTERPRISE SYSTEMS BUILDING SHOWCASE
+          OUR CUSTOMERS & REAL SYSTEMS WE BUILT (Requested by User)
       ═════════════════════════════════════════════════════════════════════ */}
-      <section id="ict-showcase" className="py-16 sm:py-24 bg-slate-50 border-y border-slate-200">
+      <section id="our-customers" className="py-16 sm:py-24 bg-slate-50 border-y border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <span className="badge-brand-gold mb-2">Institutional Systems</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
-              We Build Custom <span className="text-amber-500">ICT &amp; Enterprise Systems</span>
+          
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-300 text-amber-800 text-xs sm:text-sm font-bold uppercase tracking-wider mb-3 shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              OUR CUSTOMERS &amp; REAL DEPLOYED SYSTEMS
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-black text-slate-950 tracking-tight">
+              Real Systems We Have <span className="text-amber-500">Built &amp; Engineered</span>
             </h2>
-            <p className="mt-3 text-slate-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-              In addition to training, IftiinHub partners with educational institutions, healthcare centers, and businesses to build custom web applications, student portals, and cloud infrastructure.
+            <p className="mt-4 text-slate-600 max-w-3xl mx-auto text-sm sm:text-base leading-relaxed">
+              We engineer mission-critical software systems and cloud database architectures for hospitals, specialized clinics, universities, and institutions across the country.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            {ictProjects.map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm hover:shadow-md transition-all"
+          {/* ── CLIENT SYSTEMS LIVE LOGO TICKER / SLIDER NAVIGATION ── */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
+            {clientSystems.map((item, idx) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveSlide(idx)}
+                className={`px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 flex items-center gap-2.5 border cursor-pointer ${
+                  activeSlide === idx
+                    ? 'bg-slate-950 text-amber-400 border-slate-950 shadow-lg scale-105'
+                    : 'bg-white text-slate-700 border-slate-200 hover:border-amber-400 hover:bg-amber-50/50'
+                }`}
               >
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="text-3xl p-3 bg-amber-50 rounded-xl border border-amber-200">
-                    {item.icon}
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold uppercase text-amber-700 tracking-wider">
-                      {item.category}
+                <span className="text-base">{item.icon}</span>
+                <span className="font-mono">{item.domain}</span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              </button>
+            ))}
+          </div>
+
+          {/* ── ACTIVE FEATURED SYSTEM HERO CARD SLIDER ── */}
+          <div className="bg-white rounded-3xl border-2 border-slate-200/90 shadow-xl overflow-hidden mb-12 transition-all duration-500">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
+              
+              {/* Left Column: Visual Brand Card */}
+              <div className="lg:col-span-5 bg-gradient-to-br from-slate-950 via-slate-900 to-zinc-900 p-8 sm:p-12 text-white flex flex-col justify-between relative overflow-hidden">
+                {/* Ambient Glow */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-6">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-bold uppercase tracking-wider">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                      {currentSystem.status}
                     </span>
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-950">
-                      {item.title}
-                    </h3>
+                    <span className="text-xs font-mono text-slate-400">
+                      System {activeSlide + 1} of {clientSystems.length}
+                    </span>
+                  </div>
+
+                  <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-4xl mb-6 shadow-inner">
+                    {currentSystem.icon}
+                  </div>
+
+                  <span className="text-xs font-bold uppercase tracking-widest text-amber-400">
+                    {currentSystem.badge}
+                  </span>
+                  <h3 className="text-2xl sm:text-3xl font-black tracking-tight mt-1 mb-3 text-white">
+                    {currentSystem.name}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-6">
+                    {currentSystem.tagline}
+                  </p>
+                </div>
+
+                {/* Direct Live Link Action */}
+                <div className="pt-6 border-t border-white/10 space-y-3">
+                  <a
+                    href={currentSystem.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-3.5 px-6 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-black text-sm transition-all shadow-lg flex items-center justify-center gap-2"
+                  >
+                    <span>🚀 Visit Live System</span>
+                    <span className="font-mono text-xs font-normal">({currentSystem.domain})</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                  
+                  {/* Slider Control Arrows */}
+                  <div className="flex items-center justify-between pt-2">
+                    <button
+                      onClick={() => setActiveSlide((prev) => (prev - 1 + clientSystems.length) % clientSystems.length)}
+                      className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold text-slate-300 flex items-center gap-1 cursor-pointer"
+                    >
+                      ← Previous System
+                    </button>
+                    <button
+                      onClick={() => setActiveSlide((prev) => (prev + 1) % clientSystems.length)}
+                      className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold text-slate-300 flex items-center gap-1 cursor-pointer"
+                    >
+                      Next System →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: System Capabilities & Architecture */}
+              <div className="lg:col-span-7 p-8 sm:p-12 flex flex-col justify-between">
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-2">
+                    System Architecture &amp; Solution Overview
+                  </h4>
+                  <p className="text-sm sm:text-base text-slate-700 leading-relaxed mb-6 font-medium">
+                    {currentSystem.desc}
+                  </p>
+
+                  <h5 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-3">
+                    Key Modules &amp; Engineered Features:
+                  </h5>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+                    {currentSystem.features.map((feat, fIdx) => (
+                      <div key={fIdx} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-start gap-2.5">
+                        <span className="text-emerald-600 font-black text-sm">✓</span>
+                        <span className="text-xs font-semibold text-slate-800 leading-snug">{feat}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                <p className="text-sm text-slate-600 leading-relaxed mb-6">
-                  {item.desc}
-                </p>
+                {/* Tech Stack Footer */}
+                <div className="pt-6 border-t border-slate-100">
+                  <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5">
+                    Engineering Stack &amp; Cloud Infrastructure:
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {currentSystem.tech.map((t, tIdx) => (
+                      <span
+                        key={tIdx}
+                        className="px-3 py-1 rounded-lg bg-amber-50 text-amber-900 text-xs font-mono font-bold border border-amber-200 shadow-2xs"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
 
-                <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-100">
-                  {item.tech.map((t, tIdx) => (
-                    <span
-                      key={tIdx}
-                      className="px-2.5 py-1 rounded-md bg-slate-50 text-slate-700 text-xs font-mono font-medium border border-slate-200"
-                    >
-                      {t}
+            </div>
+          </div>
+
+          {/* ── 4 CLIENT SYSTEM CARDS GRID (Side-by-Side Reference) ── */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-14">
+            {clientSystems.map((item, idx) => (
+              <div
+                key={item.id}
+                onClick={() => setActiveSlide(idx)}
+                className={`bg-white rounded-2xl p-6 border-2 transition-all duration-300 flex flex-col justify-between cursor-pointer group ${
+                  activeSlide === idx
+                    ? 'border-amber-500 shadow-lg scale-102 bg-amber-50/10'
+                    : 'border-slate-200 shadow-sm hover:border-slate-300 hover:shadow-md'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="text-2xl">{item.icon}</span>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      Live
                     </span>
-                  ))}
+                  </div>
+
+                  <h4 className="font-bold text-slate-950 text-base leading-snug mb-1 group-hover:text-amber-700 transition">
+                    {item.name}
+                  </h4>
+                  <p className="font-mono text-xs text-amber-800 font-semibold mb-3">
+                    {item.domain}
+                  </p>
+                  <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed mb-4">
+                    {item.tagline}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase">
+                    {item.badge.split(' ')[0]}
+                  </span>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-xs font-bold text-amber-700 hover:text-amber-900 inline-flex items-center gap-1"
+                  >
+                    Open Live ↗
+                  </a>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Consultation Banner */}
-          <div className="bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 rounded-2xl p-8 sm:p-12 text-slate-950 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+          <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-orange-500 rounded-3xl p-8 sm:p-12 text-slate-950 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
             <div>
+              <span className="inline-block px-3 py-1 rounded-full bg-black/10 text-slate-950 text-xs font-black uppercase tracking-wider mb-2">
+                Enterprise Custom Engineering
+              </span>
               <h3 className="text-2xl sm:text-3xl font-black mb-2">
-                Need a Custom ICT Software System?
+                Need a Custom ICT Software System for Your Organization?
               </h3>
-              <p className="text-slate-900 font-medium text-sm sm:text-base max-w-xl">
-                Let us build your school portal, hospital management software, or enterprise ERP. Contact our engineering team for a project proposal.
+              <p className="text-slate-950/90 font-medium text-sm sm:text-base max-w-xl">
+                We engineer scalable hospital software, school and university portals, blood bank ERPs, and cloud database solutions. Let's build your system today.
               </p>
             </div>
             <div className="flex flex-wrap gap-3 shrink-0">
@@ -316,12 +535,13 @@ const Home = () => {
               </a>
               <Link
                 to="/contact"
-                className="px-6 py-3.5 rounded-xl bg-white/40 backdrop-blur-sm border border-slate-950/20 text-slate-950 font-bold text-sm hover:bg-white/60 transition-all"
+                className="px-6 py-3.5 rounded-xl bg-white/50 backdrop-blur-sm border border-slate-950/20 text-slate-950 font-bold text-sm hover:bg-white/70 transition-all"
               >
-                ✉️ Contact Us
+                ✉️ Contact Engineering Team
               </Link>
             </div>
           </div>
+
         </div>
       </section>
 
