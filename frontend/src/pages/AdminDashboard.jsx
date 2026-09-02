@@ -233,9 +233,11 @@ const AdminDashboard = () => {
     setLoadingCertificates(true);
     try {
       const res = await axios.get('/certificates');
-      setCertificates(res.data);
+      const rawCerts = Array.isArray(res.data) ? res.data : (res.data?.certificates || []);
+      setCertificates(rawCerts);
     } catch (error) {
       console.error('Failed to fetch certificates:', error);
+      setCertificates([]);
     } finally {
       setLoadingCertificates(false);
     }
@@ -253,7 +255,7 @@ const AdminDashboard = () => {
       const endpoint = newCert.studentId ? '/certificates/assign-complete' : '/certificates';
       const res = await axios.post(endpoint, newCert);
       if (res.data && res.data.certificate) {
-        setCertificates([res.data.certificate, ...certificates]);
+        setCertificates(prev => [res.data.certificate, ...(Array.isArray(prev) ? prev : [])]);
       } else {
         await fetchCertificates();
       }
@@ -283,7 +285,7 @@ const AdminDashboard = () => {
     if (!window.confirm('Are you sure you want to delete this certificate?')) return;
     try {
       await axios.delete(`/certificates/${id}`);
-      setCertificates(certificates.filter(c => c._id !== id));
+      setCertificates(prev => (Array.isArray(prev) ? prev.filter(c => c._id !== id) : []));
       setToast('Certificate deleted successfully');
       setTimeout(() => setToast(''), 3000);
     } catch (error) {
@@ -292,22 +294,25 @@ const AdminDashboard = () => {
     }
   };
 
-
   const fetchMessages = async () => {
     try {
       const res = await axios.get('/messages');
-      setMessages(res.data);
+      const rawMsgs = Array.isArray(res.data) ? res.data : (res.data?.messages || []);
+      setMessages(rawMsgs);
     } catch (error) {
       console.error('Failed to fetch messages:', error);
+      setMessages([]);
     }
   };
 
   const fetchCategories = async () => {
     try {
       const res = await axios.get('/categories');
-      setCategories(res.data);
+      const rawCats = Array.isArray(res.data) ? res.data : (res.data?.categories || []);
+      setCategories(rawCats);
     } catch (error) {
       console.error('Failed to fetch categories:', error);
+      setCategories([]);
     }
   };
 
@@ -316,7 +321,7 @@ const AdminDashboard = () => {
     if (!newCategoryName.trim()) return;
     try {
       const res = await axios.post('/categories', { name: newCategoryName.trim().toLowerCase() });
-      setCategories([...categories, res.data]);
+      setCategories(prev => [...(Array.isArray(prev) ? prev : []), res.data]);
       setNewCategoryName('');
       setToast('Category added successfully');
       setTimeout(() => setToast(''), 3000);
@@ -330,7 +335,7 @@ const AdminDashboard = () => {
     if (!window.confirm('Are you sure you want to delete this category?')) return;
     try {
       await axios.delete(`/categories/${id}`);
-      setCategories(categories.filter(c => c._id !== id));
+      setCategories(prev => (Array.isArray(prev) ? prev.filter(c => c._id !== id) : []));
       setToast('Category deleted successfully');
       setTimeout(() => setToast(''), 3000);
     } catch (error) {
@@ -348,14 +353,20 @@ const AdminDashboard = () => {
         axios.get('/dashboard/recent-enrollments')
       ]);
       
-      setStats(statsRes.data);
-      setCourses(coursesRes.data);
-      setUsers(usersRes.data);
-      setRecentEnrollments(enrollmentsRes.data);
+      setStats(statsRes.data || null);
+      
+      const rawCourses = Array.isArray(coursesRes.data) ? coursesRes.data : (coursesRes.data?.courses || []);
+      const rawUsers = Array.isArray(usersRes.data) ? usersRes.data : (usersRes.data?.users || []);
+      const rawEnrollments = Array.isArray(enrollmentsRes.data) ? enrollmentsRes.data : (enrollmentsRes.data?.enrollments || []);
+      
+      setCourses(rawCourses);
+      setUsers(rawUsers);
+      setRecentEnrollments(rawEnrollments);
       
       // Calculate video statistics
-      calculateVideoStats(coursesRes.data);
+      calculateVideoStats(rawCourses);
     } catch (error) {
+      console.error('Failed to fetch dashboard data:', error);
       setError('Failed to fetch dashboard data');
     } finally {
       setLoading(false);
@@ -388,7 +399,7 @@ const AdminDashboard = () => {
     if (window.confirm('Are you sure you want to delete this course?')) {
       try {
         await axios.delete(`/courses/${courseId}`);
-        setCourses(courses.filter(course => course._id !== courseId));
+        setCourses(prev => (Array.isArray(prev) ? prev.filter(course => course._id !== courseId) : []));
       } catch (error) {
         alert('Failed to delete course');
       }
@@ -399,7 +410,7 @@ const AdminDashboard = () => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
         await axios.delete(`/users/${userId}`);
-        setUsers(users.filter(user => user._id !== userId));
+        setUsers(prev => (Array.isArray(prev) ? prev.filter(user => user._id !== userId) : []));
       } catch (error) {
         alert('Failed to delete user');
       }
@@ -465,7 +476,8 @@ const AdminDashboard = () => {
       }
       
       const res = await axios.put(`/users/${currentUser._id}`, updateData);
-      setUsers(users.map(user => user._id === currentUser._id ? res.data : user));
+      const updatedItem = res.data?.user || res.data;
+      setUsers(prev => (Array.isArray(prev) ? prev.map(user => user._id === currentUser._id ? updatedItem : user) : []));
       setIsEditModalOpen(false);
       setToast('User updated successfully');
       setTimeout(() => setToast(''), 3000);
@@ -480,7 +492,7 @@ const AdminDashboard = () => {
     if (!window.confirm(`Are you sure you want to ${targetStatus} this user?`)) return;
     try {
       const res = await axios.put(`/users/${userId}/status`, { status: targetStatus });
-      setUsers(users.map(u => u._id === userId ? { ...u, status: targetStatus } : u));
+      setUsers(prev => (Array.isArray(prev) ? prev.map(u => u._id === userId ? { ...u, status: targetStatus } : u) : []));
       setToast(`User ${targetStatus} successfully!`);
       setTimeout(() => setToast(''), 3000);
     } catch (error) {
