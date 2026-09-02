@@ -20,10 +20,12 @@ const Footer = () => {
             <p className="text-sm text-slate-600 max-w-md leading-relaxed mb-6">
               IftiinHub provides live online Zoom tech bootcamps in <strong className="text-slate-900">Full-Stack Web Development</strong> and <strong className="text-slate-900">Data Analysis (Excel &amp; Power BI)</strong>, and engineers custom enterprise software management systems for institutions across the region.
             </p>
-            <div className="flex items-center gap-3 text-xs font-bold text-amber-800">
+            <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-amber-800">
               <span>💡 Live Zoom Tech Bootcamps</span>
               <span>•</span>
               <span>⚡ Enterprise ICT Systems</span>
+              <span>•</span>
+              <span>📜 Verified Credentials</span>
             </div>
           </div>
 
@@ -46,6 +48,12 @@ const Footer = () => {
               <li>
                 <Link to="/training-programs" className="text-slate-600 hover:text-amber-600 font-medium transition-colors">
                   Training Programs
+                </Link>
+              </li>
+              <li>
+                <Link to="/verify-certificate" className="text-slate-600 hover:text-amber-600 font-medium transition-colors flex items-center gap-1.5">
+                  <span>📜</span>
+                  <span>Verify Certificate</span>
                 </Link>
               </li>
               <li>
@@ -98,6 +106,7 @@ const Footer = () => {
           <div className="flex gap-6">
             <Link to="/about" className="hover:text-slate-800">Privacy &amp; Terms</Link>
             <Link to="/contact" className="hover:text-slate-800">Help Desk</Link>
+            <Link to="/verify-certificate" className="hover:text-slate-800">Verify Certificate</Link>
           </div>
         </div>
       </div>

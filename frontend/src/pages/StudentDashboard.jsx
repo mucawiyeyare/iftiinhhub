@@ -1,39 +1,54 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import PageTitle from '../components/PageTitle';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [enrollments, setEnrollments] = useState([]);
+  const [certificates, setCertificates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [copiedId, setCopiedId] = useState('');
   
   const [activeTab, setActiveTab] = useState('overview');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    fetchEnrollments();
+    fetchDashboardData();
   }, []);
 
-  const fetchEnrollments = async () => {
+  const fetchDashboardData = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get('/enrollments/student');
-      setEnrollments(response.data);
-    } catch (error) {
-      setError('Failed to fetch enrollments');
+      const [enrollRes, certRes] = await Promise.all([
+        axios.get('/enrollments/student').catch(() => ({ data: [] })),
+        axios.get('/certificates/my-certificates').catch(() => ({ data: [] }))
+      ]);
+      setEnrollments(enrollRes.data || []);
+      setCertificates(certRes.data || []);
+    } catch (err) {
+      setError('Failed to fetch dashboard data');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleCopyLink = (certId) => {
+    const url = `${window.location.origin}/verify-certificate?id=${encodeURIComponent(certId)}`;
+    navigator.clipboard.writeText(url);
+    setCopiedId(certId);
+    setTimeout(() => setCopiedId(''), 3000);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading your dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mb-4"></div>
+          <p className="text-slate-600 font-medium">Loading your student dashboard...</p>
         </div>
       </div>
     );
@@ -41,14 +56,14 @@ const StudentDashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
+        <div className="bg-white p-8 rounded-2xl shadow-lg max-w-md w-full text-center border border-slate-200">
           <div className="text-red-500 text-5xl mb-4">⚠️</div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">Something went wrong</h2>
+          <p className="text-slate-600 mb-6">{error}</p>
           <button 
-            onClick={fetchEnrollments}
-            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition duration-200"
+            onClick={fetchDashboardData}
+            className="bg-amber-500 text-slate-950 font-bold px-6 py-2.5 rounded-xl hover:bg-amber-400 transition duration-200 shadow-md"
           >
             Try Again
           </button>
@@ -69,10 +84,20 @@ const StudentDashboard = () => {
     },
     {
       id: 'courses',
-      label: 'Student Dashboard',
+      label: 'My Courses',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      )
+    },
+    {
+      id: 'certificates',
+      label: 'My Certificates',
+      badge: certificates.length > 0 ? certificates.length : null,
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
         </svg>
       )
     },
@@ -97,88 +122,112 @@ const StudentDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <PageTitle title="Student Dashboard - IFTIINHUB" />
+    <div className="min-h-screen bg-slate-100 flex">
+      <PageTitle title="Student Dashboard - IftiinHub" />
+
       {/* Mobile Top Bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm h-14 flex items-center px-4">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-amber-500 shadow-sm h-14 flex items-center px-4">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="mr-3 p-1.5 rounded-lg border border-gray-200 bg-white"
+          className="mr-3 p-1.5 rounded-lg border border-slate-200 bg-white text-slate-700"
         >
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <h1 className="text-base font-bold text-gray-800 truncate">Student Dashboard</h1>
+        <h1 className="text-base font-bold text-slate-900 truncate">Student Dashboard</h1>
       </div>
 
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-purple-950 bg-opacity-60 z-40"
+          className="md:hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-40"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      {/* Professional Sidebar */}
-      <aside className={`w-72 bg-white shadow-lg min-h-screen fixed left-0 top-0 z-40 overflow-y-auto transform transition-transform duration-300 ease-in-out ${
+      {/* Brand Sidebar */}
+      <aside className={`w-72 bg-white shadow-xl min-h-screen fixed left-0 top-0 z-40 overflow-y-auto transform transition-transform duration-300 ease-in-out border-r border-slate-200 ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
       }`}>
         {/* Brand Header */}
-        <div className="px-6 py-8 border-b border-purple-500 bg-purple-500">
+        <div className="px-6 py-6 border-b-2 border-amber-500 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-slate-950">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Link
                 to="/"
-                className="flex items-center p-2 text-purple-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all duration-200 group"
+                className="flex items-center p-2 text-slate-900 hover:bg-white/30 rounded-xl transition duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
+                title="Back to Homepage"
               >
-                <svg className="w-5 h-5 text-white group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
               </Link>
-              <h2 className="text-xl font-bold text-white tracking-wide">STUDENT DASHBOARD</h2>
+              <div>
+                <h2 className="text-lg font-black tracking-wide text-slate-950">STUDENT HUB</h2>
+                <p className="text-[11px] font-bold text-slate-900/80 uppercase tracking-wider">IftiinHub Academy</p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Navigation */}
         <nav className="px-4 py-6">
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             {menuItems.map(item => (
               <button
                 key={item.id}
-                onClick={item.id === 'profile' ? () => window.location.href = '/profile' : () => {
+                onClick={item.id === 'profile' ? () => navigate('/profile') : () => {
                   setActiveTab(item.id);
                   setIsMobileMenuOpen(false);
                 }}
-                className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-all duration-200 group ${
+                className={`w-full flex items-center justify-between px-4 py-3 text-left rounded-xl transition-all duration-200 group ${
                   activeTab === item.id && item.id !== 'profile'
-                    ? 'bg-purple-600 text-white shadow-md'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                    : 'text-slate-700 hover:bg-amber-50 hover:text-amber-900 font-semibold'
                 }`}
               >
-                <span className={`w-5 h-5 mr-3 ${
-                  activeTab === item.id && item.id !== 'profile' ? 'text-white' : 'text-gray-400 group-hover:text-gray-600'
-                }`}>
-                  {item.icon}
-                </span>
-                <span className="font-medium">{item.label}</span>
+                <div className="flex items-center">
+                  <span className={`w-5 h-5 mr-3 ${
+                    activeTab === item.id && item.id !== 'profile' ? 'text-slate-950' : 'text-slate-400 group-hover:text-amber-700'
+                  }`}>
+                    {item.icon}
+                  </span>
+                  <span className="text-sm">{item.label}</span>
+                </div>
+                {item.badge && (
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
+                    activeTab === item.id ? 'bg-slate-950 text-white' : 'bg-amber-100 text-amber-900'
+                  }`}>
+                    {item.badge}
+                  </span>
+                )}
               </button>
             ))}
             
-            {/* Browse link separate from tabs */}
-            <div className="pt-4 mt-4 border-t border-gray-100">
-                <Link
-                  to="/courses"
-                  className="w-full flex items-center px-4 py-3 text-left rounded-lg transition-all duration-200 group text-indigo-600 hover:bg-indigo-50"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <span className="w-5 h-5 mr-3 text-indigo-500">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                  </span>
-                  <span className="font-medium">Browse Catalog</span>
-                </Link>
+            {/* Quick Link to Catalog & Verify */}
+            <div className="pt-4 mt-4 border-t border-slate-100 space-y-1">
+              <Link
+                to="/courses"
+                className="w-full flex items-center px-4 py-2.5 text-left rounded-xl transition-all duration-200 group text-amber-800 hover:bg-amber-50 font-semibold text-sm"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <span className="w-5 h-5 mr-3 text-amber-600">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </span>
+                <span>Browse All Courses</span>
+              </Link>
+              <Link
+                to="/verify-certificate"
+                className="w-full flex items-center px-4 py-2.5 text-left rounded-xl transition-all duration-200 group text-emerald-800 hover:bg-emerald-50 font-semibold text-sm"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <span className="w-5 h-5 mr-3 text-emerald-600">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </span>
+                <span>Public Certificate Portal</span>
+              </Link>
             </div>
           </div>
         </nav>
@@ -187,87 +236,144 @@ const StudentDashboard = () => {
       {/* Main Content Area */}
       <main className="flex-1 ml-0 md:ml-72 min-h-screen overflow-x-hidden">
         {/* Top Header */}
-        <header className="bg-white shadow-sm px-8 py-4 sticky top-0 z-30 flex justify-between items-center hidden md:flex">
-          <h2 className="text-2xl font-bold text-gray-800 tracking-tight">
+        <header className="bg-white border-b border-slate-200 px-8 py-4 sticky top-0 z-30 justify-between items-center hidden md:flex shadow-xs">
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight">
             {activeTab === 'overview' && 'Dashboard Overview'}
-            {activeTab === 'courses' && 'Student Dashboard'}
+            {activeTab === 'courses' && 'My Courses'}
+            {activeTab === 'certificates' && 'My Certificates & Credentials'}
             {activeTab === 'activity' && 'Recent Activity'}
           </h2>
-          <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold border border-purple-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-amber-100 border border-amber-300 rounded-full flex items-center justify-center text-amber-900 font-black text-base shadow-sm">
                {user?.name ? user.name.charAt(0).toUpperCase() : 'S'}
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900 leading-tight">{user?.name || 'Student'}</p>
-              <p className="text-xs text-gray-500">{user?.email || 'student@iftiinhub.com'}</p>
+              <p className="text-sm font-bold text-slate-900 leading-tight">{user?.name || 'Student'}</p>
+              <p className="text-xs text-slate-500">{user?.email || 'student@iftiinhub.com'}</p>
             </div>
           </div>
         </header>
 
-        <div className="p-3 sm:p-6 lg:p-8 pt-16 md:pt-8">
+        <div className="p-4 sm:p-6 lg:p-8 pt-16 md:pt-8 max-w-7xl mx-auto">
 
-          {/* OVERVIEW TAB */}
+          {/* ═══════════════════════════════════════════
+             OVERVIEW TAB
+          ═══════════════════════════════════════════ */}
           {activeTab === 'overview' && (
             <div className="space-y-8 animate-fadeIn">
-              {/* Welcome Section */}
-              <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl shadow-lg p-8 text-white">
-                <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.name?.split(' ')[0]}! 👋</h1>
-                <p className="text-purple-100 text-lg">You've enrolled in {enrollments.length} {enrollments.length === 1 ? 'course' : 'courses'}. Ready to continue your learning journey?</p>
+              {/* Welcome Banner */}
+              <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 rounded-3xl shadow-xl p-8 sm:p-10 text-slate-950 relative overflow-hidden">
+                <div className="relative z-10">
+                  <span className="inline-block px-3 py-1 rounded-full bg-black/10 text-slate-950 text-xs font-bold uppercase tracking-wider mb-3">
+                    Student Learning Portal
+                  </span>
+                  <h1 className="text-3xl sm:text-4xl font-black mb-2">Welcome back, {user?.name?.split(' ')[0]}! 👋</h1>
+                  <p className="text-slate-950/80 text-base sm:text-lg max-w-2xl font-medium">
+                    You're enrolled in {enrollments.length} {enrollments.length === 1 ? 'course' : 'courses'} and have earned {certificates.length} verified {certificates.length === 1 ? 'certificate' : 'certificates'}.
+                  </p>
+                </div>
               </div>
 
               {/* Stats Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center hover:shadow-md transition-shadow">
-                  <div className="bg-blue-100 rounded-full p-4 mr-4 text-blue-600">
-                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex items-center hover:shadow-md transition">
+                  <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mr-4 text-blue-700">
+                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Courses</h3>
-                    <p className="text-3xl font-extrabold text-gray-900">{enrollments.length}</p>
+                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Enrolled Courses</h3>
+                    <p className="text-3xl font-black text-slate-900">{enrollments.length}</p>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center hover:shadow-md transition-shadow">
-                  <div className="bg-green-100 rounded-full p-4 mr-4 text-green-600">
-                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex items-center hover:shadow-md transition">
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mr-4 text-emerald-700">
+                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Completed</h3>
-                    <p className="text-3xl font-extrabold text-gray-900">
-                      {enrollments.filter(e => e.status === 'completed').length}
-                    </p>
+                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">My Certificates</h3>
+                    <p className="text-3xl font-black text-slate-900">{certificates.length}</p>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center hover:shadow-md transition-shadow">
-                  <div className="bg-yellow-100 rounded-full p-4 mr-4 text-yellow-600">
-                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex items-center hover:shadow-md transition">
+                  <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mr-4 text-amber-700">
+                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">In Progress</h3>
-                    <p className="text-3xl font-extrabold text-gray-900">
+                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">In Progress</h3>
+                    <p className="text-3xl font-black text-slate-900">
                       {enrollments.filter(e => e.status === 'active').length}
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Enrolled Courses Preview (Up to 3) */}
+              {/* Certificates Quick Section */}
+              {certificates.length > 0 && (
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 rounded-3xl p-6 sm:p-8 shadow-sm">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-xl font-bold text-amber-950 flex items-center gap-2">
+                        📜 Your Official Verified Certificates
+                      </h3>
+                      <p className="text-xs text-amber-800 mt-0.5">Instant proof of program completion and professional mastery</p>
+                    </div>
+                    <button 
+                      onClick={() => setActiveTab('certificates')}
+                      className="text-amber-800 font-bold hover:text-amber-950 transition text-sm flex items-center gap-1"
+                    >
+                      View All ({certificates.length}) →
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {certificates.slice(0, 2).map((cert) => (
+                      <div key={cert._id} className="bg-white rounded-2xl p-5 border border-amber-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between gap-2 mb-2">
+                            <span className="font-mono text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200">
+                              {cert.certificateId}
+                            </span>
+                            <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                              ✓ Verified
+                            </span>
+                          </div>
+                          <h4 className="font-bold text-slate-900 text-base line-clamp-1 mb-1">{cert.courseTitle}</h4>
+                          <p className="text-xs text-slate-500">
+                            Issued on {new Date(cert.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })} • {cert.grade || 'Passed'}
+                          </p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2">
+                          <Link
+                            to={`/verify-certificate?id=${encodeURIComponent(cert.certificateId)}`}
+                            className="flex-1 py-2 px-3 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-xl text-center transition shadow-xs"
+                          >
+                            View & Print Certificate
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Enrolled Courses Preview */}
               {enrollments.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-gray-900">Continue Learning</h3>
+                    <h3 className="text-xl font-bold text-slate-900">Continue Learning</h3>
                     <button 
                       onClick={() => setActiveTab('courses')}
-                      className="text-purple-600 font-medium hover:text-purple-800 transition-colors"
+                      className="text-amber-700 font-bold hover:text-amber-900 transition-colors text-sm"
                     >
-                      View All →
+                      View All Courses →
                     </button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -275,23 +381,23 @@ const StudentDashboard = () => {
                       const course = enrollment?.courseId;
                       if (!course) return null;
                       return (
-                        <div key={enrollment._id} className="bg-white rounded-xl shadow-sm border border-gray-100 flex p-4 gap-4 hover:shadow-md transition-all cursor-pointer" onClick={() => window.location.href = `/courses/${course._id}/learn`}>
-                          <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                        <div key={enrollment._id} className="bg-white rounded-2xl shadow-sm border border-slate-200/80 flex p-4 gap-4 hover:shadow-md transition cursor-pointer" onClick={() => navigate(`/courses/${course._id}/learn`)}>
+                          <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-slate-100 border border-slate-100">
                              {course.imageUrl ? (
                                <img src={course.imageUrl} alt={course.name} className="w-full h-full object-cover" />
                              ) : (
-                               <div className="w-full h-full bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">
+                               <div className="w-full h-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-slate-950 font-black text-xl">
                                  {course.name.charAt(0)}
-                               </div>
+                                </div>
                              )}
                           </div>
                           <div className="flex flex-col flex-1">
-                            <h4 className="font-bold text-gray-900 line-clamp-1 mb-1">{course.name}</h4>
+                            <h4 className="font-bold text-slate-900 line-clamp-1 mb-1">{course.name}</h4>
                             <div className="mt-auto">
-                               <div className="w-full bg-gray-100 rounded-full h-1.5 mb-1">
-                                <div className="bg-purple-600 h-1.5 rounded-full" style={{ width: enrollment.status === 'completed' ? '100%' : '5%' }}></div>
+                              <div className="w-full bg-slate-100 rounded-full h-1.5 mb-1">
+                                <div className="bg-amber-500 h-1.5 rounded-full" style={{ width: enrollment.status === 'completed' ? '100%' : '15%' }}></div>
                               </div>
-                              <span className="text-xs text-gray-500">{enrollment.status === 'completed' ? 'Completed' : 'In Progress'}</span>
+                              <span className="text-xs font-semibold text-slate-500">{enrollment.status === 'completed' ? 'Completed' : 'In Progress'}</span>
                             </div>
                           </div>
                         </div>
@@ -303,24 +409,31 @@ const StudentDashboard = () => {
             </div>
           )}
 
-          {/* STUDENT DASHBOARD TAB */}
+          {/* ═══════════════════════════════════════════
+             MY COURSES TAB
+          ═══════════════════════════════════════════ */}
           {activeTab === 'courses' && (
             <div className="animate-fadeIn">
               <div className="mb-6 flex items-center justify-between">
-                <h3 className="text-xl font-bold text-gray-900">Student Dashboard</h3>
-                <span className="bg-purple-100 text-purple-800 text-sm font-semibold px-3 py-1 rounded-full">{enrollments.length}</span>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">Enrolled Courses</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">Access your course videos, training modules, and materials</p>
+                </div>
+                <span className="bg-amber-100 text-amber-900 text-xs font-bold px-3 py-1 rounded-full border border-amber-200">
+                  {enrollments.length} Total
+                </span>
               </div>
               
               {enrollments.length === 0 ? (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-                  <div className="bg-purple-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="text-5xl">🎓</span>
+                <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-12 text-center">
+                  <div className="bg-amber-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border border-amber-200 text-5xl">
+                    🎓
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Start Your Learning Journey</h3>
-                  <p className="text-gray-500 mb-8 max-w-md mx-auto">You haven't enrolled in any courses yet. Browse our catalog to find the perfect course for you.</p>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">Start Your Learning Journey</h3>
+                  <p className="text-slate-500 mb-8 max-w-md mx-auto text-sm">You haven't enrolled in any courses yet. Browse our hands-on professional tracks to get started.</p>
                   <Link
                     to="/courses"
-                    className="inline-flex items-center justify-center bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition duration-200 font-medium shadow-md hover:shadow-lg"
+                    className="inline-flex items-center justify-center bg-amber-500 hover:bg-amber-400 text-slate-950 px-8 py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition"
                   >
                     Explore Courses
                   </Link>
@@ -335,18 +448,18 @@ const StudentDashboard = () => {
                     const totalSections = course.sections?.length || 0;
 
                     return (
-                      <div key={enrollment._id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col group h-full">
+                      <div key={enrollment._id} className="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col group h-full">
                         <div className="relative overflow-hidden aspect-video">
                           <Link to={`/courses/${course._id}/learn`}>
                             {course.imageUrl ? (
-                              <img className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" src={course.imageUrl} alt={course.name} />
+                              <img className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" src={course.imageUrl} alt={course.name} />
                             ) : (
-                              <div className="w-full h-full bg-gradient-to-br from-purple-400 to-indigo-600 flex items-center justify-center text-white text-5xl">📚</div>
+                              <div className="w-full h-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-slate-950 text-5xl">📚</div>
                             )}
                           </Link>
                           <div className="absolute top-3 right-3">
                             <span className={`px-2.5 py-1 text-xs font-bold rounded-full flex items-center shadow-sm backdrop-blur-md ${
-                              enrollment.status === 'completed' ? 'bg-green-500/90 text-white' : 'bg-white/90 text-gray-800'
+                              enrollment.status === 'completed' ? 'bg-emerald-600 text-white' : 'bg-white/95 text-slate-800'
                             }`}>
                               {enrollment.status === 'completed' ? '✅ Completed' : '🔄 In Progress'}
                             </span>
@@ -355,38 +468,35 @@ const StudentDashboard = () => {
 
                         <div className="p-5 flex flex-col flex-grow">
                           <div className="mb-4">
-                            <div className="flex items-center gap-2 mb-2">
-                            </div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 leading-tight group-hover:text-purple-600 transition-colors">
+                            <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-2 leading-tight group-hover:text-amber-700 transition">
                               <Link to={`/courses/${course._id}/learn`}>{course.name}</Link>
                             </h3>
-                            <p className="text-sm text-gray-500 line-clamp-2">{course.description}</p>
+                            <p className="text-xs text-slate-500 line-clamp-2">{course.description}</p>
                           </div>
 
                           <div className="mb-4">
-                            <div className="w-full bg-gray-100 rounded-full h-1.5">
-                              <div className="bg-purple-600 h-1.5 rounded-full transition-all" style={{ width: enrollment.status === 'completed' ? '100%' : '5%' }}></div>
+                            <div className="w-full bg-slate-100 rounded-full h-2">
+                              <div className="bg-amber-500 h-2 rounded-full transition-all" style={{ width: enrollment.status === 'completed' ? '100%' : '15%' }}></div>
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-gray-500 mb-5 pt-4 border-t border-gray-50">
-                            <div className="flex items-center hover:text-gray-900"><span className="mr-1.5 text-gray-400">👨‍🏫</span><span className="truncate">{course.instructor}</span></div>
-                            <div className="flex items-center hover:text-gray-900"><span className="mr-1.5 text-gray-400">⏱️</span><span className="truncate">{course.duration || 'Self-paced'}</span></div>
-                            <div className="flex items-center hover:text-gray-900"><span className="mr-1.5 text-gray-400">📽️</span><span>{totalVideos} Videos</span></div>
-                            <div className="flex items-center hover:text-gray-900"><span className="mr-1.5 text-gray-400">📑</span><span>{totalSections} Sections</span></div>
+                          <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-slate-500 mb-5 pt-4 border-t border-slate-100">
+                            <div className="flex items-center"><span className="mr-1.5">👨‍🏫</span><span className="truncate">{course.instructor}</span></div>
+                            <div className="flex items-center"><span className="mr-1.5">⏱️</span><span className="truncate">{course.duration || 'Self-paced'}</span></div>
+                            <div className="flex items-center"><span className="mr-1.5">📽️</span><span>{totalVideos} Videos</span></div>
+                            <div className="flex items-center"><span className="mr-1.5">📑</span><span>{totalSections} Sections</span></div>
                           </div>
 
                           <div className="mt-auto">
                             <Link
                               to={`/courses/${course._id}/learn`}
-                              className={`w-full flex items-center justify-center px-4 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 border-2 ${
+                              className={`w-full flex items-center justify-center px-4 py-2.5 text-sm font-bold rounded-xl transition duration-200 border-2 ${
                                 enrollment.status === 'completed' 
-                                 ? 'border-green-500 text-green-600 hover:bg-green-50'
-                                 : 'border-transparent bg-purple-600 text-white hover:bg-purple-700 shadow-md hover:shadow-lg'
+                                 ? 'border-emerald-600 text-emerald-700 hover:bg-emerald-50'
+                                 : 'border-transparent bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md'
                               }`}
                             >
-                              {enrollment.status === 'completed' ? 'Review Course' : 'Continue Learning'}
-                              {enrollment.status !== 'completed' && <span className="ml-2">→</span>}
+                              {enrollment.status === 'completed' ? 'Review Course Material' : 'Continue Learning →'}
                             </Link>
                           </div>
                         </div>
@@ -398,41 +508,169 @@ const StudentDashboard = () => {
             </div>
           )}
 
-          {/* ACTIVITY TAB */}
+          {/* ═══════════════════════════════════════════
+             MY CERTIFICATES TAB (Requested by User)
+          ═══════════════════════════════════════════ */}
+          {activeTab === 'certificates' && (
+            <div className="animate-fadeIn space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">My Certificates of Completion</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">Official authenticated graduation credentials issued to your account</p>
+                </div>
+                <Link
+                  to="/verify-certificate"
+                  target="_blank"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold text-xs rounded-xl hover:bg-emerald-100 transition shadow-xs"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  Open Public Verification Portal
+                </Link>
+              </div>
+
+              {certificates.length === 0 ? (
+                <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-12 text-center">
+                  <div className="bg-amber-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border border-amber-200 text-5xl">
+                    📜
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">No Certificates Issued Yet</h3>
+                  <p className="text-slate-500 mb-8 max-w-md mx-auto text-sm">
+                    Certificates are automatically generated and awarded upon completing your training program curriculum and project evaluations.
+                  </p>
+                  <Link
+                    to="/courses"
+                    className="inline-flex items-center justify-center bg-amber-500 hover:bg-amber-400 text-slate-950 px-8 py-3 rounded-xl font-bold shadow-md transition"
+                  >
+                    View Courses to Complete
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {certificates.map((cert) => (
+                    <div
+                      key={cert._id}
+                      className="bg-white rounded-3xl border-2 border-amber-300/80 p-6 sm:p-8 shadow-sm hover:shadow-md transition flex flex-col justify-between relative overflow-hidden"
+                    >
+                      {/* Decorative Gold Header Bar */}
+                      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500"></div>
+
+                      <div>
+                        {/* Certificate Badges */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pt-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs font-bold text-amber-800 bg-amber-50 px-3 py-1 rounded-lg border border-amber-200">
+                              {cert.certificateId}
+                            </span>
+                            <button
+                              onClick={() => handleCopyLink(cert.certificateId)}
+                              className="text-slate-400 hover:text-slate-700 p-1"
+                              title="Copy verification link"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                            </button>
+                            {copiedId === cert.certificateId && (
+                              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                                Copied!
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                            ✓ Verified Credential
+                          </span>
+                        </div>
+
+                        {/* Title & Details */}
+                        <h4 className="text-xl font-bold text-slate-900 mb-2 leading-snug">{cert.courseTitle}</h4>
+                        <div className="space-y-1.5 text-xs text-slate-600 mb-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                          <div><span className="font-semibold text-slate-800">Student Name:</span> {cert.studentName}</div>
+                          <div><span className="font-semibold text-slate-800">Issue Date:</span> {new Date(cert.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                          <div><span className="font-semibold text-slate-800">Grade / Score:</span> <span className="font-bold text-amber-800">{cert.grade || 'Passed'}</span></div>
+                          <div><span className="font-semibold text-slate-800">Signatory:</span> {cert.instructor || 'Eng. Mucawiye & Academic Team'}</div>
+                        </div>
+
+                        {/* Skills */}
+                        {cert.skills && cert.skills.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mb-6">
+                            {cert.skills.map((skill, idx) => (
+                              <span key={idx} className="text-[11px] font-semibold bg-white text-slate-700 px-2.5 py-0.5 rounded-md border border-slate-200 shadow-2xs">
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex flex-col sm:flex-row gap-2.5 pt-4 border-t border-slate-100">
+                        <Link
+                          to={`/verify-certificate?id=${encodeURIComponent(cert.certificateId)}`}
+                          target="_blank"
+                          className="flex-1 py-2.5 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-xl text-center transition shadow-xs flex items-center justify-center gap-1.5"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          View Official Certificate
+                        </Link>
+                        <button
+                          onClick={() => handleCopyLink(cert.certificateId)}
+                          className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                          </svg>
+                          Share Link
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════
+             ACTIVITY TAB
+          ═══════════════════════════════════════════ */}
           {activeTab === 'activity' && (
             <div className="animate-fadeIn">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Recent Activity</h3>
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <h3 className="text-xl font-bold text-slate-900 mb-6">Recent Activity</h3>
+              <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
                 <div className="p-0">
                   {enrollments.length === 0 ? (
-                     <div className="p-12 text-center text-gray-500 flex flex-col items-center">
-                        <div className="bg-gray-100 rounded-full p-4 mb-4 text-gray-400 text-3xl">📭</div>
-                        <p className="text-lg font-medium">No activity to show</p>
-                        <p className="text-sm mt-1">Enroll in a course to see your history here.</p>
+                     <div className="p-12 text-center text-slate-500 flex flex-col items-center">
+                        <div className="bg-slate-100 rounded-full p-4 mb-4 text-slate-400 text-3xl">📭</div>
+                        <p className="text-base font-bold text-slate-700">No activity to show</p>
+                        <p className="text-xs text-slate-500 mt-1">Enroll in a course to see your learning history here.</p>
                      </div>
                   ) : (
-                    <div className="divide-y divide-gray-100">
+                    <div className="divide-y divide-slate-100">
                       {enrollments.map(enrollment => (
-                        <div key={enrollment._id} className="p-6 hover:bg-gray-50 transition-colors flex items-start space-x-4">
-                          <div className="flex-shrink-0 bg-indigo-50 rounded-full p-3 mt-1">
-                            <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div key={enrollment._id} className="p-6 hover:bg-slate-50 transition flex items-start space-x-4">
+                          <div className="flex-shrink-0 bg-amber-50 border border-amber-200 rounded-2xl p-3 mt-1 text-amber-700">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-base font-medium text-gray-900 border-b border-gray-100 pb-2 mb-2 inline-block w-full">
-                              You enrolled in a new course
+                            <p className="text-sm font-semibold text-slate-900 mb-1">
+                              Enrolled in training course
                             </p>
-                            <Link to={`/courses/${enrollment.courseId?._id}/learn`} className="text-purple-600 hover:text-purple-800 font-bold block mb-1">
-                               {enrollment?.courseId?.name || 'Unknown course'}
+                            <Link to={`/courses/${enrollment.courseId?._id}/learn`} className="text-amber-800 hover:text-amber-950 font-bold block mb-1 text-base">
+                               {enrollment?.courseId?.name || 'Full-Stack Web Development'}
                             </Link>
-                            <p className="text-sm text-gray-500 flex items-center mt-1">
-                              <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                              {new Date(enrollment.enrolledAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                            <p className="text-xs text-slate-400 flex items-center mt-1">
+                              <svg className="w-3.5 h-3.5 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                              {new Date(enrollment.enrolledAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                             </p>
                           </div>
-                           <div className="text-xs font-medium px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 hidden sm:block border border-blue-100">
-                              System Action
+                          <div className="text-xs font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200 hidden sm:block">
+                            {enrollment.status === 'completed' ? 'Completed' : 'Enrolled'}
                           </div>
                         </div>
                       ))}

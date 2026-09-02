@@ -153,14 +153,60 @@ const AdminDashboard = () => {
   const [showIssueCertModal, setShowIssueCertModal] = useState(false);
   const [issuingCert, setIssuingCert] = useState(false);
   const [newCert, setNewCert] = useState({
+    studentId: '',
+    courseId: '',
     studentName: '',
     studentEmail: '',
     courseTitle: '',
     certificateId: '',
-    grade: 'Passed',
+    grade: 'Distinction (98%)',
     instructor: 'Eng. Mucawiye & IftiinHub Academic Team',
-    skills: ''
+    skills: 'HTML5 & CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js & Express, MongoDB'
   });
+
+  const handleStudentSelect = (selectedStudentId) => {
+    const selected = users.find(u => u._id === selectedStudentId);
+    if (selected) {
+      setNewCert(prev => ({
+        ...prev,
+        studentId: selectedStudentId,
+        studentName: selected.name || selected.username || '',
+        studentEmail: selected.email || ''
+      }));
+    }
+  };
+
+  const handleCourseSelect = (selectedCourseId) => {
+    const selected = courses.find(c => c._id === selectedCourseId);
+    if (selected) {
+      setNewCert(prev => ({
+        ...prev,
+        courseId: selectedCourseId,
+        courseTitle: selected.name || '',
+        instructor: selected.instructor || prev.instructor
+      }));
+    }
+  };
+
+  const handleQuickPreset = (track) => {
+    if (track === 'fullstack') {
+      setNewCert(prev => ({
+        ...prev,
+        courseTitle: 'Associate Full-Stack Web Developer (MERN Stack)',
+        skills: 'HTML5 & CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js & Express, MongoDB',
+        grade: 'Distinction (98%)',
+        instructor: 'Eng. Mucawiye & IftiinHub Academic Team'
+      }));
+    } else if (track === 'data') {
+      setNewCert(prev => ({
+        ...prev,
+        courseTitle: 'Associate Data Analyst (Excel & Power BI)',
+        skills: 'Advanced Excel, Microsoft Power BI, Power Query, DAX Formulas, Data Visualization',
+        grade: 'Distinction (98%)',
+        instructor: 'Data Analytics Lead - IftiinHub'
+      }));
+    }
+  };
 
   useEffect(() => {
     // Handle redirect toast from Register page
@@ -204,19 +250,26 @@ const AdminDashboard = () => {
     }
     setIssuingCert(true);
     try {
-      const res = await axios.post('/certificates', newCert);
-      setCertificates([res.data.certificate, ...certificates]);
+      const endpoint = newCert.studentId ? '/certificates/assign-complete' : '/certificates';
+      const res = await axios.post(endpoint, newCert);
+      if (res.data && res.data.certificate) {
+        setCertificates([res.data.certificate, ...certificates]);
+      } else {
+        await fetchCertificates();
+      }
       setShowIssueCertModal(false);
       setNewCert({
+        studentId: '',
+        courseId: '',
         studentName: '',
         studentEmail: '',
         courseTitle: '',
         certificateId: '',
-        grade: 'Passed',
+        grade: 'Distinction (98%)',
         instructor: 'Eng. Mucawiye & IftiinHub Academic Team',
-        skills: ''
+        skills: 'HTML5 & CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js & Express, MongoDB'
       });
-      setToast('Certificate issued successfully!');
+      setToast(res.data.message || 'Certificate issued and student marked as completed!');
       setTimeout(() => setToast(''), 3000);
     } catch (error) {
       setToast(error.response?.data?.message || 'Failed to issue certificate');
@@ -691,51 +744,55 @@ const AdminDashboard = () => {
       
 
       {/* Mobile Top Bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm h-14 flex items-center px-4">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-amber-500 shadow-sm h-14 flex items-center px-4">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="mr-3 p-1.5 rounded-lg border border-gray-200 bg-white"
+          className="mr-3 p-1.5 rounded-lg border border-slate-200 bg-white"
         >
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <h1 className="text-base font-bold text-purple-700 truncate">IftiinHub Admin</h1>
+        <h1 className="text-base font-bold text-amber-800 truncate">IftiinHub Admin</h1>
       </div>
 
 
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-purple-950 bg-opacity-60 z-40"
+          className="md:hidden fixed inset-0 bg-slate-950/60 z-40"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* Professional Sidebar */}
-      <aside className={`w-72 bg-white shadow-lg h-screen fixed left-0 top-0 z-40 flex flex-col transform transition-transform duration-300 ease-in-out ${
+      <aside className={`w-72 bg-white shadow-xl h-screen fixed left-0 top-0 z-40 flex flex-col transform transition-transform duration-300 ease-in-out border-r border-slate-200 ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
       }`}>
         {/* Brand Header */}
-        <div className="flex-shrink-0 px-6 py-8 border-b border-purple-500 bg-purple-500 ">
+        <div className="flex-shrink-0 px-6 py-6 border-b-2 border-amber-500 bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-slate-950">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Link
                 to="/"
-                className="flex items-center p-2 text-purple-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all duration-200 group"
+                className="flex items-center p-2 text-slate-900 hover:bg-white/30 rounded-xl transition duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
+                title="Back to Homepage"
               >
-                <svg className="w-5 h-5 text-white group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <svg className="w-5 h-5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
               </Link>
-              <h2 className="text-xl font-bold text-white tracking-wide ">IFTIINHUB ADMIN</h2>
+              <div>
+                <h2 className="text-lg font-black tracking-wide text-slate-950">IFTIINHUB ADMIN</h2>
+                <p className="text-[11px] font-bold text-slate-900/80 uppercase tracking-wider">Management Console</p>
+              </div>
             </div>
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="md:hidden p-1 rounded-lg hover:bg-gray-100"
+              className="md:hidden p-1 rounded-lg hover:bg-white/20 text-slate-950 font-bold"
             >
-              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -744,7 +801,7 @@ const AdminDashboard = () => {
 
         
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-4 py-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+        <nav className="flex-1 overflow-y-auto px-4 py-6 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
           <div className="space-y-1">
             {menuItems.map(item => (
               <button
@@ -753,25 +810,25 @@ const AdminDashboard = () => {
                   setActiveTab(item.id);
                   setIsMobileMenuOpen(false);
                 }}
-                className={`w-full flex items-center justify-between px-4 py-3 text-left rounded-lg transition-all duration-200 group ${
+                className={`w-full flex items-center justify-between px-4 py-3 text-left rounded-xl transition-all duration-200 group ${
                   activeTab === item.id
-                    ? 'bg-purple-600 text-white shadow-md'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                    : 'text-slate-700 hover:bg-amber-50 hover:text-amber-900 font-semibold'
                 }`}
               >
                 <span className="flex items-center space-x-3">
                   <span className={`w-5 h-5 ${
-                    activeTab === item.id ? 'text-white' : 'text-gray-400 group-hover:text-gray-600'
+                    activeTab === item.id ? 'text-slate-950' : 'text-slate-400 group-hover:text-amber-700'
                   }`}>
                     {item.icon}
                   </span>
-                  <span className="font-medium">{item.label}</span>
+                  <span className="text-sm">{item.label}</span>
                 </span>
                 {sidebarCounts[item.id] !== undefined && (
-                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
                     activeTab === item.id 
-                      ? 'bg-white/20 text-white' 
-                      : 'bg-gray-100 text-gray-600 group-hover:bg-gray-200'
+                      ? 'bg-slate-950 text-white' 
+                      : 'bg-amber-100 text-amber-900 group-hover:bg-amber-200'
                   }`}>
                     {sidebarCounts[item.id]}
                   </span>
@@ -797,7 +854,7 @@ const AdminDashboard = () => {
                     </div>
                     <Link
                       to="/courses"
-                      className="self-start sm:self-auto bg-purple-600 hover:bg-purple-700 text-white px-3 sm:px-4 py-2 rounded-lg transition duration-200 font-medium text-sm"
+                      className="self-start sm:self-auto bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl transition duration-200 font-bold text-sm shadow-sm"
                     >
                       View All Courses
                     </Link>
@@ -806,60 +863,60 @@ const AdminDashboard = () => {
                 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
                   <div className="flex items-center">
-                    <div className="bg-blue-100 rounded-lg p-3">
+                    <div className="bg-blue-100 rounded-xl p-3">
                       <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                     </div>
                     
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-600">Total Users</p>
-                      <p className="text-2xl font-bold text-gray-900">{stats.totalUsers}</p>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Users</p>
+                      <p className="text-2xl font-black text-slate-900">{stats.totalUsers}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
                   <div className="flex items-center">
-                    <div className="bg-green-100 rounded-lg p-3">
-                      <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-emerald-100 rounded-xl p-3">
+                      <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                       </svg>
                     </div>
                     
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-600">Total Students</p>
-                      <p className="text-2xl font-bold text-gray-900">{stats.totalStudents}</p>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Students</p>
+                      <p className="text-2xl font-black text-slate-900">{stats.totalStudents}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
                   <div className="flex items-center">
-                    <div className="bg-yellow-100 rounded-lg p-3">
-                      <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-amber-100 rounded-xl p-3">
+                      <svg className="w-6 h-6 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                       </svg>
                     </div>
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-600">Total Courses</p>
-                      <p className="text-2xl font-bold text-gray-900">{stats.totalCourses}</p>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Courses</p>
+                      <p className="text-2xl font-black text-slate-900">{stats.totalCourses}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
                   <div className="flex items-center">
-                    <div className="bg-purple-100 rounded-lg p-3">
-                      <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-orange-100 rounded-xl p-3">
+                      <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-600">Total Enrollments</p>
-                      <p className="text-2xl font-bold text-gray-900">{stats.totalEnrollments}</p>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Enrollments</p>
+                      <p className="text-2xl font-black text-slate-900">{stats.totalEnrollments}</p>
                     </div>
                   </div>
                 </div>
@@ -868,16 +925,16 @@ const AdminDashboard = () => {
             )}
 
             {/* Content card */}
-            <div className="bg-white rounded-lg shadow mb-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 mb-6">
               {/* Mobile tabs nav */}
-              <div className="border-b border-gray-200 md:hidden">
+              <div className="border-b border-slate-200 md:hidden">
                 <nav className="-mb-px flex space-x-4 px-4 overflow-x-auto">
                   {menuItems.map(item => (
                     <button
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
-                      className={`py-3 px-2 whitespace-nowrap border-b-2 text-sm font-medium ${
-                        activeTab === item.id ? 'border-purple-600 text-purple-700' : 'border-transparent text-gray-600'
+                      className={`py-3 px-2 whitespace-nowrap border-b-2 text-sm font-bold ${
+                        activeTab === item.id ? 'border-amber-500 text-amber-800' : 'border-transparent text-slate-600'
                       }`}
                     >
                       {item.label}
@@ -890,44 +947,43 @@ const AdminDashboard = () => {
             {activeTab === 'messages' && (
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-gray-900">Contact Messages</h2>
+                  <h2 className="text-xl font-bold text-slate-900">Contact Messages</h2>
                   <div className="space-x-2">
                     <button
                       onClick={fetchMessages}
-                      className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                      className="px-4 py-2 bg-amber-500 text-slate-950 font-bold rounded-xl hover:bg-amber-400 shadow-sm"
                     >
                       Refresh
                     </button>
-                    {/* Clear All typically requires a bulk delete endpoint. We'll leave it out or implement a bulk delete later if needed. For now we will hide the clear all button. */}
                   </div>
                 </div>
 
                 {messages.length === 0 ? (
-                  <div className="text-gray-500">No messages found.</div>
+                  <div className="text-slate-500">No messages found.</div>
                 ) : (
-                  <div className="bg-white rounded-lg shadow overflow-hidden">
-                    <div className="overflow-x-auto shadow-sm rounded-lg border border-gray-200">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                  <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto shadow-sm rounded-xl border border-slate-200">
+                      <table className="min-w-full divide-y divide-slate-200">
+                        <thead className="bg-slate-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Message</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Name</th>
+                            <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Email</th>
+                            <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Phone</th>
+                            <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Message</th>
+                            <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Type</th>
+                            <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Time</th>
+                            <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Actions</th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-white divide-y divide-slate-100">
                           {messages.map((m) => (
-                            <tr key={m._id} className={m.read ? 'bg-white' : 'bg-purple-50'}>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{m.name}</td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-purple-700">{m.email}</td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{m.whatsapp || 'N/A'}</td>
-                              <td className="px-6 py-4 text-sm text-gray-700 max-w-lg truncate">{m.message}</td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{m.type === 'enrollment_request' ? <span className="text-blue-600 font-semibold text-xs border border-blue-200 bg-blue-50 px-2 py-1 rounded-full">Enrollment</span> : <span className="text-gray-600 font-semibold text-xs border border-gray-200 bg-gray-50 px-2 py-1 rounded-full">General</span>}</td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(m.createdAt).toLocaleString()}</td>
+                            <tr key={m._id} className={m.read ? 'bg-white' : 'bg-amber-50/50'}>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-semibold">{m.name}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-amber-800 font-medium">{m.email}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-800">{m.whatsapp || 'N/A'}</td>
+                              <td className="px-6 py-4 text-sm text-slate-700 max-w-lg truncate">{m.message}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700">{m.type === 'enrollment_request' ? <span className="text-amber-800 font-bold text-xs border border-amber-200 bg-amber-50 px-2 py-1 rounded-full">Enrollment</span> : <span className="text-slate-600 font-semibold text-xs border border-slate-200 bg-slate-50 px-2 py-1 rounded-full">General</span>}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{new Date(m.createdAt).toLocaleString()}</td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
                                 {!m.read && (
                                   <button
@@ -940,7 +996,7 @@ const AdminDashboard = () => {
                                         setTimeout(() => setToast(''), 3000);
                                       }
                                     }}
-                                    className="text-purple-600 hover:text-purple-900"
+                                    className="text-amber-700 hover:text-amber-900 font-bold"
                                   >
                                     Mark Read
                                   </button>
@@ -1131,18 +1187,28 @@ const AdminDashboard = () => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {new Date(student.createdAt).toLocaleDateString()}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                               <button
-                                onClick={() => handleDeleteUser(student._id)}
-                                className="text-red-600 hover:text-red-900"
+                                onClick={() => {
+                                  handleStudentSelect(student._id);
+                                  setActiveTab('certificates');
+                                  setShowIssueCertModal(true);
+                                }}
+                                className="text-amber-700 hover:text-amber-900 font-bold bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-lg border border-amber-200"
                               >
-                                Delete
+                                📜 Issue Cert
                               </button>
                               <button
                                 onClick={() => handleEditUser(student)}
-                                className="text-blue-600 hover:text-blue-900 ml-3"
+                                className="text-blue-600 hover:text-blue-900 font-medium"
                               >
                                 Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteUser(student._id)}
+                                className="text-red-600 hover:text-red-900 font-medium"
+                              >
+                                Delete
                               </button>
                             </td>
                           </tr>
@@ -1320,13 +1386,28 @@ const AdminDashboard = () => {
                             </div>
 
                             {/* Actions */}
-                            <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid #f3f4f6', paddingTop: '14px' }}>
+                            <div style={{ display: 'flex', gap: '6px', borderTop: '1px solid #f3f4f6', paddingTop: '14px' }}>
+                              <button
+                                onClick={() => {
+                                  handleStudentSelect(student._id);
+                                  setActiveTab('certificates');
+                                  setShowIssueCertModal(true);
+                                }}
+                                style={{
+                                  flex: 1.2, padding: '8px 4px', borderRadius: '8px',
+                                  border: '1.5px solid #fde68a', background: '#fef3c7',
+                                  color: '#92400e', fontSize: '0.78rem', fontWeight: 700,
+                                  cursor: 'pointer', transition: 'all 0.2s',
+                                }}
+                              >
+                                📜 Issue Cert
+                              </button>
                               <button
                                 onClick={() => handleEditUser(student)}
                                 style={{
                                   flex: 1, padding: '8px', borderRadius: '8px',
                                   border: '1.5px solid #e5e7eb', background: '#fff',
-                                  color: '#374151', fontSize: '0.8rem', fontWeight: 600,
+                                  color: '#374151', fontSize: '0.78rem', fontWeight: 600,
                                   cursor: 'pointer', transition: 'all 0.2s',
                                 }}
                               >
@@ -1337,7 +1418,7 @@ const AdminDashboard = () => {
                                 style={{
                                   flex: 1, padding: '8px', borderRadius: '8px',
                                   border: '1.5px solid #fecaca', background: '#fef2f2',
-                                  color: '#dc2626', fontSize: '0.8rem', fontWeight: 600,
+                                  color: '#dc2626', fontSize: '0.78rem', fontWeight: 600,
                                   cursor: 'pointer', transition: 'all 0.2s',
                                 }}
                               >
@@ -2121,14 +2202,14 @@ const AdminDashboard = () => {
               <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Certificate Management</h2>
-                    <p className="text-sm text-gray-500 mt-1">Issue, view, and manage student certificates of completion</p>
+                    <h2 className="text-2xl font-bold text-slate-900">Certificate Management</h2>
+                    <p className="text-sm text-slate-500 mt-1">Issue, view, and manage verified graduation certificates for students</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <Link
                       to="/verify-certificate"
                       target="_blank"
-                      className="px-4 py-2 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200 transition text-sm flex items-center gap-1.5"
+                      className="px-4 py-2 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition text-sm flex items-center gap-1.5 border border-slate-200"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -2137,19 +2218,19 @@ const AdminDashboard = () => {
                     </Link>
                     <button
                       onClick={() => setShowIssueCertModal(true)}
-                      className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition text-sm flex items-center gap-1.5 shadow-sm"
+                      className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition text-sm flex items-center gap-1.5 shadow-md shadow-amber-500/20 cursor-pointer"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
                       </svg>
-                      Issue New Certificate
+                      Issue / Assign Certificate
                     </button>
                   </div>
                 </div>
 
                 {/* Search Bar */}
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center gap-3">
+                  <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <input
@@ -2157,20 +2238,20 @@ const AdminDashboard = () => {
                     value={certSearchTerm}
                     onChange={(e) => setCertSearchTerm(e.target.value)}
                     placeholder="Search by Certificate ID, Student Name, Email, or Course..."
-                    className="w-full text-sm outline-none text-gray-700 placeholder-gray-400"
+                    className="w-full text-sm outline-none text-slate-800 placeholder-slate-400"
                   />
                   {certSearchTerm && (
-                    <button onClick={() => setCertSearchTerm('')} className="text-xs text-gray-400 hover:text-gray-600">
+                    <button onClick={() => setCertSearchTerm('')} className="text-xs text-slate-400 hover:text-slate-600">
                       Clear
                     </button>
                   )}
                 </div>
 
                 {/* Certificates Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
                   <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <table className="min-w-full divide-y divide-slate-200">
+                      <thead className="bg-slate-50 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
                         <tr>
                           <th className="px-6 py-3.5">Certificate ID</th>
                           <th className="px-6 py-3.5">Student Name</th>
@@ -2181,11 +2262,11 @@ const AdminDashboard = () => {
                           <th className="px-6 py-3.5 text-right">Actions</th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-gray-100 text-sm">
+                      <tbody className="bg-white divide-y divide-slate-100 text-sm">
                         {loadingCertificates ? (
                           <tr>
-                            <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
-                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-2"></div>
+                            <td colSpan="7" className="px-6 py-12 text-center text-slate-500">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mx-auto mb-2"></div>
                               Loading certificates...
                             </td>
                           </tr>
@@ -2199,10 +2280,10 @@ const AdminDashboard = () => {
                           );
                         }).length === 0 ? (
                           <tr>
-                            <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
+                            <td colSpan="7" className="px-6 py-12 text-center text-slate-500">
                               <div className="text-3xl mb-2">📜</div>
-                              <p className="font-medium text-gray-700">No certificates found</p>
-                              <p className="text-xs text-gray-400 mt-1">Issue a new certificate or adjust your search filter</p>
+                              <p className="font-bold text-slate-700">No certificates found</p>
+                              <p className="text-xs text-slate-400 mt-1">Issue a new certificate or adjust your search filter</p>
                             </td>
                           </tr>
                         ) : (
@@ -2217,10 +2298,10 @@ const AdminDashboard = () => {
                               );
                             })
                             .map((cert) => (
-                              <tr key={cert._id} className="hover:bg-gray-50 transition">
+                              <tr key={cert._id} className="hover:bg-slate-50 transition">
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <div className="flex items-center gap-2">
-                                    <span className="font-mono font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200 text-xs">
+                                    <span className="font-mono font-bold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200 text-xs">
                                       {cert.certificateId}
                                     </span>
                                     <button
@@ -2230,7 +2311,7 @@ const AdminDashboard = () => {
                                         setTimeout(() => setToast(''), 2000);
                                       }}
                                       title="Copy ID"
-                                      className="text-gray-400 hover:text-gray-600"
+                                      className="text-slate-400 hover:text-slate-600"
                                     >
                                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -2239,40 +2320,40 @@ const AdminDashboard = () => {
                                   </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="font-semibold text-gray-900">{cert.studentName}</div>
+                                  <div className="font-bold text-slate-900">{cert.studentName}</div>
                                   {cert.studentEmail && (
-                                    <div className="text-xs text-gray-400">{cert.studentEmail}</div>
+                                    <div className="text-xs text-slate-400">{cert.studentEmail}</div>
                                   )}
                                 </td>
                                 <td className="px-6 py-4">
-                                  <div className="font-medium text-gray-800 line-clamp-1">{cert.courseTitle}</div>
+                                  <div className="font-medium text-slate-800 line-clamp-1">{cert.courseTitle}</div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
+                                <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-500">
                                   {new Date(cert.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                  <span className="text-xs font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                                  <span className="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                                     {cert.grade || 'Passed'}
                                   </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                                    cert.status === 'valid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                  <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                                    cert.status === 'valid' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-red-100 text-red-800 border border-red-200'
                                   }`}>
-                                    {cert.status === 'valid' ? 'Active' : 'Revoked'}
+                                    {cert.status === 'valid' ? 'Verified' : 'Revoked'}
                                   </span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium space-x-2">
+                                <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium space-x-3">
                                   <Link
                                     to={`/verify-certificate?id=${encodeURIComponent(cert.certificateId)}`}
                                     target="_blank"
-                                    className="text-indigo-600 hover:text-indigo-900 font-semibold"
+                                    className="text-amber-700 hover:text-amber-900 font-bold"
                                   >
-                                    View
+                                    View Live
                                   </Link>
                                   <button
                                     onClick={() => handleDeleteCertificate(cert._id)}
-                                    className="text-red-600 hover:text-red-900 font-semibold"
+                                    className="text-red-600 hover:text-red-800 font-bold cursor-pointer"
                                   >
                                     Delete
                                   </button>
@@ -2287,116 +2368,171 @@ const AdminDashboard = () => {
 
                 {/* Issue Certificate Modal */}
                 {showIssueCertModal && (
-                  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
-                      <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+                  <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto border border-slate-200">
+                      <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                         <div>
-                          <h3 className="text-lg font-bold text-gray-900">Issue New Certificate</h3>
-                          <p className="text-xs text-gray-500">Create an official certificate record for a student</p>
+                          <h3 className="text-xl font-bold text-slate-900">Issue / Assign Certificate</h3>
+                          <p className="text-xs text-slate-500 mt-0.5">Select a student and course to mark completed & generate certificate</p>
                         </div>
                         <button
                           onClick={() => setShowIssueCertModal(false)}
-                          className="text-gray-400 hover:text-gray-600"
+                          className="text-slate-400 hover:text-slate-600 text-lg font-bold p-1 cursor-pointer"
                         >
                           ✕
                         </button>
                       </div>
 
-                      <form onSubmit={handleIssueCertificate} className="mt-4 space-y-4 text-sm">
+                      {/* Quick 1-Click Track Presets */}
+                      <div className="mt-4 pt-2">
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Quick Track Presets</label>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleQuickPreset('fullstack')}
+                            className="text-xs px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold border border-amber-200 transition cursor-pointer"
+                          >
+                            ⚡ Full-Stack Developer Track
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleQuickPreset('data')}
+                            className="text-xs px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold border border-blue-200 transition cursor-pointer"
+                          >
+                            ⚡ Data Analyst Track
+                          </button>
+                        </div>
+                      </div>
+
+                      <form onSubmit={handleIssueCertificate} className="mt-5 space-y-4 text-sm">
+                        {/* Select Student from Database */}
                         <div>
-                          <label className="block font-semibold text-gray-700 mb-1">Student Full Name *</label>
+                          <label className="block font-bold text-slate-800 mb-1">Select Registered Student (Optional Auto-Fill)</label>
+                          <select
+                            value={newCert.studentId || ''}
+                            onChange={(e) => handleStudentSelect(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none bg-white text-slate-900 text-sm"
+                          >
+                            <option value="">-- Or type student details manually below --</option>
+                            {users.filter(u => u.role === 'student').map((s) => (
+                              <option key={s._id} value={s._id}>
+                                {s.name || s.username} ({s.email})
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {/* Select Course from Database */}
+                        <div>
+                          <label className="block font-bold text-slate-800 mb-1">Select Course / Track (Optional Auto-Fill)</label>
+                          <select
+                            value={newCert.courseId || ''}
+                            onChange={(e) => handleCourseSelect(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none bg-white text-slate-900 text-sm"
+                          >
+                            <option value="">-- Or type course title manually below --</option>
+                            {courses.map((c) => (
+                              <option key={c._id} value={c._id}>
+                                {c.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block font-bold text-slate-800 mb-1">Student Full Name *</label>
                           <input
                             type="text"
                             required
                             value={newCert.studentName}
                             onChange={(e) => setNewCert({ ...newCert, studentName: e.target.value })}
                             placeholder="e.g. Abdirahman Mohamed Ali"
-                            className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
                           />
                         </div>
 
                         <div>
-                          <label className="block font-semibold text-gray-700 mb-1">Student Email (Optional)</label>
+                          <label className="block font-bold text-slate-800 mb-1">Student Email (For dashboard linking)</label>
                           <input
                             type="email"
                             value={newCert.studentEmail}
                             onChange={(e) => setNewCert({ ...newCert, studentEmail: e.target.value })}
                             placeholder="student@example.com"
-                            className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
                           />
                         </div>
 
                         <div>
-                          <label className="block font-semibold text-gray-700 mb-1">Course / Program Title *</label>
+                          <label className="block font-bold text-slate-800 mb-1">Course / Program Title *</label>
                           <input
                             type="text"
                             required
                             value={newCert.courseTitle}
                             onChange={(e) => setNewCert({ ...newCert, courseTitle: e.target.value })}
-                            placeholder="e.g. Associate Full-Stack Web Developer"
-                            className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                            placeholder="e.g. Associate Full-Stack Web Developer (MERN Stack)"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
                           />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
-                            <label className="block font-semibold text-gray-700 mb-1">Custom Cert ID (Optional)</label>
+                            <label className="block font-bold text-slate-800 mb-1">Custom Cert ID (Optional)</label>
                             <input
                               type="text"
                               value={newCert.certificateId}
                               onChange={(e) => setNewCert({ ...newCert, certificateId: e.target.value })}
                               placeholder="Auto-generated if empty"
-                              className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none uppercase font-mono text-xs"
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none uppercase font-mono text-xs"
                             />
                           </div>
                           <div>
-                            <label className="block font-semibold text-gray-700 mb-1">Grade / Performance</label>
+                            <label className="block font-bold text-slate-800 mb-1">Grade / Performance</label>
                             <input
                               type="text"
                               value={newCert.grade}
                               onChange={(e) => setNewCert({ ...newCert, grade: e.target.value })}
                               placeholder="e.g. Distinction (98%)"
-                              className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
                             />
                           </div>
                         </div>
 
                         <div>
-                          <label className="block font-semibold text-gray-700 mb-1">Instructor / Signatory</label>
+                          <label className="block font-bold text-slate-800 mb-1">Instructor / Signatory</label>
                           <input
                             type="text"
                             value={newCert.instructor}
                             onChange={(e) => setNewCert({ ...newCert, instructor: e.target.value })}
                             placeholder="Eng. Mucawiye & IftiinHub Academic Team"
-                            className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
                           />
                         </div>
 
                         <div>
-                          <label className="block font-semibold text-gray-700 mb-1">Key Skills (Comma separated)</label>
+                          <label className="block font-bold text-slate-800 mb-1">Key Skills (Comma separated)</label>
                           <input
                             type="text"
                             value={newCert.skills}
                             onChange={(e) => setNewCert({ ...newCert, skills: e.target.value })}
                             placeholder="React.js, Node.js, Express, MongoDB, Tailwind CSS"
-                            className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
                           />
                         </div>
 
-                        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+                        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
                           <button
                             type="button"
                             onClick={() => setShowIssueCertModal(false)}
-                            className="px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50"
+                            className="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-bold hover:bg-slate-50 cursor-pointer"
                           >
                             Cancel
                           </button>
                           <button
                             type="submit"
                             disabled={issuingCert}
-                            className="px-5 py-2.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold transition disabled:opacity-50"
+                            className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition shadow-md disabled:opacity-50 cursor-pointer"
                           >
-                            {issuingCert ? 'Issuing...' : 'Issue Certificate'}
+                            {issuingCert ? 'Issuing Certificate...' : 'Award & Issue Certificate'}
                           </button>
                         </div>
                       </form>

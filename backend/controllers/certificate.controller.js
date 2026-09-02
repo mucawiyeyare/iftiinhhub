@@ -1,6 +1,7 @@
 import Certificate from '../models/Certificate.js';
 import Course from '../models/Course.js';
 import User from '../models/User.js';
+import Enrollment from '../models/Enrollment.js';
 
 /**
  * Seed initial certificates if none exist in the database
@@ -13,7 +14,7 @@ const seedSampleCertificatesIfEmpty = async () => {
         {
           certificateId: 'NTW-YEAR-A1B2C3D4',
           studentName: 'Abdirahman Mohamed Ali',
-          studentEmail: 'abdirahman@example.com',
+          studentEmail: 'abdirahm916@gmail.com',
           courseTitle: 'Associate Full-Stack Web Developer (MERN Stack)',
           issueDate: new Date('2024-12-15'),
           completionDate: new Date('2024-12-10'),
@@ -25,7 +26,7 @@ const seedSampleCertificatesIfEmpty = async () => {
         {
           certificateId: 'NTW-2024-A1B2C3D4',
           studentName: 'Abdirahman Mohamed Ali',
-          studentEmail: 'abdirahman@example.com',
+          studentEmail: 'abdirahm916@gmail.com',
           courseTitle: 'Associate Full-Stack Web Developer (MERN Stack)',
           issueDate: new Date('2024-12-15'),
           completionDate: new Date('2024-12-10'),
@@ -103,6 +104,46 @@ export const verifyCertificate = async (req, res) => {
   } catch (error) {
     console.error('Error verifying certificate:', error);
     return res.status(500).json({ message: 'Server error while verifying certificate', error: error.message });
+  }
+};
+
+/**
+ * Get Certificates for Current Logged-in Student
+ * GET /api/certificates/my-certificates
+ */
+export const getStudentCertificates = async (req, res) => {
+  try {
+    await seedSampleCertificatesIfEmpty();
+
+    const userEmail = req.user.email?.toLowerCase();
+    const userName = req.user.name || req.user.username;
+
+    const query = {
+      $or: [
+        { userId: req.user._id },
+        ...(userEmail ? [{ studentEmail: userEmail }] : []),
+        ...(userName ? [{ studentName: { $regex: new RegExp(`^${userName}$`, 'i') } }] : [])
+      ]
+    };
+
+    let certs = await Certificate.find(query).sort({ issueDate: -1 });
+
+    // Fallback if demo or user name matches
+    if (certs.length === 0 && (userEmail?.includes('abdirahm') || userName?.toLowerCase().includes('abdirahman'))) {
+      const demoCerts = await Certificate.find({
+        $or: [
+          { certificateId: 'NTW-YEAR-A1B2C3D4' },
+          { studentName: { $regex: /abdirahman/i } }
+        ]
+      });
+      if (demoCerts.length > 0) {
+        certs = demoCerts;
+      }
+    }
+
+    res.status(200).json(certs);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch certificates', error: error.message });
   }
 };
 
@@ -186,9 +227,9 @@ export const createCertificate = async (req, res) => {
       userId: userId || undefined,
       issueDate: issueDate || new Date(),
       completionDate: completionDate || new Date(),
-      grade: grade || 'Passed',
+      grade: grade || 'Distinction (98%)',
       instructor: instructor || 'Eng. Mucawiye & IftiinHub Academic Team',
-      skills: Array.isArray(skills) ? skills : (skills ? skills.split(',').map(s => s.trim()) : []),
+      skills: Array.isArray(skills) ? skills : (skills ? skills.split(',').map(s => s.trim()) : ['HTML5 & CSS3', 'JavaScript ES6+', 'React.js', 'Node.js', 'MongoDB']),
       status: status || 'valid'
     });
 
@@ -196,6 +237,83 @@ export const createCertificate = async (req, res) => {
     res.status(201).json({ message: 'Certificate issued successfully', certificate: newCertificate });
   } catch (error) {
     res.status(500).json({ message: 'Failed to issue certificate', error: error.message });
+  }
+};
+
+/**
+ * Assign Student Course as Completed & Auto-Generate Certificate (Admin)
+ * POST /api/certificates/assign-complete
+ */
+export const assignCompletedAndGenerateCertificate = async (req, res) => {
+  try {
+    const { studentId, courseId, grade, instructor, skills, customCourseTitle } = req.body;
+
+    if (!studentId) {
+      return res.status(400).json({ message: 'Student selection is required' });
+    }
+
+    const student = await User.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    let course = null;
+    let courseTitle = customCourseTitle;
+
+    if (courseId) {
+      course = await Course.findById(courseId);
+      if (course) {
+        courseTitle = course.name;
+      }
+    }
+
+    if (!courseTitle) {
+      courseTitle = 'Associate Full-Stack Web Developer (MERN Stack)';
+    }
+
+    // Update or create enrollment marked as completed
+    if (courseId) {
+      let enrollment = await Enrollment.findOne({ studentId, courseId });
+      if (!enrollment) {
+        enrollment = new Enrollment({
+          studentId,
+          courseId,
+          status: 'completed'
+        });
+      } else {
+        enrollment.status = 'completed';
+      }
+      await enrollment.save();
+    }
+
+    // Auto-generate unique Certificate ID
+    const year = new Date().getFullYear();
+    const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const certId = `IFT-${year}-${randomCode}`;
+
+    const newCert = new Certificate({
+      certificateId: certId,
+      studentName: student.name || student.username,
+      studentEmail: student.email,
+      courseTitle,
+      courseId: course?._id || undefined,
+      userId: student._id,
+      issueDate: new Date(),
+      completionDate: new Date(),
+      grade: grade || 'Distinction (98%)',
+      instructor: instructor || 'Eng. Mucawiye & IftiinHub Academic Team',
+      skills: Array.isArray(skills) ? skills : (skills ? skills.split(',').map(s => s.trim()) : ['HTML5 & CSS3', 'Tailwind CSS', 'JavaScript ES6+', 'React.js', 'Node.js & Express', 'MongoDB']),
+      status: 'valid'
+    });
+
+    await newCert.save();
+
+    res.status(201).json({
+      message: 'Course marked as completed and certificate generated successfully!',
+      certificate: newCert
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to assign completion and generate certificate', error: error.message });
   }
 };
 
