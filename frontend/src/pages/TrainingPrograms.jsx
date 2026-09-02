@@ -4,6 +4,11 @@ import PageTitle from '../components/PageTitle';
 import fullstackImg from '../assets/program-fullstack.png';
 import dataAnalysisImg from '../assets/program-data-analysis.png';
 
+// Real customer logos
+import snabDentalLogo from '../assets/customers/snab-dental-logo.png';
+import dhiigkaalLogo from '../assets/customers/dhiigkaal-logo.png';
+import ntwHuLogo from '../assets/customers/ntw-hu-logo.png';
+
 const academyPrograms = [
   {
     id: 'fullstack-web',
@@ -65,26 +70,66 @@ const academyPrograms = [
   }
 ];
 
-const ictServices = [
+const builtSystems = [
   {
-    icon: '🏫',
-    title: 'University & School Portals',
-    desc: 'Student admission, grade books, fees management, attendance tracking, and parent/teacher portals.'
+    id: 'dhiigkaal',
+    title: 'Dhiigkaal Blood Bank & Healthcare System',
+    shortName: 'Dhiigkaal Blood Bank',
+    logo: dhiigkaalLogo,
+    url: 'https://dhiigkaal.iftiinhub.com',
+    domain: 'dhiigkaal.iftiinhub.com',
+    category: 'Healthcare & Blood Bank ERP',
+    systemColor: '#e11d48',
+    borderColor: 'border-rose-200 hover:border-rose-400',
+    bgColor: 'bg-rose-50/20 hover:bg-rose-50/50',
+    tabColor: '#e11d48',
+    badgeClass: 'bg-rose-100 text-rose-800 border-rose-200',
+    desc: 'Electronic blood donor registry, emergency blood matching, hospital lab screening workflows, and real-time blood stock management.',
+    features: [
+      'Donor Registry & Blood Type Matching',
+      'Emergency Dispatch & Request Workflows',
+      'Laboratory Screening & Stock Tracking'
+    ]
   },
   {
-    icon: '🏥',
-    title: 'Hospital & Clinic Information Systems',
-    desc: 'Patient digital records (EHR), doctor schedules, appointments, pharmacy, laboratory workflows, and invoicing.'
+    id: 'snabdental',
+    title: 'SNAB Dental Clinic & Healthcare Management',
+    shortName: 'SNAB Dental Clinic',
+    logo: snabDentalLogo,
+    url: 'https://snabdental.iftiinhub.com',
+    domain: 'snabdental.iftiinhub.com',
+    category: 'Dental & Clinical EHR System',
+    systemColor: '#d97706',
+    borderColor: 'border-amber-200 hover:border-amber-400',
+    bgColor: 'bg-amber-50/20 hover:bg-amber-50/50',
+    tabColor: '#f59e0b',
+    badgeClass: 'bg-amber-100 text-amber-900 border-amber-200',
+    desc: 'Specialized dental clinical management suite with electronic health records (EHR), tooth charting, appointments, and medical billing.',
+    features: [
+      'Interactive Tooth & Dental Charting',
+      'Online Patient Booking & Doctor Schedules',
+      'Point of Sale, Invoicing & Receipts'
+    ]
   },
   {
-    icon: '💼',
-    title: 'Enterprise Business ERPs & Accounting',
-    desc: 'Inventory control, Point of Sale (POS), staff payroll, expense tracking, and real-time financial reporting.'
-  },
-  {
-    icon: '☁️',
-    title: 'Cloud Infrastructure & Database Setup',
-    desc: 'Linux VPS configuration, database optimization, SSL security, automated nightly backups, and IT support.'
+    id: 'ntw',
+    title: 'National Training Week (Hormuud University)',
+    shortName: 'Hormuud University (NTW)',
+    logo: ntwHuLogo,
+    url: 'https://ntw.hu.edu.so',
+    domain: 'ntw.hu.edu.so',
+    category: 'University & Academic Portal',
+    systemColor: '#16a34a',
+    borderColor: 'border-emerald-200 hover:border-emerald-400',
+    bgColor: 'bg-emerald-50/20 hover:bg-emerald-50/50',
+    tabColor: '#16a34a',
+    badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    desc: 'High-performance university academic portal powering student admissions, semester grade books, course syllabi, and verified digital credentials.',
+    features: [
+      'Student Admissions & Enrollment Hub',
+      'Semester Grade Books & Transcripts',
+      'Online Credential Verification System'
+    ]
   }
 ];
 
@@ -96,7 +141,7 @@ const TrainingPrograms = () => {
       {/* ── Top Header (Clean White Design) ── */}
       <section className="py-12 sm:py-16 bg-gradient-to-b from-amber-500/10 via-white to-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-300 text-amber-800 text-xs sm:text-sm font-bold uppercase tracking-wider mb-4 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 border border-amber-300 text-amber-800 text-xs sm:text-sm font-bold uppercase tracking-wider mb-4 shadow-xs">
             <span>🎥</span> Live Interactive Online Classes via Zoom
           </div>
           <h1 className="text-3xl sm:text-5xl font-black text-slate-950 tracking-tight leading-tight">
@@ -108,98 +153,86 @@ const TrainingPrograms = () => {
         </div>
       </section>
 
-      {/* ── Training Programs Cards Section (Software Academy Style) ── */}
-      <section className="py-12 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <span className="badge-brand-gold mb-2">Cohort Programs</span>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-950 tracking-tight">
-            Available Live Zoom Bootcamps
-          </h2>
-          <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-xl mx-auto">
-            Choose your learning track. Each program is delivered live on Zoom with direct mentorship and project reviews.
-          </p>
-        </div>
-
-        {/* 2 Main Program Cards */}
+      {/* ── Program Cards (Software Academy Style) ── */}
+      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {academyPrograms.map((program) => (
+          {academyPrograms.map((p) => (
             <div
-              key={program.id}
-              className="bg-white rounded-2xl border border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
+              key={p.id}
+              className="bg-white rounded-3xl border border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
             >
               <div>
-                {/* Real Image Container (Software Academy style) */}
-                <div className="relative bg-white border-b border-slate-100 p-6 flex items-center justify-center overflow-hidden">
+                {/* Visual Image Header */}
+                <div className="bg-white p-6 border-b border-slate-100 flex items-center justify-center relative">
                   <img
-                    src={program.image}
-                    alt={program.title}
-                    className="w-full h-auto max-h-64 object-contain rounded-xl transform group-hover:scale-102 transition-transform duration-300"
+                    src={p.image}
+                    alt={p.title}
+                    className="w-full h-auto max-h-64 object-contain rounded-2xl transform group-hover:scale-102 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 right-4 bg-amber-500 text-slate-950 font-black text-xs px-3 py-1 rounded-full shadow-md">
-                    {program.badge}
+                  <div className="absolute top-4 right-4 bg-amber-500 text-slate-950 font-black text-xs px-3.5 py-1 rounded-full shadow-md">
+                    {p.badge}
                   </div>
                 </div>
 
-                {/* Card Body */}
+                {/* Body Content */}
                 <div className="p-6 sm:p-8">
-                  {/* Mode & Duration Row */}
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
-                      {program.mode}
+                      {p.mode}
                     </span>
                     <span className="text-xs font-semibold text-slate-500">
-                      ⏱️ {program.duration}
+                      ⏱️ {p.duration}
                     </span>
                   </div>
 
-                  {/* Title (Software Academy uppercase bold) */}
-                  <h3 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight mb-2">
-                    {program.title}
-                  </h3>
+                  <h2 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight mb-2">
+                    {p.title}
+                  </h2>
 
                   <p className="text-xs font-bold text-amber-700 uppercase tracking-wider mb-4">
-                    {program.subtitle}
+                    {p.subtitle}
                   </p>
 
                   <p className="text-sm text-slate-600 leading-relaxed mb-6">
-                    {program.description}
+                    {p.description}
                   </p>
 
-                  {/* Curriculum Breakdown */}
-                  <div className="mb-6 p-4 rounded-xl bg-slate-50 border border-slate-100">
-                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                      <span>📚</span> Syllabus &amp; Core Topics:
-                    </h4>
-                    <ul className="space-y-2">
-                      {program.curriculum.map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-slate-700">
-                          <span className="text-amber-500 font-bold shrink-0">✓</span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Program Features */}
+                  {/* Detailed Curriculum Section */}
                   <div className="mb-6">
-                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">
-                      What is Included:
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700 font-medium">
-                      {program.features.map((feat, idx) => (
-                        <div key={idx} className="flex items-center gap-1.5 bg-slate-50 p-2 rounded-lg border border-slate-100">
-                          <span>{feat}</span>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-1.5">
+                      <span>📚</span> Program Curriculum &amp; Modules
+                    </h3>
+                    <div className="space-y-2">
+                      {p.curriculum.map((topic, idx) => (
+                        <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700">
+                          <span className="w-5 h-5 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                            {idx + 1}
+                          </span>
+                          <span>{topic}</span>
                         </div>
                       ))}
                     </div>
                   </div>
+
+                  {/* Program Highlights */}
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
+                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
+                      What's Included:
+                    </h4>
+                    {p.features.map((feat, idx) => (
+                      <div key={idx} className="flex items-center gap-2 text-xs text-slate-700">
+                        <span className="text-amber-500 font-bold">✓</span>
+                        <span>{feat}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Actions Footer */}
+              {/* Action Buttons */}
               <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
                 <a
-                  href={`https://wa.me/616408886?text=${encodeURIComponent(program.whatsappMsg)}`}
+                  href={`https://wa.me/616408886?text=${encodeURIComponent(p.whatsappMsg)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-brand-primary flex-1 text-center text-sm py-3 justify-center"
@@ -218,47 +251,127 @@ const TrainingPrograms = () => {
         </div>
       </section>
 
-      {/* ── Enterprise ICT Systems Building Section (Clean White) ── */}
-      <section className="py-16 sm:py-20 bg-slate-50 border-y border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* ── Real Enterprise Systems Built By Us ── */}
+      <section className="py-16 sm:py-24 bg-gradient-to-b from-slate-50/80 via-white to-slate-50/60 border-y border-slate-200 relative overflow-hidden">
+        
+        {/* Dot pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] opacity-20 pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          
           <div className="text-center mb-12">
-            <span className="badge-brand-gold mb-2">Institutional Systems</span>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-950 tracking-tight">
-              We Also Build Custom ICT &amp; Enterprise Systems
+            <span className="badge-brand-gold mb-2">Live Production Systems</span>
+            <h2 className="text-3xl sm:text-5xl font-black text-slate-950 tracking-tight flex items-baseline justify-center gap-2">
+              <span>Real Systems</span>
+              <span className="text-amber-500 relative inline-block">
+                Built By Us
+                <svg
+                  className="absolute -bottom-2.5 left-0 w-full h-3.5 text-amber-500 overflow-visible"
+                  viewBox="0 0 100 12"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M2 9C28 2 72 2 98 9"
+                    stroke="#f59e0b"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
             </h2>
-            <p className="mt-3 text-slate-600 max-w-2xl mx-auto text-sm sm:text-base">
-              IftiinHub builds modern software systems and cloud database infrastructure for schools, universities, hospitals, and businesses.
+            <p className="mt-5 text-slate-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+              We design, build, and deploy mission-critical web applications, electronic medical records, blood bank registries, and university management portals.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            {ictServices.map((srv, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+          {/* 3 Real System Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 mb-12">
+            {builtSystems.map((sys) => (
+              <a
+                key={sys.id}
+                href={sys.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative group cursor-pointer transition-all duration-300 hover:-translate-y-2 block"
               >
-                <div>
-                  <div className="text-3xl mb-3 p-3 bg-amber-50 rounded-xl w-fit border border-amber-200">
-                    {srv.icon}
+                {/* System Color Accent Shadow Tab */}
+                <div
+                  className="absolute -bottom-2.5 right-6 w-24 h-4 rounded-full transition-all duration-300 opacity-80 group-hover:opacity-100 group-hover:w-32 shadow-md"
+                  style={{ backgroundColor: sys.tabColor }}
+                ></div>
+
+                {/* White Card with System Accent */}
+                <div className={`relative bg-white rounded-2xl border-2 p-6 sm:p-7 flex flex-col justify-between h-full shadow-lg transition-all duration-300 ${sys.borderColor} ${sys.bgColor}`}>
+                  
+                  <div>
+                    {/* Header Badges */}
+                    <div className="w-full flex items-center justify-between mb-4">
+                      <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${sys.badgeClass}`}>
+                        {sys.category}
+                      </span>
+                      <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Live
+                      </span>
+                    </div>
+
+                    {/* Logo Image */}
+                    <div className="w-full h-24 flex items-center justify-center p-2 mb-4 bg-white rounded-xl border border-slate-100 shadow-xs">
+                      <img
+                        src={sys.logo}
+                        alt={sys.title}
+                        className="max-h-20 max-w-[180px] w-auto h-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+
+                    <h3 className="text-lg font-black text-slate-950 mb-2">
+                      {sys.title}
+                    </h3>
+
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+                      {sys.desc}
+                    </p>
+
+                    {/* Feature bullet points */}
+                    <div className="space-y-1.5 mb-6">
+                      {sys.features.map((f, fIdx) => (
+                        <div key={fIdx} className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                          <span className="text-emerald-600 font-black">✓</span>
+                          <span>{f}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <h3 className="text-base font-bold text-slate-950 mb-2">
-                    {srv.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                    {srv.desc}
-                  </p>
+
+                  {/* Domain & Direct Link */}
+                  <div className="w-full pt-3 border-t border-slate-200/80 flex items-center justify-between text-xs font-mono font-bold text-slate-800">
+                    <span className="group-hover:text-slate-950 transition-colors">
+                      {sys.domain}
+                    </span>
+                    <span
+                      className="font-sans font-bold flex items-center gap-1 transition-transform group-hover:translate-x-1"
+                      style={{ color: sys.systemColor }}
+                    >
+                      Visit System →
+                    </span>
+                  </div>
+
                 </div>
-              </div>
+              </a>
             ))}
           </div>
 
           {/* Consultation CTA Banner */}
-          <div className="bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 rounded-2xl p-8 text-slate-950 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+          <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-orange-500 rounded-3xl p-8 sm:p-12 text-slate-950 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
             <div>
-              <h3 className="text-xl sm:text-2xl font-black mb-1">
+              <span className="inline-block px-3 py-1 rounded-full bg-black/10 text-slate-950 text-xs font-black uppercase tracking-wider mb-2">
+                Enterprise Custom Engineering
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-black mb-1">
                 Need a Custom ICT System for Your Institution?
               </h3>
-              <p className="text-slate-900 font-medium text-xs sm:text-sm max-w-xl">
+              <p className="text-slate-950/90 font-medium text-xs sm:text-sm max-w-xl">
                 Contact our senior software engineering team to discuss your project requirements and receive a customized quote.
               </p>
             </div>
@@ -266,11 +379,12 @@ const TrainingPrograms = () => {
               href="https://wa.me/616408886?text=Salaan!%20Waxaan%20doonayaa%20in%20aan%20kala%20hadlo%20dhismaha%20nidaam%20ICT."
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 rounded-xl bg-slate-950 text-white font-bold text-sm hover:bg-zinc-800 transition-all shadow-md shrink-0 inline-flex items-center gap-2"
+              className="px-6 py-3.5 rounded-xl bg-slate-950 text-white font-bold text-sm hover:bg-zinc-800 transition-all shadow-md shrink-0 inline-flex items-center gap-2"
             >
               💬 Request System Consultation
             </a>
           </div>
+
         </div>
       </section>
 
@@ -303,10 +417,10 @@ const TrainingPrograms = () => {
 
           <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200">
             <h3 className="font-bold text-base text-slate-950 mb-2">
-              How do I get instructor support between live classes?
+              Will I receive a verified certificate upon completion?
             </h3>
             <p className="text-sm text-slate-600 leading-relaxed">
-              Each student is added to an active WhatsApp group and has direct 1-on-1 access to instructors for code debugging, assignment reviews, and question answering.
+              Yes. Upon completing your coursework and submitting your portfolio capstone project, an official verifiable certificate with a unique Verification ID and QR code is issued directly to your student dashboard.
             </p>
           </div>
         </div>
