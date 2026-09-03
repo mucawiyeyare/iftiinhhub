@@ -71,8 +71,6 @@ const VerifyCertificate = () => {
     window.print();
   };
 
-  const sampleIds = ['NTW-YEAR-A1B2C3D4', 'IFT-2025-WEB01', 'IFT-2025-DATA02'];
-
   return (
     <div className="min-h-screen bg-white text-slate-800 py-12 px-4 sm:px-6 lg:px-8 selection:bg-amber-500 selection:text-black">
       <PageTitle title="Verify Certificate - IftiinHub" />
@@ -146,7 +144,7 @@ const VerifyCertificate = () => {
                 type="text"
                 value={certificateId}
                 onChange={(e) => setCertificateId(e.target.value)}
-                placeholder="E.G. NTW-YEAR-A1B2C3D4"
+                placeholder="E.G. IFT-2025-XXXXXX"
                 className="w-full pl-11 pr-10 py-3.5 bg-slate-50 text-slate-900 placeholder-slate-400 rounded-xl border border-slate-300 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition duration-200 font-mono text-sm tracking-wider uppercase font-semibold"
               />
               {certificateId && (
@@ -180,24 +178,6 @@ const VerifyCertificate = () => {
               )}
             </button>
           </form>
-
-          {/* Quick Demo Samples */}
-          <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-            <span className="font-semibold text-slate-700">Try sample IDs:</span>
-            {sampleIds.map((id) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => {
-                  setCertificateId(id);
-                  handleVerify(id);
-                }}
-                className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-amber-100 hover:text-amber-900 border border-slate-200 font-mono transition font-medium cursor-pointer"
-              >
-                {id}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* ── ERROR / NOT FOUND STATE ── */}
@@ -213,7 +193,7 @@ const VerifyCertificate = () => {
             <div className="text-xs text-slate-600 bg-white border border-red-100 p-4 rounded-xl max-w-md mx-auto text-left space-y-1 shadow-sm">
               <p className="font-semibold text-slate-800">💡 Quick Troubleshooting:</p>
               <p>• Make sure there are no typos in your certificate ID.</p>
-              <p>• IDs typically look like <span className="font-mono text-amber-700 font-bold">NTW-YEAR-A1B2C3D4</span> or <span className="font-mono text-amber-700 font-bold">IFT-2025-XXXXXX</span>.</p>
+              <p>• IDs typically look like <span className="font-mono text-amber-700 font-bold">IFT-2025-XXXXXX</span>.</p>
               <p>• If you need assistance, contact <a href="mailto:support@iftiinhhub.com" className="text-amber-700 underline font-semibold">support@iftiinhhub.com</a>.</p>
             </div>
           </div>
