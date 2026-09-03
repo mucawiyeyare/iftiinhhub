@@ -214,8 +214,11 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
           <span className="text-base sm:text-xl md:text-2xl font-bold text-white tracking-wide shrink-0 pb-0.5 sm:pb-1 font-sans">
             Name :
           </span>
-          <div className="flex-1 relative border-b-2 sm:border-b-3 border-amber-400 pb-0.5 sm:pb-1 text-center sm:text-left pl-1 sm:pl-3">
-            <span className="text-base sm:text-xl md:text-2xl lg:text-3xl font-black uppercase tracking-wider text-amber-300 font-serif drop-shadow-sm break-words">
+          <div className="flex-1 relative border-b-2 sm:border-b-3 border-amber-400 pb-0.5 sm:pb-1 text-left pl-1 sm:pl-3 overflow-hidden">
+            <span
+              className="font-black uppercase tracking-wider text-amber-300 font-serif drop-shadow-sm whitespace-nowrap block"
+              style={{ fontSize: 'clamp(0.75rem, 3.5vw, 1.75rem)' }}
+            >
               {studentName}
             </span>
           </div>
