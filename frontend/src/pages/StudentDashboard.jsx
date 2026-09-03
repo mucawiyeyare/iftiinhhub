@@ -29,8 +29,17 @@ const StudentDashboard = () => {
         axios.get('/enrollments/student').catch(() => ({ data: [] })),
         axios.get('/certificates/my-certificates').catch(() => ({ data: [] }))
       ]);
+      const rawCerts = certRes.data || [];
+      const currentEmail = user?.email?.toLowerCase().trim();
+      const currentUserId = user?._id;
+      const myOwnCerts = rawCerts.filter(c => {
+        if (!c) return false;
+        const matchesUser = currentUserId && c.userId && String(c.userId) === String(currentUserId);
+        const matchesEmail = currentEmail && c.studentEmail && c.studentEmail.toLowerCase().trim() === currentEmail;
+        return matchesUser || matchesEmail;
+      });
       setEnrollments(enrollRes.data || []);
-      setCertificates(certRes.data || []);
+      setCertificates(myOwnCerts);
     } catch (err) {
       setError('Failed to fetch dashboard data');
     } finally {
@@ -382,6 +391,15 @@ const StudentDashboard = () => {
                     {enrollments.slice(0, 3).map(enrollment => {
                       const course = enrollment?.courseId;
                       if (!course) return null;
+
+                      const matchingCert = certificates.find(c => 
+                        (c.courseId && String(c.courseId) === String(course._id)) ||
+                        (c.courseTitle && course.name && (
+                          c.courseTitle.toLowerCase().includes(course.name.toLowerCase()) ||
+                          course.name.toLowerCase().includes(c.courseTitle.toLowerCase())
+                        ))
+                      );
+
                       return (
                         <div key={enrollment._id} className="bg-white rounded-2xl shadow-sm border border-slate-200/80 flex p-4 gap-4 hover:shadow-md transition cursor-pointer" onClick={() => navigate(`/courses/${course._id}/learn`)}>
                           <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-slate-100 border border-slate-100">
@@ -396,14 +414,28 @@ const StudentDashboard = () => {
                           <div className="flex flex-col flex-1">
                             <h4 className="font-bold text-slate-900 line-clamp-1 mb-1">{course.name}</h4>
                             <div className="mt-auto">
-                              <div className="w-full bg-slate-100 rounded-full h-1.5 mb-1">
+                              <div className="w-full bg-slate-100 rounded-full h-1.5 mb-1.5">
                                 <div className="bg-amber-500 h-1.5 rounded-full" style={{ width: enrollment.status === 'completed' ? '100%' : '15%' }}></div>
                               </div>
-                              <span className="text-xs font-semibold text-slate-500">{enrollment.status === 'completed' ? 'Completed' : 'In Progress'}</span>
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-semibold text-slate-500">{enrollment.status === 'completed' ? 'Completed' : 'In Progress'}</span>
+                                {matchingCert && (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setPreviewCert(matchingCert);
+                                    }}
+                                    className="text-[11px] font-bold text-amber-700 hover:text-amber-900 underline flex items-center gap-0.5 cursor-pointer"
+                                  >
+                                    📜 Certificate
+                                  </button>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      )
+                      );
                     })}
                   </div>
                 </div>
@@ -446,6 +478,14 @@ const StudentDashboard = () => {
                     const course = enrollment?.courseId;
                     if (!course) return null;
 
+                    const matchingCert = certificates.find(c => 
+                      (c.courseId && String(c.courseId) === String(course._id)) ||
+                      (c.courseTitle && course.name && (
+                        c.courseTitle.toLowerCase().includes(course.name.toLowerCase()) ||
+                        course.name.toLowerCase().includes(c.courseTitle.toLowerCase())
+                      ))
+                    );
+
                     const totalVideos = (course.videos?.length || 0) + (course.video1 ? 1 : 0) + (course.video2 ? 1 : 0);
                     const totalSections = course.sections?.length || 0;
 
@@ -459,12 +499,17 @@ const StudentDashboard = () => {
                               <div className="w-full h-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-slate-950 text-5xl">📚</div>
                             )}
                           </Link>
-                          <div className="absolute top-3 right-3">
+                          <div className="absolute top-3 right-3 flex flex-col gap-1 items-end">
                             <span className={`px-2.5 py-1 text-xs font-bold rounded-full flex items-center shadow-sm backdrop-blur-md ${
                               enrollment.status === 'completed' ? 'bg-emerald-600 text-white' : 'bg-white/95 text-slate-800'
                             }`}>
                               {enrollment.status === 'completed' ? '✅ Completed' : '🔄 In Progress'}
                             </span>
+                            {matchingCert && (
+                              <span className="px-2 py-0.5 text-[10px] font-black rounded-full bg-amber-500 text-slate-950 shadow-xs">
+                                📜 Certified
+                              </span>
+                            )}
                           </div>
                         </div>
 
@@ -489,12 +534,24 @@ const StudentDashboard = () => {
                             <div className="flex items-center"><span className="mr-1.5">📑</span><span>{totalSections} Sections</span></div>
                           </div>
 
-                          <div className="mt-auto">
+                          <div className="mt-auto space-y-2">
+                            {/* If course completed and student has their own certificate */}
+                            {matchingCert && (
+                              <button
+                                type="button"
+                                onClick={() => setPreviewCert(matchingCert)}
+                                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs sm:text-sm font-black rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 shadow-md transition duration-200 cursor-pointer"
+                              >
+                                <span>📜</span>
+                                <span>View My Certificate ({matchingCert.certificateId})</span>
+                              </button>
+                            )}
+
                             <Link
                               to={`/courses/${course._id}/learn`}
                               className={`w-full flex items-center justify-center px-4 py-2.5 text-sm font-bold rounded-xl transition duration-200 border-2 ${
                                 enrollment.status === 'completed' 
-                                 ? 'border-emerald-600 text-emerald-700 hover:bg-emerald-50'
+                                 ? 'border-slate-300 text-slate-700 hover:bg-slate-50'
                                  : 'border-transparent bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md'
                               }`}
                             >

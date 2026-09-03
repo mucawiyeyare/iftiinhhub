@@ -113,34 +113,21 @@ export const verifyCertificate = async (req, res) => {
  */
 export const getStudentCertificates = async (req, res) => {
   try {
-    await seedSampleCertificatesIfEmpty();
+    const userEmail = req.user.email?.toLowerCase().trim();
+    const userId = req.user._id;
 
-    const userEmail = req.user.email?.toLowerCase();
-    const userName = req.user.name || req.user.username;
+    if (!userId && !userEmail) {
+      return res.status(200).json([]);
+    }
 
     const query = {
       $or: [
-        { userId: req.user._id },
-        ...(userEmail ? [{ studentEmail: userEmail }] : []),
-        ...(userName ? [{ studentName: { $regex: new RegExp(`^${userName}$`, 'i') } }] : [])
+        { userId: userId },
+        ...(userEmail ? [{ studentEmail: userEmail }] : [])
       ]
     };
 
-    let certs = await Certificate.find(query).sort({ issueDate: -1 });
-
-    // Fallback if demo or user name matches
-    if (certs.length === 0 && (userEmail?.includes('abdirahm') || userName?.toLowerCase().includes('abdirahman'))) {
-      const demoCerts = await Certificate.find({
-        $or: [
-          { certificateId: 'NTW-YEAR-A1B2C3D4' },
-          { studentName: { $regex: /abdirahman/i } }
-        ]
-      });
-      if (demoCerts.length > 0) {
-        certs = demoCerts;
-      }
-    }
-
+    const certs = await Certificate.find(query).sort({ issueDate: -1 });
     res.status(200).json(certs);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch certificates', error: error.message });

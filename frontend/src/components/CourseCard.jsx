@@ -13,6 +13,14 @@ const CourseCard = ({ course }) => {
           className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628]/60 via-transparent to-transparent" />
+        
+        {/* Duration Badge */}
+        <div className="absolute top-3 right-3">
+          <span className="px-3 py-1 text-xs font-bold rounded-full bg-slate-950/85 text-amber-400 border border-amber-500/40 backdrop-blur-md shadow-md flex items-center gap-1.5">
+            <span>⏱️</span>
+            <span>{course.duration || '12 Weeks'}</span>
+          </span>
+        </div>
       </div>
 
       {/* Card Content */}
@@ -28,18 +36,26 @@ const CourseCard = ({ course }) => {
             {course.name}
           </h3>
 
+          {/* Instructor Name & His Image */}
+          <div className="flex items-center gap-2.5 pb-3 mb-3 border-b border-slate-100 font-medium">
+            <img
+              src={course.instructorImage || instructorImg}
+              alt={course.instructor || 'Instructor'}
+              className="w-8 h-8 rounded-full object-cover border-2 border-amber-500 shadow-xs flex-shrink-0"
+              onError={(e) => { e.target.src = instructorImg; }}
+            />
+            <div className="min-w-0">
+              <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider leading-none">Instructor</p>
+              <p className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                {course.instructor || 'Eng. Abdirahman Mohamed Ibrahim'}
+              </p>
+            </div>
+          </div>
+
           {/* Description */}
-          <p className="text-slate-600 text-xs sm:text-sm mb-4 line-clamp-3 leading-relaxed font-normal">
+          <p className="text-slate-600 text-xs sm:text-sm mb-4 line-clamp-2 leading-relaxed font-normal">
             {course.description || 'Master modern skills with intensive hands-on lessons and mentorship.'}
           </p>
-
-          {/* Instructor */}
-          <div className="flex items-center gap-2 pb-4 border-b border-slate-100 font-medium">
-            <img src={instructorImg} alt={course.instructor || 'Instructor'} className="w-7 h-7 rounded-full object-cover border-2 border-amber-500 shadow-sm" />
-            <span className="font-bold text-xs text-slate-900">
-              {course.instructor || 'Eng. Abdirahman Mohamed Ibrahim'}
-            </span>
-          </div>
         </div>
 
         {/* Action Button */}

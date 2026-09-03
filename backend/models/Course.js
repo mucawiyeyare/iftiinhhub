@@ -3,9 +3,11 @@ import mongoose from 'mongoose';
 const courseSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
-  price: { type: Number, required: true },
+  price: { type: Number, default: 0 },
   originalPrice: { type: Number }, // Optional: original price before discount
   instructor: { type: String, required: true },
+  instructorImage: { type: String }, // Instructor avatar / image URL
+  duration: { type: String, default: '12 Weeks' }, // e.g. 16 Weeks or 3 Months
   imageUrl: { type: String },
   requirements: { type: String },
   whatYouWillLearn: [{ type: String }],

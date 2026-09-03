@@ -18,6 +18,8 @@ const CourseForm = () => {
     name: '',
     description: '',
     instructor: '',
+    instructorImage: '',
+    duration: '',
     price: '',
     originalPrice: '',
     imageUrl: '',
@@ -251,10 +253,10 @@ const CourseForm = () => {
                 />
               </div>
 
-              {/* Instructor */}
+              {/* Instructor Name */}
               <div>
                 <label htmlFor="instructor" className="block text-sm font-medium text-gray-700 mb-2">
-                  Instructor *
+                  Instructor Name *
                 </label>
                 <input
                   type="text"
@@ -264,7 +266,38 @@ const CourseForm = () => {
                   onChange={handleChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter instructor name"
+                  placeholder="Enter instructor name (e.g. Eng. Abdirahman Mohamed)"
+                />
+              </div>
+
+              {/* Course Duration */}
+              <div>
+                <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
+                  Course Duration
+                </label>
+                <input
+                  type="text"
+                  id="duration"
+                  name="duration"
+                  value={formData.duration}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="e.g. 16 Weeks or 3 Months (4 Days/Week)"
+                />
+              </div>
+
+              {/* Instructor Image Upload */}
+              <div className="md:col-span-2">
+                <ImageUpload
+                  label="Instructor Image / Avatar"
+                  currentImageUrl={formData.instructorImage}
+                  onImageUpload={(imageUrl) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      instructorImage: imageUrl
+                    }));
+                  }}
+                  maxSize={5}
                 />
               </div>
 

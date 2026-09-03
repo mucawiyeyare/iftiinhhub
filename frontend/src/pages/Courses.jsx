@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import PageTitle from '../components/PageTitle';
+import instructorImg from '../assets/instructor.jpg';
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -117,26 +118,55 @@ const Courses = () => {
                 key={course._id}
                 className="bg-white rounded-2xl border border-slate-200/80 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden group"
               >
-                <Link to={`/courses/${course._id}`}>
+                <Link to={`/courses/${course._id}`} className="block relative">
                   <div className="w-full bg-slate-900 flex items-center justify-center overflow-hidden h-52 relative">
                     <img
                       src={course.imageUrl || 'https://via.placeholder.com/400x225'}
                       alt={course.name}
                       className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+                    
+                    {/* Duration Badge */}
+                    <div className="absolute top-3 right-3">
+                      <span className="px-3 py-1 text-xs font-bold rounded-full bg-slate-950/85 text-amber-400 border border-amber-500/40 backdrop-blur-md shadow-md flex items-center gap-1.5">
+                        <span>⏱️</span>
+                        <span>{course.duration || '12 Weeks'}</span>
+                      </span>
+                    </div>
                   </div>
                 </Link>
 
                 <div className="p-5 sm:p-6 flex flex-col flex-grow justify-between">
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900 line-clamp-2 mb-1 group-hover:text-amber-600 transition-colors">
+                    {/* Category Tag */}
+                    <div className="text-[11px] font-black tracking-widest text-amber-600 uppercase mb-1.5">
+                      ACADEMY PROGRAM
+                    </div>
+
+                    {/* Course-Name */}
+                    <h3 className="text-lg sm:text-xl font-extrabold text-slate-950 line-clamp-2 mb-3 leading-snug group-hover:text-amber-600 transition-colors">
                       {course.name}
                     </h3>
-                    <p className="text-xs text-amber-700 font-semibold mb-2 flex items-center gap-1">
-                      <span>👨‍🏫</span> {course.instructor || 'Eng. Abdirahman Mohamed Ibrahim'}
-                    </p>
-                    <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+
+                    {/* Instructor Name and His Image */}
+                    <div className="flex items-center gap-2.5 pb-3.5 mb-3 border-b border-slate-100">
+                      <img
+                        src={course.instructorImage || instructorImg}
+                        alt={course.instructor || 'Instructor'}
+                        className="w-8 h-8 rounded-full object-cover border-2 border-amber-500 shadow-xs flex-shrink-0"
+                        onError={(e) => { e.target.src = instructorImg; }}
+                      />
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider leading-none">Instructor</p>
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                          {course.instructor || 'Eng. Abdirahman Mohamed Ibrahim'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
                       {course.description || 'Master professional hands-on tech skills with practical industry curriculum.'}
                     </p>
                   </div>
