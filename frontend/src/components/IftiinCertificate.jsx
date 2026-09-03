@@ -273,11 +273,11 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
         {/* Right: Signature */}
         <div className="text-center flex flex-col items-center">
           {/* Symbol signature image above the line (Exact match to requested signature) */}
-          <div className="h-7 sm:h-9 md:h-11 flex items-end justify-center pb-0.5 select-none">
+          <div className="h-8 sm:h-10 md:h-12 flex items-end justify-center pb-0.5 select-none">
             <img
               src={signatureImg}
               alt="Official Signature"
-              className="h-6 sm:h-8 md:h-10 w-auto object-contain drop-shadow-sm filter brightness-110"
+              className="h-7 sm:h-9 md:h-11 w-auto object-contain drop-shadow-sm filter brightness-110"
             />
           </div>
           <div className="w-18 sm:w-28 md:w-36 lg:w-44 border-b-1.5 sm:border-b-2 border-amber-400 mb-0.5 sm:mb-1 mt-0.5"></div>
