@@ -53,78 +53,149 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
   return (
     <div
       id={`certificate-${certificateId}`}
-      className={`relative w-full max-w-4xl mx-auto aspect-[1.414/1] bg-[#0A0E1A] text-white rounded-3xl shadow-2xl overflow-hidden border-4 border-amber-500/80 selection:bg-amber-500 selection:text-black flex flex-col justify-between p-6 sm:p-10 ${
+      className={`relative w-full max-w-4xl mx-auto aspect-[1.414/1] bg-[#0d1117] text-white rounded-2xl shadow-2xl overflow-hidden selection:bg-amber-500 selection:text-black flex flex-col justify-between p-6 sm:p-10 ${
         isPrintMode ? 'print-certificate-page' : ''
       }`}
       style={{
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(245, 158, 11, 0.15)'
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 40px rgba(212, 175, 55, 0.15)'
       }}
     >
-      {/* ── BACKGROUND GEOMETRIC ACCENTS & DOT MATRIX (Matching PDF Template) ── */}
-      
-      {/* Top-Left Geometric Gold & Dark Layers */}
-      <div className="absolute top-0 left-0 w-64 h-64 pointer-events-none overflow-hidden z-0">
-        {/* Layer 1: Dark Slate Polygon */}
-        <div
-          className="absolute -top-12 -left-12 w-56 h-56 bg-slate-800/90 border-r-4 border-b-4 border-amber-500 transform -rotate-12 shadow-2xl"
-          style={{ clipPath: 'polygon(0 0, 100% 0, 80% 100%, 0% 80%)' }}
-        ></div>
-        {/* Layer 2: Gold Accent Ribbon */}
-        <div
-          className="absolute -top-6 -left-6 w-44 h-44 bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 transform -rotate-6 opacity-90"
-          style={{ clipPath: 'polygon(0 0, 100% 0, 60% 100%, 0% 60%)' }}
-        ></div>
-        {/* Layer 3: Dark Inner Wedge */}
-        <div
-          className="absolute -top-2 -left-2 w-32 h-32 bg-[#111827] border-r-2 border-b-2 border-amber-300"
-          style={{ clipPath: 'polygon(0 0, 100% 0, 40% 100%, 0% 40%)' }}
-        ></div>
-        {/* Dot Matrix Texture Overlay */}
-        <div className="absolute top-4 left-4 w-32 h-32 bg-[radial-gradient(#94a3b8_1.5px,transparent_1.5px)] [background-size:12px_12px] opacity-40"></div>
-      </div>
+      {/* ── BACKGROUND VECTOR ART (Exact match to certificate Iftiin Hub (1).pdf) ── */}
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-none z-0"
+        viewBox="0 0 1000 707"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="none"
+      >
+        <defs>
+          {/* Gold polka dots pattern */}
+          <pattern id="goldDotsPattern" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+            <circle cx="3" cy="3" r="1.5" fill="#d4af37" fillOpacity="0.75" />
+          </pattern>
 
-      {/* Bottom-Right Geometric Gold & Dark Layers */}
-      <div className="absolute bottom-0 right-0 w-64 h-64 pointer-events-none overflow-hidden z-0">
-        {/* Layer 1: Dark Slate Polygon */}
-        <div
-          className="absolute -bottom-12 -right-12 w-56 h-56 bg-slate-800/90 border-l-4 border-t-4 border-amber-500 transform -rotate-12 shadow-2xl"
-          style={{ clipPath: 'polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%)' }}
-        ></div>
-        {/* Layer 2: Gold Accent Ribbon */}
-        <div
-          className="absolute -bottom-6 -right-6 w-44 h-44 bg-gradient-to-tl from-amber-400 via-amber-500 to-amber-600 transform -rotate-6 opacity-90"
-          style={{ clipPath: 'polygon(40% 0%, 100% 0%, 100% 100%, 0% 100%)' }}
-        ></div>
-        {/* Layer 3: Dark Inner Wedge */}
-        <div
-          className="absolute -bottom-2 -right-2 w-32 h-32 bg-[#111827] border-l-2 border-t-2 border-amber-300"
-          style={{ clipPath: 'polygon(60% 0%, 100% 0%, 100% 100%, 0% 100%)' }}
-        ></div>
-        {/* Dot Matrix Texture Overlay */}
-        <div className="absolute bottom-4 right-4 w-32 h-32 bg-[radial-gradient(#94a3b8_1.5px,transparent_1.5px)] [background-size:12px_12px] opacity-40"></div>
-      </div>
+          {/* Soft drop shadow for layered curved cards */}
+          <filter id="cornerCardShadow" x="-20%" y="-20%" width="150%" height="150%">
+            <feDropShadow dx="4" dy="6" stdDeviation="8" floodColor="#000000" floodOpacity="0.8" />
+          </filter>
+        </defs>
 
-      {/* Subtle Full Certificate Grid Texture */}
-      <div className="absolute inset-0 bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:24px_24px] opacity-25 pointer-events-none z-0"></div>
+        {/* Outer Inset Gold Border (frames the entire certificate canvas) */}
+        <rect
+          x="26"
+          y="26"
+          width="948"
+          height="655"
+          fill="none"
+          stroke="#d4af37"
+          strokeWidth="1.8"
+          strokeOpacity="0.9"
+        />
 
-      {/* ── TOP HEADER SECTION: "certificate" Script & Logo Badge ── */}
+        {/* ── TOP-LEFT / LEFT ABSTRACT GEOMETRIC CURVES ── */}
+        {/* Layer 1: Outermost Gold Dots Shield */}
+        <path
+          d="M 0,0 L 320,0 C 270,120 220,200 160,270 C 100,340 50,390 0,430 Z"
+          fill="url(#goldDotsPattern)"
+        />
+        <path
+          d="M 320,0 C 270,120 220,200 160,270 C 100,340 50,390 0,430"
+          fill="none"
+          stroke="#d4af37"
+          strokeWidth="2.5"
+        />
+
+        {/* Layer 2: Middle Slate Curved Shield with Gold Line Edge */}
+        <path
+          d="M 0,0 L 260,0 C 210,130 170,220 120,300 C 70,380 25,430 0,470 Z"
+          fill="#1c2331"
+          filter="url(#cornerCardShadow)"
+        />
+        <path
+          d="M 260,0 C 210,130 170,220 120,300 C 70,380 25,430 0,470"
+          fill="none"
+          stroke="#d4af37"
+          strokeWidth="2"
+        />
+
+        {/* Layer 3: Foreground Smooth Rounded Navy Tongue */}
+        <path
+          d="M 0,0 L 190,0 C 170,80 180,180 140,280 C 110,360 60,430 0,520 Z"
+          fill="#252d3d"
+          filter="url(#cornerCardShadow)"
+        />
+        <path
+          d="M 190,0 C 170,80 180,180 140,280 C 110,360 60,430 0,520"
+          fill="none"
+          stroke="#eab308"
+          strokeWidth="1.5"
+          strokeOpacity="0.7"
+        />
+
+        {/* Layer 4: Deep Front Slate Organic Wave (extends down left) */}
+        <path
+          d="M 0,80 C 40,80 80,140 85,220 C 90,320 40,430 0,580 Z"
+          fill="#1f2634"
+          filter="url(#cornerCardShadow)"
+        />
+        <path
+          d="M 0,80 C 40,80 80,140 85,220 C 90,320 40,430 0,580"
+          fill="none"
+          stroke="#f59e0b"
+          strokeWidth="1.5"
+          strokeOpacity="0.5"
+        />
+
+        {/* ── BOTTOM-RIGHT ABSTRACT GEOMETRIC CURVES ── */}
+        {/* Layer 1: Dot Matrix Rising Curve */}
+        <path
+          d="M 1000,707 L 730,707 C 780,660 840,610 890,550 C 940,490 970,440 1000,410 Z"
+          fill="url(#goldDotsPattern)"
+        />
+        <path
+          d="M 730,707 C 780,660 840,610 890,550 C 940,490 970,440 1000,410"
+          fill="none"
+          stroke="#d4af37"
+          strokeWidth="2.5"
+        />
+
+        {/* Layer 2: Foreground Slate Card with Gold Trim */}
+        <path
+          d="M 1000,707 L 790,707 C 830,660 880,620 920,570 C 960,520 985,480 1000,460 Z"
+          fill="#252d3d"
+          filter="url(#cornerCardShadow)"
+        />
+        <path
+          d="M 790,707 C 830,660 880,620 920,570 C 960,520 985,480 1000,460"
+          fill="none"
+          stroke="#d4af37"
+          strokeWidth="2"
+        />
+      </svg>
+
+      {/* ── TOP SECTION: TITLES & CIRCULAR LOGO BADGE (Exact match to PDF) ── */}
       <div className="relative z-10 flex items-start justify-between">
-        {/* Elegant Gold Cursive Header (Exact match to PDF) */}
-        <div className="pt-2 sm:pt-4 pl-2 sm:pl-4">
+        {/* Left Spacer to balance the top right badge */}
+        <div className="w-16 sm:w-24 shrink-0"></div>
+
+        {/* Center: IFTIIN HUB + cursive certificate */}
+        <div className="text-center flex-1 pt-1 sm:pt-2">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-[0.14em] text-white uppercase font-sans drop-shadow-md">
+            IFTIIN HUB
+          </h1>
           <div
-            className="text-4xl sm:text-6xl md:text-7xl font-serif text-amber-400 italic tracking-wider select-none"
+            className="text-2xl sm:text-4xl md:text-5xl text-amber-400 font-serif italic tracking-wide lowercase -mt-1 sm:-mt-2 drop-shadow-sm select-none"
             style={{
-              fontFamily: "'Great Vibes', 'Brush Script MT', 'Dancing Script', 'Caveat', cursive",
-              textShadow: '0 2px 8px rgba(245, 158, 11, 0.4), 0 4px 16px rgba(0,0,0,0.8)'
+              fontFamily: "'Dancing Script', 'Caveat', 'Brush Script MT', 'Great Vibes', cursive"
             }}
           >
             certificate
           </div>
         </div>
 
-        {/* Top-Right Circular Golden Logo Badge (Exact match to PDF) */}
-        <div className="shrink-0 mt-2 sm:mt-4 mr-2 sm:mr-4">
-          <div className="w-16 h-16 sm:w-22 sm:h-22 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 p-2 sm:p-2.5 border-4 border-amber-200 shadow-xl flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
+        {/* Top-Right: Circular Golden Logo Badge (Exact match to PDF) */}
+        <div className="shrink-0 pt-1 sm:pt-2 pr-1 sm:pr-2">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 p-1.5 sm:p-2 border-3 sm:border-4 border-amber-300 shadow-xl flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
             <div className="w-full h-full rounded-full bg-white flex items-center justify-center p-1.5 shadow-inner">
               <img
                 src={logoImg}
@@ -136,53 +207,45 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
         </div>
       </div>
 
-      {/* ── MIDDLE SECTION 1: STUDENT NAME LINE (Matching second certificate text) ── */}
-      <div className="relative z-10 my-2 sm:my-3 max-w-2xl mx-auto w-full px-2 sm:px-6 text-center">
-        <p className="text-xs sm:text-sm md:text-base font-semibold text-slate-300 tracking-wider mb-1">
-          This Is To Proudly Certify That :
-        </p>
-        <div className="border-b-2 border-amber-400 pb-1 text-center">
-          <span className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-wider text-amber-300 font-serif drop-shadow-sm">
-            {studentName}
+      {/* ── MIDDLE SECTION 1: NAME : ________________________ (Exact match to PDF) ── */}
+      <div className="relative z-10 my-3 sm:my-5 max-w-2xl mx-auto w-full px-4 sm:px-8">
+        <div className="flex items-end gap-3 w-full">
+          <span className="text-lg sm:text-2xl md:text-3xl font-bold text-white tracking-wide shrink-0 pb-1 font-sans">
+            Name :
           </span>
+          <div className="flex-1 relative border-b-2 sm:border-b-3 border-amber-400 pb-1 text-center sm:text-left pl-2 sm:pl-4">
+            <span className="text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-wider text-amber-300 font-serif drop-shadow-sm">
+              {studentName}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* ── MIDDLE SECTION 2: GOLD BORDERED COURSE & CURRICULUM BOX ── */}
-      <div className="relative z-10 max-w-2xl mx-auto w-full px-2 sm:px-4">
-        <div className="border-2 border-amber-400 rounded-xl p-3.5 sm:p-5 bg-gradient-to-b from-slate-900/80 via-slate-950/90 to-slate-900/80 shadow-2xl backdrop-blur-xs text-center relative overflow-hidden">
-          
-          {/* Subtle inner gold glow */}
-          <div className="absolute inset-0 bg-amber-500/5 pointer-events-none"></div>
-
-          {/* Congratulatory Lead (Matching second certificate text) */}
-          <p className="text-[11px] sm:text-xs md:text-sm font-semibold text-slate-300 tracking-wider mb-1">
-            Congratulations on completing
-          </p>
-
-          {/* Course Name Header: Only Full Stack Web Development (No Associate) */}
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-amber-400 tracking-wide mb-2 sm:mb-2.5 drop-shadow-sm uppercase">
+      {/* ── MIDDLE SECTION 2: GOLD BORDERED COURSE BOX (Exact match to PDF) ── */}
+      <div className="relative z-10 max-w-2xl mx-auto w-full px-4 sm:px-8">
+        <div className="border border-amber-400/90 rounded-none p-4 sm:p-6 bg-transparent text-center relative">
+          {/* Course Name Header: Full Stack (Exact match to PDF) */}
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-400 tracking-wide mb-2 sm:mb-3 drop-shadow-sm">
             {cleanCourseTitle}
           </h2>
 
           {/* Curriculum Description & Competencies Text */}
-          <p className="text-[11px] sm:text-xs md:text-sm text-slate-200 leading-relaxed font-medium max-w-xl mx-auto">
+          <p className="text-[11px] sm:text-xs md:text-sm text-slate-100 leading-relaxed font-normal max-w-xl mx-auto">
             Has demonstrated academic excellence and practical proficiency in {cleanCourseTitle}. Successfully engineered, tested, and deployed end-to-end full-scale software capstones encompassing {skillsText}.
           </p>
-
         </div>
       </div>
 
       {/* ── BOTTOM SECTION: DATE, QR CODE & SIGNATURE (Exact match to PDF) ── */}
-      <div className="relative z-10 grid grid-cols-3 gap-2 sm:gap-4 items-end mt-4 sm:mt-6 pt-2">
+      <div className="relative z-10 grid grid-cols-3 gap-2 sm:gap-4 items-end mt-4 sm:mt-6 pb-2 px-2 sm:px-6">
         
         {/* Left: Date */}
-        <div className="text-center sm:text-left flex flex-col items-center sm:items-start">
+        <div className="text-center flex flex-col items-center">
           <div className="text-xs sm:text-sm md:text-base font-bold text-amber-300 tracking-wide pb-1">
             {formattedDate}
           </div>
-          <div className="w-24 sm:w-36 border-b-2 border-slate-400 mb-1"></div>
-          <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-white">
+          <div className="w-28 sm:w-44 border-b-2 border-amber-400 mb-1"></div>
+          <span className="text-sm sm:text-base font-bold text-white tracking-wider">
             Date
           </span>
           <span className="text-[9px] sm:text-[10px] font-mono text-slate-400 tracking-wider">
@@ -207,24 +270,24 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
         </div>
 
         {/* Right: Signature */}
-        <div className="text-center sm:text-right flex flex-col items-center sm:items-end">
-          {/* Cursive text-image signature above the name */}
+        <div className="text-center flex flex-col items-center">
+          {/* Cursive text-image signature above the line */}
           <div
             className="text-xl sm:text-3xl md:text-4xl text-slate-300 font-serif italic tracking-wide pb-0 drop-shadow-sm leading-tight select-none"
             style={{
-              fontFamily: "'Brush Script MT', 'Dancing Script', 'Caveat', 'Great Vibes', cursive",
+              fontFamily: "'Dancing Script', 'Brush Script MT', 'Caveat', 'Great Vibes', cursive",
               filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))',
-              opacity: 0.85
+              opacity: 0.9
             }}
           >
             {displayInstructor}
           </div>
-          <div className="w-24 sm:w-36 border-b-2 border-slate-400 mb-1 mt-0.5"></div>
-          <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-white">
-            {displayInstructor}
+          <div className="w-28 sm:w-44 border-b-2 border-amber-400 mb-1 mt-0.5"></div>
+          <span className="text-sm sm:text-base font-bold text-white tracking-wider">
+            Signature
           </span>
-          <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-widest font-semibold">
-            Academic Director
+          <span className="text-[10px] sm:text-xs text-slate-400 font-medium tracking-wide">
+            {displayInstructor}
           </span>
         </div>
 
