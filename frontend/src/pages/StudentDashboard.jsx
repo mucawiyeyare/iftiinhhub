@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import PageTitle from '../components/PageTitle';
 import IftiinCertificate from '../components/IftiinCertificate';
+import { downloadCertificateAsPDF, downloadCertificateAsPNG } from '../utils/certificateDownload';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
@@ -14,6 +15,7 @@ const StudentDashboard = () => {
   const [error, setError] = useState('');
   const [copiedId, setCopiedId] = useState('');
   const [previewCert, setPreviewCert] = useState(null);
+  const [downloadingCertId, setDownloadingCertId] = useState('');
   
   const [activeTab, setActiveTab] = useState('overview');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -607,16 +609,16 @@ const StudentDashboard = () => {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex flex-col sm:flex-row gap-2.5 pt-4 border-t border-slate-100">
+                      <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t border-slate-100">
                         <button
                           onClick={() => setPreviewCert(cert)}
-                          className="flex-1 py-2.5 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black rounded-xl text-center transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                          className="flex-1 py-2.5 px-3 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black rounded-xl text-center transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
-                          View &amp; Print Certificate
+                          View &amp; Download
                         </button>
                         <Link
                           to={`/verify-certificate?id=${encodeURIComponent(cert.certificateId)}`}
@@ -628,7 +630,7 @@ const StudentDashboard = () => {
                         <button
                           onClick={() => handleCopyLink(cert.certificateId)}
                           className="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1 cursor-pointer"
-                          title="Copy Link"
+                          title="Copy verification link"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -640,28 +642,55 @@ const StudentDashboard = () => {
                 </div>
               )}
 
-              {/* ── LUXURY CERTIFICATE PREVIEW & PRINT MODAL ── */}
+              {/* ── LUXURY CERTIFICATE PREVIEW & DOWNLOAD MODAL ── */}
               {previewCert && (
                 <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fadeIn">
                   <div className="bg-[#0A0E1A] border-2 border-amber-500 rounded-3xl p-4 sm:p-6 max-w-5xl w-full text-white shadow-2xl relative">
                     {/* Top Action Bar */}
-                    <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800 no-print">
+                    <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-800 no-print">
                       <div className="flex items-center gap-2">
                         <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
                         <h4 className="font-bold text-sm sm:text-base text-amber-300">
                           Official Certificate Preview ({previewCert.certificateId})
                         </h4>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <button
-                          onClick={() => window.print()}
-                          className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition flex items-center gap-1.5 shadow-md cursor-pointer"
+                          onClick={async () => {
+                            setDownloadingCertId(previewCert.certificateId);
+                            const filename = `${(previewCert.studentName || 'Student').replace(/\s+/g, '_')}_Certificate_${previewCert.certificateId}.pdf`;
+                            await downloadCertificateAsPDF(`certificate-${previewCert.certificateId}`, filename);
+                            setDownloadingCertId('');
+                          }}
+                          disabled={downloadingCertId === previewCert.certificateId}
+                          className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-black text-xs transition flex items-center gap-1.5 shadow-md cursor-pointer disabled:opacity-50"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v12m0 0l-4-4m4 4l4-4M4 18h16" />
                           </svg>
-                          Print / Save as PDF
+                          {downloadingCertId === previewCert.certificateId ? 'Downloading...' : 'Download PDF'}
                         </button>
+
+                        <button
+                          onClick={async () => {
+                            setDownloadingCertId(previewCert.certificateId);
+                            const filename = `${(previewCert.studentName || 'Student').replace(/\s+/g, '_')}_Certificate_${previewCert.certificateId}.png`;
+                            await downloadCertificateAsPNG(`certificate-${previewCert.certificateId}`, filename);
+                            setDownloadingCertId('');
+                          }}
+                          disabled={downloadingCertId === previewCert.certificateId}
+                          className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition border border-slate-700 cursor-pointer disabled:opacity-50"
+                        >
+                          PNG Image
+                        </button>
+
+                        <button
+                          onClick={() => window.print()}
+                          className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition border border-slate-700 cursor-pointer"
+                        >
+                          Print
+                        </button>
+
                         <button
                           onClick={() => setPreviewCert(null)}
                           className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer"

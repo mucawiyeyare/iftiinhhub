@@ -10,12 +10,13 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
     courseTitle = 'Full Stack Web Developer (MERN Stack)',
     issueDate = new Date().toISOString(),
     certificateId = 'IFT-2025-000000',
-    instructor = 'Eng. Mucawiye',
+    instructor = 'Abdirahman Mohamed Ibrahim',
     skills = [],
-    grade = 'Distinction (98%)'
+    grade = null
   } = certificate;
 
-  const formattedDate = new Date(issueDate).toLocaleDateString('en-GB', {
+  // Always use the current date dynamically as requested by the user
+  const formattedDate = new Date().toLocaleDateString('en-GB', {
     day: 'numeric',
     month: 'short',
     year: 'numeric'
@@ -162,12 +163,7 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
             Has demonstrated academic excellence and practical proficiency in {courseTitle}. Successfully engineered, tested, and deployed end-to-end full-scale software capstones encompassing {skillsText}.
           </p>
 
-          {/* Distinction / Grade pill if present */}
-          {grade && (
-            <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-300 text-[10px] sm:text-xs font-bold tracking-wider">
-              <span>★</span> Awarded with {grade} <span>★</span>
-            </div>
-          )}
+
         </div>
       </div>
 
@@ -206,15 +202,20 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
 
         {/* Right: Signature */}
         <div className="text-center sm:text-right flex flex-col items-center sm:items-end">
+          {/* Cursive text-image signature above the name */}
           <div
-            className="text-base sm:text-xl md:text-2xl text-amber-300 font-serif italic tracking-wider pb-1 drop-shadow-sm font-bold"
-            style={{ fontFamily: "'Brush Script MT', 'Dancing Script', 'Caveat', 'Great Vibes', cursive" }}
+            className="text-xl sm:text-3xl md:text-4xl text-slate-300 font-serif italic tracking-wide pb-0 drop-shadow-sm leading-tight select-none"
+            style={{
+              fontFamily: "'Brush Script MT', 'Dancing Script', 'Caveat', 'Great Vibes', cursive",
+              filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))',
+              opacity: 0.85
+            }}
           >
-            {instructor || 'Eng. Mucawiye'}
+            {instructor || 'Abdirahman Mohamed Ibrahim'}
           </div>
-          <div className="w-24 sm:w-36 border-b-2 border-slate-400 mb-1"></div>
+          <div className="w-24 sm:w-36 border-b-2 border-slate-400 mb-1 mt-0.5"></div>
           <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-white">
-            Signature
+            {instructor || 'Abdirahman Mohamed Ibrahim'}
           </span>
           <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-widest font-semibold">
             Academic Director
