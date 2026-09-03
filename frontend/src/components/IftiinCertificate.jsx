@@ -214,10 +214,18 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
           <span className="text-base sm:text-xl md:text-2xl font-bold text-white tracking-wide shrink-0 pb-0.5 sm:pb-1 font-sans">
             Name :
           </span>
-          <div className="flex-1 relative border-b-2 sm:border-b-3 border-amber-400 pb-0.5 sm:pb-1 text-left pl-1 sm:pl-3 overflow-hidden">
+          <div className="flex-1 relative border-b-2 sm:border-b-3 border-amber-400 pb-0.5 sm:pb-1 text-left pl-1 sm:pl-3">
             <span
-              className="font-black uppercase tracking-wider text-amber-300 font-serif drop-shadow-sm whitespace-nowrap block"
-              style={{ fontSize: 'clamp(0.75rem, 3.5vw, 1.75rem)' }}
+              className="font-black uppercase tracking-wider text-amber-300 font-serif drop-shadow-sm whitespace-nowrap block w-full"
+              style={{
+                fontSize: (() => {
+                  const len = (studentName || '').length;
+                  if (len <= 15) return 'clamp(1.1rem, 4vw, 2rem)';
+                  if (len <= 22) return 'clamp(0.9rem, 3.2vw, 1.6rem)';
+                  if (len <= 30) return 'clamp(0.75rem, 2.5vw, 1.3rem)';
+                  return 'clamp(0.6rem, 2vw, 1.05rem)';
+                })()
+              }}
             >
               {studentName}
             </span>
