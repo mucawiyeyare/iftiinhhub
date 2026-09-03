@@ -53,7 +53,7 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
   return (
     <div
       id={`certificate-${certificateId}`}
-      className={`relative w-full max-w-4xl mx-auto aspect-[1.414/1] bg-[#0d1117] text-white rounded-2xl shadow-2xl overflow-hidden selection:bg-amber-500 selection:text-black flex flex-col justify-between p-6 sm:p-10 ${
+      className={`relative w-full max-w-4xl mx-auto min-h-[490px] sm:min-h-0 sm:aspect-[1.414/1] bg-[#0d1117] text-white rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden selection:bg-amber-500 selection:text-black flex flex-col justify-between p-3.5 sm:p-7 md:p-10 transition-all duration-200 ${
         isPrintMode ? 'print-certificate-page' : ''
       }`}
       style={{
@@ -174,17 +174,17 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
       </svg>
 
       {/* ── TOP SECTION: TITLES & CIRCULAR LOGO BADGE (Exact match to PDF) ── */}
-      <div className="relative z-10 flex items-start justify-between">
+      <div className="relative z-10 flex items-start justify-between gap-2">
         {/* Left Spacer to balance the top right badge */}
-        <div className="w-16 sm:w-24 shrink-0"></div>
+        <div className="w-12 sm:w-20 md:w-24 shrink-0"></div>
 
         {/* Center: IFTIIN HUB + cursive certificate */}
-        <div className="text-center flex-1 pt-1 sm:pt-2">
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-[0.14em] text-white uppercase font-sans drop-shadow-md">
+        <div className="text-center flex-1 pt-0.5 sm:pt-1">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-[0.14em] text-white uppercase font-sans drop-shadow-md leading-none">
             IFTIIN HUB
           </h1>
           <div
-            className="text-2xl sm:text-4xl md:text-5xl text-amber-400 font-serif italic tracking-wide lowercase -mt-1 sm:-mt-2 drop-shadow-sm select-none"
+            className="text-xl sm:text-3xl md:text-4xl lg:text-5xl text-amber-400 font-serif italic tracking-wide lowercase mt-0.5 sm:-mt-1 drop-shadow-sm select-none"
             style={{
               fontFamily: "'Dancing Script', 'Caveat', 'Brush Script MT', 'Great Vibes', cursive"
             }}
@@ -194,9 +194,9 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
         </div>
 
         {/* Top-Right: Circular Golden Logo Badge (Exact match to PDF) */}
-        <div className="shrink-0 pt-1 sm:pt-2 pr-1 sm:pr-2">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 p-1.5 sm:p-2 border-3 sm:border-4 border-amber-300 shadow-xl flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
-            <div className="w-full h-full rounded-full bg-white flex items-center justify-center p-1.5 shadow-inner">
+        <div className="shrink-0 pt-0 sm:pt-1 pr-0 sm:pr-1">
+          <div className="w-12 h-12 sm:w-18 sm:h-18 md:w-22 md:h-22 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 p-1 sm:p-1.5 border-2 sm:border-3 md:border-4 border-amber-300 shadow-xl flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
+            <div className="w-full h-full rounded-full bg-white flex items-center justify-center p-1 sm:p-1.5 shadow-inner">
               <img
                 src={logoImg}
                 alt="IftiinHub Logo"
@@ -208,13 +208,13 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
       </div>
 
       {/* ── MIDDLE SECTION 1: NAME : ________________________ (Exact match to PDF) ── */}
-      <div className="relative z-10 my-3 sm:my-5 max-w-2xl mx-auto w-full px-4 sm:px-8">
-        <div className="flex items-end gap-3 w-full">
-          <span className="text-lg sm:text-2xl md:text-3xl font-bold text-white tracking-wide shrink-0 pb-1 font-sans">
+      <div className="relative z-10 my-2 sm:my-4 md:my-5 max-w-2xl mx-auto w-full px-2 sm:px-6 md:px-8">
+        <div className="flex items-end gap-2 sm:gap-3 w-full">
+          <span className="text-base sm:text-xl md:text-2xl font-bold text-white tracking-wide shrink-0 pb-0.5 sm:pb-1 font-sans">
             Name :
           </span>
-          <div className="flex-1 relative border-b-2 sm:border-b-3 border-amber-400 pb-1 text-center sm:text-left pl-2 sm:pl-4">
-            <span className="text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-wider text-amber-300 font-serif drop-shadow-sm">
+          <div className="flex-1 relative border-b-2 sm:border-b-3 border-amber-400 pb-0.5 sm:pb-1 text-center sm:text-left pl-1 sm:pl-3">
+            <span className="text-base sm:text-xl md:text-2xl lg:text-3xl font-black uppercase tracking-wider text-amber-300 font-serif drop-shadow-sm break-words">
               {studentName}
             </span>
           </div>
@@ -222,49 +222,49 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
       </div>
 
       {/* ── MIDDLE SECTION 2: GOLD BORDERED COURSE BOX (Exact match to PDF) ── */}
-      <div className="relative z-10 max-w-2xl mx-auto w-full px-4 sm:px-8">
-        <div className="border border-amber-400/90 rounded-none p-4 sm:p-6 bg-transparent text-center relative">
+      <div className="relative z-10 max-w-2xl mx-auto w-full px-2 sm:px-6 md:px-8 my-1 sm:my-2">
+        <div className="border border-amber-400/90 rounded-none p-2.5 sm:p-4 md:p-6 bg-slate-950/40 sm:bg-transparent text-center relative backdrop-blur-xs sm:backdrop-blur-none">
           {/* Course Name Header: Full Stack (Exact match to PDF) */}
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-400 tracking-wide mb-2 sm:mb-3 drop-shadow-sm">
+          <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold text-amber-400 tracking-wide mb-1 sm:mb-2 md:mb-3 drop-shadow-sm">
             {cleanCourseTitle}
           </h2>
 
           {/* Curriculum Description & Competencies Text */}
-          <p className="text-[11px] sm:text-xs md:text-sm text-slate-100 leading-relaxed font-normal max-w-xl mx-auto">
+          <p className="text-[10px] sm:text-xs md:text-sm text-slate-100 leading-relaxed font-normal max-w-xl mx-auto">
             Has demonstrated academic excellence and practical proficiency in {cleanCourseTitle}. Successfully engineered, tested, and deployed end-to-end full-scale software capstones encompassing {skillsText}.
           </p>
         </div>
       </div>
 
       {/* ── BOTTOM SECTION: DATE, QR CODE & SIGNATURE (Exact match to PDF) ── */}
-      <div className="relative z-10 grid grid-cols-3 gap-2 sm:gap-4 items-end mt-4 sm:mt-6 pb-2 px-2 sm:px-6">
+      <div className="relative z-10 grid grid-cols-3 gap-1 sm:gap-3 md:gap-4 items-end mt-2 sm:mt-4 md:mt-6 pb-1 sm:pb-2 px-1 sm:px-4 md:px-6">
         
         {/* Left: Date */}
         <div className="text-center flex flex-col items-center">
-          <div className="text-xs sm:text-sm md:text-base font-bold text-amber-300 tracking-wide pb-1">
+          <div className="text-[10px] sm:text-xs md:text-sm font-bold text-amber-300 tracking-wide pb-0.5 sm:pb-1 whitespace-nowrap">
             {formattedDate}
           </div>
-          <div className="w-28 sm:w-44 border-b-2 border-amber-400 mb-1"></div>
-          <span className="text-sm sm:text-base font-bold text-white tracking-wider">
+          <div className="w-18 sm:w-28 md:w-36 lg:w-44 border-b-1.5 sm:border-b-2 border-amber-400 mb-0.5 sm:mb-1"></div>
+          <span className="text-xs sm:text-sm md:text-base font-bold text-white tracking-wider">
             Date
           </span>
-          <span className="text-[9px] sm:text-[10px] font-mono text-slate-400 tracking-wider">
+          <span className="text-[8px] sm:text-[9px] md:text-[10px] font-mono text-slate-400 tracking-wider truncate max-w-[90px] sm:max-w-none">
             {certificateId}
           </span>
         </div>
 
         {/* Center: QR Code with "SCAN ME" (Exact match to PDF) */}
         <div className="flex flex-col items-center justify-center">
-          <div className="bg-white p-1.5 sm:p-2 rounded-xl shadow-2xl border-2 border-amber-400 transform hover:scale-110 transition-transform duration-200">
+          <div className="bg-white p-1 sm:p-1.5 md:p-2 rounded-lg sm:rounded-xl shadow-2xl border sm:border-2 border-amber-400 transform hover:scale-105 transition-transform duration-200">
             <QRCodeSVG
               value={verificationUrl}
-              size={64}
+              size={46}
               level="H"
               includeMargin={false}
-              className="w-12 h-12 sm:w-16 sm:h-16 md:w-18 md:h-18"
+              className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16"
             />
           </div>
-          <div className="mt-1 px-2 py-0.5 rounded bg-slate-950 border border-amber-400/60 text-[9px] sm:text-[10px] font-mono font-black text-amber-300 uppercase tracking-wider shadow-xs">
+          <div className="mt-0.5 sm:mt-1 px-1.5 py-0.5 rounded bg-slate-950 border border-amber-400/60 text-[8px] sm:text-[9px] md:text-[10px] font-mono font-black text-amber-300 uppercase tracking-wider shadow-xs">
             SCAN ME
           </div>
         </div>
@@ -273,7 +273,7 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
         <div className="text-center flex flex-col items-center">
           {/* Cursive text-image signature above the line */}
           <div
-            className="text-xl sm:text-3xl md:text-4xl text-slate-300 font-serif italic tracking-wide pb-0 drop-shadow-sm leading-tight select-none"
+            className="text-base sm:text-2xl md:text-3xl lg:text-4xl text-slate-300 font-serif italic tracking-wide pb-0 drop-shadow-sm leading-tight select-none truncate max-w-[100px] sm:max-w-none"
             style={{
               fontFamily: "'Dancing Script', 'Brush Script MT', 'Caveat', 'Great Vibes', cursive",
               filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))',
@@ -282,11 +282,11 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
           >
             {displayInstructor}
           </div>
-          <div className="w-28 sm:w-44 border-b-2 border-amber-400 mb-1 mt-0.5"></div>
-          <span className="text-sm sm:text-base font-bold text-white tracking-wider">
+          <div className="w-18 sm:w-28 md:w-36 lg:w-44 border-b-1.5 sm:border-b-2 border-amber-400 mb-0.5 sm:mb-1 mt-0.5"></div>
+          <span className="text-xs sm:text-sm md:text-base font-bold text-white tracking-wider">
             Signature
           </span>
-          <span className="text-[10px] sm:text-xs text-slate-400 font-medium tracking-wide">
+          <span className="text-[8px] sm:text-[10px] md:text-xs text-slate-400 font-medium tracking-wide truncate max-w-[90px] sm:max-w-none">
             {displayInstructor}
           </span>
         </div>

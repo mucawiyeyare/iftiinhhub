@@ -267,7 +267,11 @@ const VerifyCertificate = () => {
             </div>
 
             {/* ── OFFICIAL LUXURY CERTIFICATE CARD (Matching certificate Iftiin Hub (1).pdf) ── */}
-            <div className="print-certificate-container">
+            <div className="flex items-center justify-center gap-1.5 text-xs text-amber-800 font-medium mb-2.5 sm:hidden no-print bg-amber-50/80 py-1.5 px-3 rounded-xl border border-amber-200/80">
+              <span>📱 Rotate phone for full landscape or tap <b>Print / Save PDF</b></span>
+            </div>
+
+            <div className="print-certificate-container w-full overflow-hidden">
               <IftiinCertificate certificate={result} isPrintMode={true} />
             </div>
 
