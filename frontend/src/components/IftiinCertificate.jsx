@@ -282,7 +282,7 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
           </div>
           <div className="w-18 sm:w-28 md:w-36 lg:w-44 border-b-1.5 sm:border-b-2 border-amber-400 mb-0.5 sm:mb-1 mt-0.5"></div>
           <span className="text-xs sm:text-sm md:text-base font-bold text-white tracking-wide text-center">
-            Signature: {displayInstructor}
+            {displayInstructor}
           </span>
         </div>
 
