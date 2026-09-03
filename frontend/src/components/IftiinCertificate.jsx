@@ -25,12 +25,25 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
   // Always use iftiinhub.com domain for QR verification
   const verificationUrl = `https://iftiinhub.com/verify-certificate?id=${encodeURIComponent(certificateId)}`;
 
-  // Formatted short course name for the bold header (e.g. "Full Stack" or "Data Analysis")
-  const shortCourseName = courseTitle.toLowerCase().includes('full-stack') || courseTitle.toLowerCase().includes('fullstack')
-    ? 'Full Stack'
-    : courseTitle.toLowerCase().includes('data')
-    ? 'Data Analysis'
-    : courseTitle;
+  // Clean course title: remove any "Associate" and normalize full-stack
+  const rawTitle = (courseTitle || 'Full Stack Web Development')
+    .replace(/associate\s*/gi, '')
+    .trim();
+
+  const cleanCourseTitle =
+    rawTitle.toLowerCase().includes('full') ||
+    rawTitle.toLowerCase().includes('stack') ||
+    rawTitle.toLowerCase().includes('web')
+      ? 'Full Stack Web Development'
+      : rawTitle.toLowerCase().includes('data')
+      ? 'Data Analysis (Excel & Power BI)'
+      : rawTitle;
+
+  // Normalized instructor (ensure fallback to Abdirahman Mohamed Ibrahim if not customized or old team value)
+  const displayInstructor =
+    instructor && !instructor.includes('Mucawiye')
+      ? instructor.replace(/^eng\.\s*/i, '').trim()
+      : 'Abdirahman Mohamed Ibrahim';
 
   // Skills description
   const skillsText = skills && skills.length > 0
@@ -75,17 +88,17 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
         {/* Layer 1: Dark Slate Polygon */}
         <div
           className="absolute -bottom-12 -right-12 w-56 h-56 bg-slate-800/90 border-l-4 border-t-4 border-amber-500 transform -rotate-12 shadow-2xl"
-          style={{ clipPath: 'polygon(20% 0%, 100% 20%, 100% 100%, 0% 100%)' }}
+          style={{ clipPath: 'polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%)' }}
         ></div>
         {/* Layer 2: Gold Accent Ribbon */}
         <div
           className="absolute -bottom-6 -right-6 w-44 h-44 bg-gradient-to-tl from-amber-400 via-amber-500 to-amber-600 transform -rotate-6 opacity-90"
-          style={{ clipPath: 'polygon(40% 0%, 100% 40%, 100% 100%, 0% 100%)' }}
+          style={{ clipPath: 'polygon(40% 0%, 100% 0%, 100% 100%, 0% 100%)' }}
         ></div>
         {/* Layer 3: Dark Inner Wedge */}
         <div
           className="absolute -bottom-2 -right-2 w-32 h-32 bg-[#111827] border-l-2 border-t-2 border-amber-300"
-          style={{ clipPath: 'polygon(60% 0%, 100% 60%, 100% 100%, 0% 100%)' }}
+          style={{ clipPath: 'polygon(60% 0%, 100% 0%, 100% 100%, 0% 100%)' }}
         ></div>
         {/* Dot Matrix Texture Overlay */}
         <div className="absolute bottom-4 right-4 w-32 h-32 bg-[radial-gradient(#94a3b8_1.5px,transparent_1.5px)] [background-size:12px_12px] opacity-40"></div>
@@ -94,26 +107,23 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
       {/* Subtle Full Certificate Grid Texture */}
       <div className="absolute inset-0 bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:24px_24px] opacity-25 pointer-events-none z-0"></div>
 
-      {/* ── TOP SECTION: TITLES & LOGO BADGE ── */}
+      {/* ── TOP HEADER SECTION: "certificate" Script & Logo Badge ── */}
       <div className="relative z-10 flex items-start justify-between">
-        {/* Empty left spacer to balance layout */}
-        <div className="w-16 sm:w-24 shrink-0"></div>
-
-        {/* Center Titles */}
-        <div className="text-center flex-1">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-[0.18em] text-white drop-shadow-md">
-            IFTIIN HUB
-          </h1>
+        {/* Elegant Gold Cursive Header (Exact match to PDF) */}
+        <div className="pt-2 sm:pt-4 pl-2 sm:pl-4">
           <div
-            className="text-2xl sm:text-4xl md:text-5xl text-amber-400 font-serif italic tracking-wide lowercase mt-0.5 sm:mt-1 drop-shadow-sm"
-            style={{ fontFamily: "'Brush Script MT', 'Dancing Script', 'Caveat', 'Great Vibes', cursive" }}
+            className="text-4xl sm:text-6xl md:text-7xl font-serif text-amber-400 italic tracking-wider select-none"
+            style={{
+              fontFamily: "'Great Vibes', 'Brush Script MT', 'Dancing Script', 'Caveat', cursive",
+              textShadow: '0 2px 8px rgba(245, 158, 11, 0.4), 0 4px 16px rgba(0,0,0,0.8)'
+            }}
           >
             certificate
           </div>
         </div>
 
         {/* Top-Right Circular Golden Logo Badge (Exact match to PDF) */}
-        <div className="shrink-0">
+        <div className="shrink-0 mt-2 sm:mt-4 mr-2 sm:mr-4">
           <div className="w-16 h-16 sm:w-22 sm:h-22 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 p-2 sm:p-2.5 border-4 border-amber-200 shadow-xl flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
             <div className="w-full h-full rounded-full bg-white flex items-center justify-center p-1.5 shadow-inner">
               <img
@@ -126,40 +136,38 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
         </div>
       </div>
 
-      {/* ── MIDDLE SECTION 1: STUDENT NAME LINE (Exact match to PDF) ── */}
-      <div className="relative z-10 my-3 sm:my-5 max-w-2xl mx-auto w-full px-2 sm:px-6">
-        <div className="flex items-end gap-3 w-full">
-          <span className="text-base sm:text-2xl font-bold text-white tracking-wide shrink-0 pb-1">
-            Name :
+      {/* ── MIDDLE SECTION 1: STUDENT NAME LINE (Matching second certificate text) ── */}
+      <div className="relative z-10 my-2 sm:my-3 max-w-2xl mx-auto w-full px-2 sm:px-6 text-center">
+        <p className="text-xs sm:text-sm md:text-base font-semibold text-slate-300 tracking-wider mb-1">
+          This Is To Proudly Certify That :
+        </p>
+        <div className="border-b-2 border-amber-400 pb-1 text-center">
+          <span className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-wider text-amber-300 font-serif drop-shadow-sm">
+            {studentName}
           </span>
-          <div className="flex-1 relative border-b-2 border-amber-400 pb-1 text-center">
-            <span className="text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-wider text-amber-300 font-serif drop-shadow-sm">
-              {studentName}
-            </span>
-          </div>
         </div>
       </div>
 
       {/* ── MIDDLE SECTION 2: GOLD BORDERED COURSE & CURRICULUM BOX ── */}
       <div className="relative z-10 max-w-2xl mx-auto w-full px-2 sm:px-4">
-        <div className="border-2 border-amber-400 rounded-xl p-4 sm:p-5 bg-gradient-to-b from-slate-900/80 via-slate-950/90 to-slate-900/80 shadow-2xl backdrop-blur-xs text-center relative overflow-hidden">
+        <div className="border-2 border-amber-400 rounded-xl p-3.5 sm:p-5 bg-gradient-to-b from-slate-900/80 via-slate-950/90 to-slate-900/80 shadow-2xl backdrop-blur-xs text-center relative overflow-hidden">
           
           {/* Subtle inner gold glow */}
           <div className="absolute inset-0 bg-amber-500/5 pointer-events-none"></div>
 
-          {/* Course Name Header (Golden Yellow) */}
-          <h2 className="text-xl sm:text-3xl md:text-4xl font-black text-amber-400 tracking-wide mb-2 sm:mb-2.5 drop-shadow-sm">
-            {shortCourseName}
-          </h2>
+          {/* Congratulatory Lead (Matching second certificate text) */}
+          <p className="text-[11px] sm:text-xs md:text-sm font-semibold text-slate-300 tracking-wider mb-1">
+            Congratulations on completing
+          </p>
 
-          {/* Full Course Title Subtitle */}
-          <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-            {courseTitle}
-          </div>
+          {/* Course Name Header: Only Full Stack Web Development (No Associate) */}
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-amber-400 tracking-wide mb-2 sm:mb-2.5 drop-shadow-sm uppercase">
+            {cleanCourseTitle}
+          </h2>
 
           {/* Curriculum Description & Competencies Text */}
           <p className="text-[11px] sm:text-xs md:text-sm text-slate-200 leading-relaxed font-medium max-w-xl mx-auto">
-            Has demonstrated academic excellence and practical proficiency in {courseTitle}. Successfully engineered, tested, and deployed end-to-end full-scale software capstones encompassing {skillsText}.
+            Has demonstrated academic excellence and practical proficiency in {cleanCourseTitle}. Successfully engineered, tested, and deployed end-to-end full-scale software capstones encompassing {skillsText}.
           </p>
 
         </div>
@@ -209,11 +217,11 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
               opacity: 0.85
             }}
           >
-            {instructor || 'Abdirahman Mohamed Ibrahim'}
+            {displayInstructor}
           </div>
           <div className="w-24 sm:w-36 border-b-2 border-slate-400 mb-1 mt-0.5"></div>
           <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-white">
-            {instructor || 'Abdirahman Mohamed Ibrahim'}
+            {displayInstructor}
           </span>
           <span className="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-widest font-semibold">
             Academic Director

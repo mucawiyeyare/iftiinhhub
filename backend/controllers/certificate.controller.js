@@ -15,11 +15,11 @@ const seedSampleCertificatesIfEmpty = async () => {
           certificateId: 'NTW-YEAR-A1B2C3D4',
           studentName: 'Abdirahman Mohamed Ali',
           studentEmail: 'abdirahm916@gmail.com',
-          courseTitle: 'Associate Full-Stack Web Developer (MERN Stack)',
+          courseTitle: 'Full Stack Web Development',
           issueDate: new Date('2024-12-15'),
           completionDate: new Date('2024-12-10'),
-          grade: 'Distinction (98%)',
-          instructor: 'Eng. Mucawiye & IftiinHub Academic Team',
+          grade: '',
+          instructor: 'Abdirahman Mohamed Ibrahim',
           skills: ['HTML5 & CSS3', 'Tailwind CSS', 'JavaScript ES6+', 'React.js', 'Node.js & Express', 'MongoDB'],
           status: 'valid'
         },
@@ -27,11 +27,11 @@ const seedSampleCertificatesIfEmpty = async () => {
           certificateId: 'NTW-2024-A1B2C3D4',
           studentName: 'Abdirahman Mohamed Ali',
           studentEmail: 'abdirahm916@gmail.com',
-          courseTitle: 'Associate Full-Stack Web Developer (MERN Stack)',
+          courseTitle: 'Full Stack Web Development',
           issueDate: new Date('2024-12-15'),
           completionDate: new Date('2024-12-10'),
-          grade: 'Distinction (98%)',
-          instructor: 'Eng. Mucawiye & IftiinHub Academic Team',
+          grade: '',
+          instructor: 'Abdirahman Mohamed Ibrahim',
           skills: ['HTML5 & CSS3', 'Tailwind CSS', 'JavaScript ES6+', 'React.js', 'Node.js & Express', 'MongoDB'],
           status: 'valid'
         },
@@ -39,11 +39,11 @@ const seedSampleCertificatesIfEmpty = async () => {
           certificateId: 'IFT-2025-WEB01',
           studentName: 'Fatima Hassan Warsame',
           studentEmail: 'fatima.warsame@example.com',
-          courseTitle: 'Associate Full-Stack Web Developer',
+          courseTitle: 'Full Stack Web Development',
           issueDate: new Date('2025-01-20'),
           completionDate: new Date('2025-01-18'),
-          grade: 'Excellent (95%)',
-          instructor: 'Eng. Mucawiye & IftiinHub Academic Team',
+          grade: '',
+          instructor: 'Abdirahman Mohamed Ibrahim',
           skills: ['React.js', 'Node.js', 'Express', 'MongoDB', 'REST APIs', 'Cloud Deployment'],
           status: 'valid'
         },
@@ -51,11 +51,11 @@ const seedSampleCertificatesIfEmpty = async () => {
           certificateId: 'IFT-2025-DATA02',
           studentName: 'Ahmed Jama Nur',
           studentEmail: 'ahmed.jama@example.com',
-          courseTitle: 'Associate Data Analyst (Excel & Power BI)',
+          courseTitle: 'Data Analysis (Excel & Power BI)',
           issueDate: new Date('2025-02-10'),
           completionDate: new Date('2025-02-05'),
-          grade: 'High Distinction (99%)',
-          instructor: 'Data Analytics Lead - IftiinHub',
+          grade: '',
+          instructor: 'Abdirahman Mohamed Ibrahim',
           skills: ['Advanced Excel', 'Microsoft Power BI', 'Power Query', 'DAX Formulas', 'Data Visualization'],
           status: 'valid'
         }
@@ -268,7 +268,7 @@ export const assignCompletedAndGenerateCertificate = async (req, res) => {
     }
 
     if (!courseTitle) {
-      courseTitle = 'Associate Full-Stack Web Developer (MERN Stack)';
+      courseTitle = 'Full Stack Web Development';
     }
 
     // Update or create enrollment marked as completed

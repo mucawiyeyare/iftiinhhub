@@ -271,13 +271,89 @@ const VerifyCertificate = () => {
               <IftiinCertificate certificate={result} isPrintMode={true} />
             </div>
 
+            {/* ── COURSE & SKILLS SUMMARY CARD (Matching Second Certificate in Image 1 & 3) ── */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 no-print text-slate-800 mt-6">
+              <div className="border-b border-slate-100 pb-4 mb-5">
+                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">
+                  Course completed by
+                </p>
+                <h2 className="text-xl sm:text-2xl font-black text-slate-900">
+                  {result.studentName}
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-5 border-b border-slate-100">
+                <div>
+                  <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Course</p>
+                  <p className="text-sm sm:text-base font-bold text-slate-900">
+                    {result.courseTitle && !result.courseTitle.toLowerCase().includes('data')
+                      ? 'Full Stack Web Development'
+                      : result.courseTitle || 'Full Stack Web Development'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Instructor</p>
+                  <p className="text-sm sm:text-base font-bold text-slate-900">
+                    {result.instructor && !result.instructor.includes('Mucawiye')
+                      ? result.instructor.replace(/^eng\.\s*/i, '').trim()
+                      : 'Abdirahman Mohamed Ibrahim'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Issued</p>
+                  <p className="text-sm sm:text-base font-bold text-slate-900">
+                    {new Date().toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric'
+                    })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Certificate ID</p>
+                  <p className="text-sm sm:text-base font-mono font-bold text-amber-700">
+                    {result.certificateId}
+                  </p>
+                </div>
+              </div>
+
+              {/* Skills Badges */}
+              <div className="pt-5">
+                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-3">
+                  Skills
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {(Array.isArray(result.skills) && result.skills.length > 0
+                    ? result.skills
+                    : [
+                        'Build modern websites using HTML, CSS, Bootstrap, and Tailwind CSS',
+                        'Create interactive user interfaces with JavaScript and DOM manipulation',
+                        'Complete beginner JavaScript projects (e.g., hamburger menu, animated login form, random user generator)',
+                        'Use Git & GitHub for version control and collaboration',
+                        'Develop dynamic front-ends with React',
+                        'Build full CRUD applications using Node.js, Express, MongoDB, and Mongoose',
+                        'Work on real-world full-stack projects: Book Store, Car Marketplace, Tech Blog Site, Task Management App, Bonus: Create an AI-powered ChatBot',
+                        'Deploy websites and full-stack applications to platforms like Render and Railway'
+                      ]
+                  ).map((skill, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-amber-50 hover:border-amber-200 transition"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             {/* Bottom Navigation */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 text-xs text-slate-500 no-print">
               <div>
                 Questions about this credential? Contact <a href="mailto:verify@iftiinhhub.com" className="text-amber-700 underline font-semibold">verify@iftiinhhub.com</a>.
               </div>
               <Link
-                to="/training-programs"
+                to="/courses"
                 className="text-amber-700 hover:text-amber-800 font-bold flex items-center gap-1"
               >
                 Explore More Training Programs →

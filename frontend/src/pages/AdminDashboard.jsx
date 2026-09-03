@@ -80,11 +80,11 @@ const AdminDashboard = () => {
     courseId: '',
     studentName: '',
     studentEmail: '',
-    courseTitle: '',
+    courseTitle: 'Full Stack Web Development',
     certificateId: '',
-    grade: 'Distinction (98%)',
-    instructor: 'Eng. Mucawiye & IftiinHub Academic Team',
-    skills: 'HTML5 & CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js & Express, MongoDB'
+    grade: '',
+    instructor: 'Abdirahman Mohamed Ibrahim',
+    skills: 'HTML5, CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js, Express, MongoDB'
   });
 
   // Sidebar menu items
@@ -180,18 +180,18 @@ const AdminDashboard = () => {
     if (track === 'fullstack') {
       setNewCert(prev => ({
         ...prev,
-        courseTitle: 'Associate Full-Stack Web Developer (MERN Stack)',
-        skills: 'HTML5 & CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js & Express, MongoDB',
-        grade: 'Distinction (98%)',
-        instructor: 'Eng. Mucawiye & IftiinHub Academic Team'
+        courseTitle: 'Full Stack Web Development',
+        skills: 'HTML5, CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js, Express, MongoDB',
+        grade: '',
+        instructor: 'Abdirahman Mohamed Ibrahim'
       }));
     } else if (track === 'data') {
       setNewCert(prev => ({
         ...prev,
-        courseTitle: 'Associate Data Analyst (Excel & Power BI)',
+        courseTitle: 'Data Analysis (Excel & Power BI)',
         skills: 'Advanced Excel, Microsoft Power BI, Power Query, DAX Formulas, Data Visualization',
-        grade: 'Distinction (98%)',
-        instructor: 'Data Analytics Lead - IftiinHub'
+        grade: '',
+        instructor: 'Abdirahman Mohamed Ibrahim'
       }));
     }
   };
@@ -253,11 +253,11 @@ const AdminDashboard = () => {
         courseId: '',
         studentName: '',
         studentEmail: '',
-        courseTitle: '',
+        courseTitle: 'Full Stack Web Development',
         certificateId: '',
-        grade: 'Distinction (98%)',
-        instructor: 'Eng. Mucawiye & IftiinHub Academic Team',
-        skills: 'HTML5 & CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js & Express, MongoDB'
+        grade: '',
+        instructor: 'Abdirahman Mohamed Ibrahim',
+        skills: 'HTML5, CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js, Express, MongoDB'
       });
       setToast(res.data.message || 'Certificate issued and student marked as completed!');
       setTimeout(() => setToast(''), 3000);
