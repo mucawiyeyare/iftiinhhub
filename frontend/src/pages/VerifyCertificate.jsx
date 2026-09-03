@@ -3,7 +3,6 @@ import { useSearchParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import PageTitle from '../components/PageTitle';
 import IftiinCertificate from '../components/IftiinCertificate';
-import { downloadCertificateAsPDF, downloadCertificateAsPNG } from '../utils/certificateDownload';
 
 const VerifyCertificate = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -13,7 +12,6 @@ const VerifyCertificate = () => {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
-  const [downloading, setDownloading] = useState(false);
 
   // Auto-verify if ID is in URL query param
   useEffect(() => {
@@ -71,22 +69,6 @@ const VerifyCertificate = () => {
 
   const handlePrint = () => {
     window.print();
-  };
-
-  const handleDownloadPDF = async () => {
-    if (!result) return;
-    setDownloading(true);
-    const filename = `${(result.studentName || 'Student').replace(/\s+/g, '_')}_Certificate_${result.certificateId}.pdf`;
-    await downloadCertificateAsPDF(`certificate-${result.certificateId}`, filename);
-    setDownloading(false);
-  };
-
-  const handleDownloadPNG = async () => {
-    if (!result) return;
-    setDownloading(true);
-    const filename = `${(result.studentName || 'Student').replace(/\s+/g, '_')}_Certificate_${result.certificateId}.png`;
-    await downloadCertificateAsPNG(`certificate-${result.certificateId}`, filename);
-    setDownloading(false);
   };
 
   const sampleIds = ['NTW-YEAR-A1B2C3D4', 'IFT-2025-WEB01', 'IFT-2025-DATA02'];
@@ -259,51 +241,27 @@ const VerifyCertificate = () => {
                 </div>
               </div>
 
-              {/* Action Buttons: Download PDF, PNG, Print & Share */}
-              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
-                <button
-                  onClick={handleDownloadPDF}
-                  disabled={downloading}
-                  className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 text-xs font-black flex items-center justify-center gap-1.5 transition shadow-md cursor-pointer disabled:opacity-50"
-                  title="Download Certificate as High-Quality PDF"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v12m0 0l-4-4m4 4l4-4M4 18h16" />
-                  </svg>
-                  {downloading ? 'Downloading...' : 'Download PDF'}
-                </button>
-
-                <button
-                  onClick={handleDownloadPNG}
-                  disabled={downloading}
-                  className="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold flex items-center justify-center gap-1.5 transition border border-slate-300 cursor-pointer disabled:opacity-50"
-                  title="Download Certificate as Image (PNG)"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  PNG Image
-                </button>
-
-                <button
-                  onClick={handlePrint}
-                  className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs cursor-pointer"
-                >
-                  <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                  </svg>
-                  Print
-                </button>
-
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
                 <button
                   onClick={handleCopyLink}
-                  className="px-3 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1 transition shadow-xs cursor-pointer"
+                  className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer"
                   title="Copy verification link"
                 >
                   <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                   </svg>
-                  {copied ? 'Copied!' : 'Share'}
+                  {copied ? 'Link Copied!' : 'Share Link'}
+                </button>
+
+                <button
+                  onClick={handlePrint}
+                  className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 text-xs font-black flex items-center justify-center gap-1.5 transition shadow-md cursor-pointer"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  Print / Save PDF
                 </button>
               </div>
             </div>
