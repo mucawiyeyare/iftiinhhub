@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import PageTitle from '../components/PageTitle';
 import fullstackImg from '../assets/program-fullstack.png';
 import dataAnalysisImg from '../assets/program-data-analysis.png';
+import instructorImg from '../assets/instructor.jpg';
 
 // Real customer logos
 import snabDentalLogo from '../assets/customers/snab-dental-logo.png';
@@ -134,6 +136,18 @@ const builtSystems = [
 ];
 
 const TrainingPrograms = () => {
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    axios.get('/courses')
+      .then(res => {
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setCourses(res.data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-screen bg-white text-slate-900 transition-colors duration-300">
       <PageTitle title="Live Online Training Programs - IFTIINHUB" />
@@ -156,98 +170,139 @@ const TrainingPrograms = () => {
       {/* ── Program Cards (Software Academy Style) ── */}
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {academyPrograms.map((p) => (
-            <div
-              key={p.id}
-              className="bg-white rounded-3xl border border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
-            >
-              <div>
-                {/* Visual Image Header */}
-                <div className="bg-white p-6 border-b border-slate-100 flex items-center justify-center relative">
-                  <img
-                    src={p.image}
-                    alt={p.title}
-                    className="w-full h-auto max-h-64 object-contain rounded-2xl transform group-hover:scale-102 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 right-4 bg-amber-500 text-slate-950 font-black text-xs px-3.5 py-1 rounded-full shadow-md">
-                    {p.badge}
+          {(courses.length > 0 ? courses : academyPrograms).map((p, idx) => {
+            const isDbCourse = !p.id && p._id;
+            const courseId = isDbCourse ? p._id : p.id;
+            const title = isDbCourse ? p.name : p.title;
+            const image = (isDbCourse ? p.imageUrl : p.image) || fullstackImg;
+            const duration = isDbCourse ? (p.duration || '12 Weeks') : p.duration;
+            const instructor = isDbCourse ? (p.instructor || 'Eng. Abdirahman Mohamed') : 'Eng. Abdirahman Mohamed Ibrahim';
+            const instructorImage = isDbCourse ? (p.instructorImage || instructorImg) : instructorImg;
+            const description = isDbCourse ? p.description : p.description;
+            const badge = isDbCourse ? 'ACADEMY PROGRAM' : p.badge;
+            const curriculum = isDbCourse
+              ? (Array.isArray(p.whatYouWillLearn) ? p.whatYouWillLearn : [])
+              : (p.curriculum || []);
+            const features = isDbCourse
+              ? [
+                  '🎥 Live Zoom classes with screen-sharing & live codealong',
+                  '🛠️ Real-world portfolio projects',
+                  '💬 1-on-1 WhatsApp instructor support',
+                  '📜 Official Verified Certificate of Completion'
+                ]
+              : (p.features || []);
+            const whatsappMsg = isDbCourse
+              ? `Salaan! Waxaan doonayaa inaan iska diiwaangeliyo koorsada: ${p.name}.`
+              : p.whatsappMsg;
+            const linkTo = isDbCourse ? `/courses/${p._id}` : '/student-register';
+
+            return (
+              <div
+                key={courseId || idx}
+                className="bg-white rounded-3xl border border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
+              >
+                <div>
+                  {/* Visual Image Header */}
+                  <div className="bg-slate-900 p-6 border-b border-slate-100 flex items-center justify-center relative min-h-[240px]">
+                    <img
+                      src={image}
+                      alt={title}
+                      className="w-full h-auto max-h-64 object-contain rounded-2xl transform group-hover:scale-102 transition-transform duration-300"
+                      onError={(e) => { e.target.src = fullstackImg; }}
+                    />
+                    <div className="absolute top-4 right-4 bg-amber-500 text-slate-950 font-black text-xs px-3.5 py-1 rounded-full shadow-md">
+                      {badge}
+                    </div>
                   </div>
-                </div>
 
-                {/* Body Content */}
-                <div className="p-6 sm:p-8">
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
-                      {p.mode}
-                    </span>
-                    <span className="text-xs font-semibold text-slate-500">
-                      ⏱️ {p.duration}
-                    </span>
-                  </div>
+                  {/* Body Content */}
+                  <div className="p-6 sm:p-8">
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
+                        🎥 Live Interactive via Zoom
+                      </span>
+                      <span className="text-xs font-semibold text-slate-500">
+                        ⏱️ {duration}
+                      </span>
+                    </div>
 
-                  <h2 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight mb-2">
-                    {p.title}
-                  </h2>
+                    {/* Course-Name */}
+                    <h2 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight mb-2 group-hover:text-amber-600 transition-colors">
+                      {title}
+                    </h2>
 
-                  <p className="text-xs font-bold text-amber-700 uppercase tracking-wider mb-4">
-                    {p.subtitle}
-                  </p>
+                    {/* Instructor Name & His Image */}
+                    <div className="flex items-center gap-2.5 pb-3 mb-4 border-b border-slate-100">
+                      <img
+                        src={instructorImage}
+                        alt={instructor}
+                        className="w-9 h-9 rounded-full object-cover border-2 border-amber-500 shadow-sm flex-shrink-0"
+                        onError={(e) => { e.target.src = instructorImg; }}
+                      />
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider leading-none">Instructor</p>
+                        <p className="text-sm font-bold text-slate-900 truncate">{instructor}</p>
+                      </div>
+                    </div>
 
-                  <p className="text-sm text-slate-600 leading-relaxed mb-6">
-                    {p.description}
-                  </p>
+                    <p className="text-sm text-slate-600 leading-relaxed mb-6">
+                      {description}
+                    </p>
 
-                  {/* Detailed Curriculum Section */}
-                  <div className="mb-6">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-1.5">
-                      <span>📚</span> Program Curriculum &amp; Modules
-                    </h3>
-                    <div className="space-y-2">
-                      {p.curriculum.map((topic, idx) => (
-                        <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700">
-                          <span className="w-5 h-5 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                            {idx + 1}
-                          </span>
-                          <span>{topic}</span>
+                    {/* Curriculum / What You'll Learn */}
+                    {curriculum.length > 0 && (
+                      <div className="mb-6">
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-1.5">
+                          <span>📚</span> {isDbCourse ? 'What You Will Learn' : 'Program Curriculum & Modules'}
+                        </h3>
+                        <div className="space-y-2">
+                          {curriculum.map((topic, i) => (
+                            <div key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700">
+                              <span className="w-5 h-5 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                                {i + 1}
+                              </span>
+                              <span>{topic}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Program Highlights */}
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
+                      <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
+                        What's Included:
+                      </h4>
+                      {features.map((feat, i) => (
+                        <div key={i} className="flex items-center gap-2 text-xs text-slate-700">
+                          <span className="text-amber-500 font-bold">✓</span>
+                          <span>{feat}</span>
                         </div>
                       ))}
                     </div>
                   </div>
+                </div>
 
-                  {/* Program Highlights */}
-                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
-                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
-                      What's Included:
-                    </h4>
-                    {p.features.map((feat, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-xs text-slate-700">
-                        <span className="text-amber-500 font-bold">✓</span>
-                        <span>{feat}</span>
-                      </div>
-                    ))}
-                  </div>
+                {/* Action Buttons */}
+                <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
+                  <a
+                    href={`https://wa.me/616408886?text=${encodeURIComponent(whatsappMsg)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-brand-primary flex-1 text-center text-sm py-3 justify-center"
+                  >
+                    💬 Register via WhatsApp
+                  </a>
+                  <Link
+                    to={linkTo}
+                    className="btn-brand-dark text-center text-sm py-3 px-5 justify-center"
+                  >
+                    {isDbCourse ? 'View Course →' : '📝 Student Sign Up'}
+                  </Link>
                 </div>
               </div>
-
-              {/* Action Buttons */}
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
-                <a
-                  href={`https://wa.me/616408886?text=${encodeURIComponent(p.whatsappMsg)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-brand-primary flex-1 text-center text-sm py-3 justify-center"
-                >
-                  💬 Register via WhatsApp
-                </a>
-                <Link
-                  to="/student-register"
-                  className="btn-brand-dark text-center text-sm py-3 px-5 justify-center"
-                >
-                  📝 Student Sign Up
-                </Link>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

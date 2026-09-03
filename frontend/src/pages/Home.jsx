@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import PageTitle from '../components/PageTitle';
 import fullstackImg from '../assets/program-fullstack.png';
 import dataAnalysisImg from '../assets/program-data-analysis.png';
+import instructorImg from '../assets/instructor.jpg';
 
 // Real customer logos provided by user
 import snabDentalLogo from '../assets/customers/snab-dental-logo.png';
@@ -101,6 +103,18 @@ const testimonials = [
 ];
 
 const Home = () => {
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    axios.get('/courses')
+      .then(res => {
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setCourses(res.data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-screen bg-white text-slate-900 transition-colors duration-300">
       <PageTitle title="IftiinHub - Live Zoom Tech Training & Custom ICT Systems" />
@@ -179,85 +193,115 @@ const Home = () => {
           </p>
         </div>
 
-        {/* 2 Academy Cards */}
+        {/* Dynamic / Featured Academy Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10">
-          {programs.map((p) => (
-            <div
-              key={p.id}
-              className="bg-white rounded-2xl border border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
-            >
-              <div>
-                {/* Real Tech Image Header (Software Academy style) */}
-                <div className="bg-white p-6 border-b border-slate-100 flex items-center justify-center relative">
-                  <img
-                    src={p.image}
-                    alt={p.title}
-                    className="w-full h-auto max-h-60 object-contain rounded-xl transform group-hover:scale-102 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 right-4 bg-amber-500 text-slate-950 font-black text-xs px-3 py-1 rounded-full shadow-md">
-                    {p.badge}
+          {(courses.length > 0 ? courses : programs).map((p, idx) => {
+            const isDbCourse = !p.id && p._id;
+            const courseId = isDbCourse ? p._id : p.id;
+            const title = isDbCourse ? p.name : p.title;
+            const image = (isDbCourse ? p.imageUrl : p.image) || fullstackImg;
+            const duration = isDbCourse ? (p.duration || '12 Weeks') : p.duration;
+            const instructor = isDbCourse ? (p.instructor || 'Eng. Abdirahman Mohamed') : 'Eng. Abdirahman Mohamed Ibrahim';
+            const instructorImage = isDbCourse ? (p.instructorImage || instructorImg) : instructorImg;
+            const desc = isDbCourse ? p.description : p.desc;
+            const whatsappMsg = isDbCourse
+              ? `Salaan! Waxaan doonayaa inaan iska diiwaangeliyo koorsada: ${p.name}.`
+              : p.whatsappMsg;
+            const linkTo = isDbCourse ? `/courses/${p._id}` : '/training-programs';
+            const whatYouWillLearn = (isDbCourse && Array.isArray(p.whatYouWillLearn) && p.whatYouWillLearn.length > 0)
+              ? p.whatYouWillLearn 
+              : [
+                  'Live interactive Zoom sessions with screen sharing',
+                  'Real portfolio projects & live code review',
+                  '1-on-1 WhatsApp instructor support & recordings'
+                ];
+
+            return (
+              <div
+                key={courseId || idx}
+                className="bg-white rounded-2xl border border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
+              >
+                <div>
+                  {/* Card Image Header with Duration */}
+                  <div className="bg-slate-900 p-6 border-b border-slate-100 flex items-center justify-center relative min-h-[220px]">
+                    <img
+                      src={image}
+                      alt={title}
+                      className="w-full h-auto max-h-60 object-contain rounded-xl transform group-hover:scale-102 transition-transform duration-300"
+                      onError={(e) => { e.target.src = fullstackImg; }}
+                    />
+                    <div className="absolute top-4 right-4 bg-amber-500 text-slate-950 font-black text-xs px-3 py-1 rounded-full shadow-md">
+                      {isDbCourse ? 'ACADEMY PROGRAM' : p.badge}
+                    </div>
+                  </div>
+
+                  {/* Card Content */}
+                  <div className="p-6 sm:p-8">
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
+                        🎥 Live Zoom Online
+                      </span>
+                      <span className="text-xs font-semibold text-slate-500">
+                        ⏱️ {duration}
+                      </span>
+                    </div>
+
+                    {/* Course-Name */}
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight mb-2 group-hover:text-amber-600 transition-colors">
+                      {title}
+                    </h3>
+
+                    {/* Instructor Name & His Image */}
+                    <div className="flex items-center gap-2.5 pb-3 mb-4 border-b border-slate-100">
+                      <img
+                        src={instructorImage}
+                        alt={instructor}
+                        className="w-8 h-8 rounded-full object-cover border-2 border-amber-500 shadow-xs flex-shrink-0"
+                        onError={(e) => { e.target.src = instructorImg; }}
+                      />
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider leading-none">Instructor</p>
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                          {instructor}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p className="text-sm text-slate-600 leading-relaxed mb-6 line-clamp-3">
+                      {desc}
+                    </p>
+
+                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700 space-y-1.5">
+                      {whatYouWillLearn.slice(0, 3).map((item, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <span className="text-amber-500 font-bold">✓</span>
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                {/* Card Content */}
-                <div className="p-6 sm:p-8">
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
-                      {p.mode}
-                    </span>
-                    <span className="text-xs font-semibold text-slate-500">
-                      ⏱️ {p.duration}
-                    </span>
-                  </div>
-
-                  <h3 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight mb-2">
-                    {p.title}
-                  </h3>
-
-                  <p className="text-xs font-bold text-amber-700 uppercase tracking-wider mb-4">
-                    {p.subtitle}
-                  </p>
-
-                  <p className="text-sm text-slate-600 leading-relaxed mb-6">
-                    {p.desc}
-                  </p>
-
-                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700 space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-amber-500 font-bold">✓</span>
-                      <span>Live interactive Zoom sessions with screen sharing</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-amber-500 font-bold">✓</span>
-                      <span>Real portfolio projects &amp; live code review</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-amber-500 font-bold">✓</span>
-                      <span>1-on-1 WhatsApp instructor support &amp; recordings</span>
-                    </div>
-                  </div>
+                {/* Actions Footer */}
+                <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
+                  <a
+                    href={`https://wa.me/616408886?text=${encodeURIComponent(whatsappMsg)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-brand-primary flex-1 text-center text-sm py-3 justify-center"
+                  >
+                    💬 Enroll via WhatsApp
+                  </a>
+                  <Link
+                    to={linkTo}
+                    className="btn-brand-dark text-center text-sm py-3 px-5 justify-center"
+                  >
+                    View Course Details →
+                  </Link>
                 </div>
               </div>
-
-              {/* Actions Footer */}
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
-                <a
-                  href={`https://wa.me/616408886?text=${encodeURIComponent(p.whatsappMsg)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-brand-primary flex-1 text-center text-sm py-3 justify-center"
-                >
-                  💬 Enroll via WhatsApp
-                </a>
-                <Link
-                  to="/training-programs"
-                  className="btn-brand-dark text-center text-sm py-3 px-5 justify-center"
-                >
-                  View Full Syllabus →
-                </Link>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

@@ -26,26 +26,54 @@ export const createCourse = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ message: errors.array()[0]?.msg || 'Validation failed', errors: errors.array() });
     }
 
-    const course = new Course(req.body);
+    const courseData = { ...req.body };
+    if (courseData.price === '' || courseData.price === undefined || courseData.price === null) {
+      courseData.price = 0;
+    }
+    if (courseData.originalPrice === '' || courseData.originalPrice === undefined || courseData.originalPrice === null) {
+      delete courseData.originalPrice;
+    }
+    if (typeof courseData.whatYouWillLearn === 'string') {
+      courseData.whatYouWillLearn = courseData.whatYouWillLearn
+        .split('\n')
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    const course = new Course(courseData);
     await course.save();
     res.status(201).json(course);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error: ' + error.message, error: error.message });
   }
 };
 
 export const updateCourse = async (req, res) => {
   try {
-    const course = await Course.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const courseData = { ...req.body };
+    if (courseData.price === '' || courseData.price === undefined || courseData.price === null) {
+      courseData.price = 0;
+    }
+    if (courseData.originalPrice === '' || courseData.originalPrice === undefined || courseData.originalPrice === null) {
+      delete courseData.originalPrice;
+    }
+    if (typeof courseData.whatYouWillLearn === 'string') {
+      courseData.whatYouWillLearn = courseData.whatYouWillLearn
+        .split('\n')
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    const course = await Course.findByIdAndUpdate(req.params.id, courseData, { new: true });
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
     }
     res.json(course);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Server error: ' + error.message, error: error.message });
   }
 };
 
