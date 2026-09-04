@@ -1,64 +1,66 @@
-import React from 'react';
-import { QRCodeSVG } from 'qrcode.react';
-import logoImg from '../assets/logo-transparent.png';
-import signatureImg from '../assets/signature-transparent.png';
+import React from "react";
+import { QRCodeSVG } from "qrcode.react";
+import logoImg from "../assets/logo-transparent.png";
+import signatureImg from "../assets/signature-transparent.png";
 
 const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
   if (!certificate) return null;
 
   const {
-    studentName = 'Student Name',
-    courseTitle = 'Full Stack Web Developer (MERN Stack)',
+    studentName = "Student Name",
+    courseTitle = "Full Stack Web Developer (MERN Stack)",
     issueDate = new Date().toISOString(),
-    certificateId = 'IFT-2025-000000',
-    instructor = 'Abdirahman Mohamed Ibrahim',
+    certificateId = "IFT-2025-000000",
+    instructor = "Abdirahman Mohamed Ibrahim",
     skills = [],
-    grade = null
+    grade = null,
   } = certificate;
 
   // Always use the current date dynamically
-  const formattedDate = new Date().toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
+  const formattedDate = new Date().toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
   });
 
   // Always use iftiinhub.com domain for QR verification
   const verificationUrl = `https://iftiinhub.com/verify-certificate?id=${encodeURIComponent(certificateId)}`;
 
   // Clean course title: remove any "Associate" and normalize full-stack
-  const rawTitle = (courseTitle || 'Full Stack Web Development')
-    .replace(/associate\s*/gi, '')
+  const rawTitle = (courseTitle || "Full Stack Web Development")
+    .replace(/associate\s*/gi, "")
     .trim();
 
   const cleanCourseTitle =
-    rawTitle.toLowerCase().includes('full') ||
-    rawTitle.toLowerCase().includes('stack') ||
-    rawTitle.toLowerCase().includes('web')
-      ? 'Full Stack Web Development'
-      : rawTitle.toLowerCase().includes('data')
-      ? 'Data Analysis (Excel & Power BI)'
-      : rawTitle;
+    rawTitle.toLowerCase().includes("full") ||
+    rawTitle.toLowerCase().includes("stack") ||
+    rawTitle.toLowerCase().includes("web")
+      ? "Full Stack Web Development"
+      : rawTitle.toLowerCase().includes("data")
+        ? "Data Analysis (Excel & Power BI)"
+        : rawTitle;
 
   // Normalized instructor (ensure fallback to Abdirahman Mohamed Ibrahim if not customized or old team value)
   const displayInstructor =
-    instructor && !instructor.includes('Mucawiye')
-      ? instructor.replace(/^eng\.\s*/i, '').trim()
-      : 'Abdirahman Mohamed Ibrahim';
+    instructor && !instructor.includes("Mucawiye")
+      ? instructor.replace(/^eng\.\s*/i, "").trim()
+      : "Abdirahman Mohamed Ibrahim";
 
   // Skills description
-  const skillsText = skills && skills.length > 0
-    ? skills.join(' • ')
-    : 'HTML5, CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js, Express & MongoDB Database Architecture';
+  const skillsText =
+    skills && skills.length > 0
+      ? skills.join(" • ")
+      : "HTML5, CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js, Express & MongoDB Database Architecture";
 
   return (
     <div
       id={`certificate-${certificateId}`}
       className={`relative w-full max-w-4xl mx-auto min-h-[490px] sm:min-h-0 sm:aspect-[1.414/1] bg-[#0d1117] text-white rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden selection:bg-amber-500 selection:text-black flex flex-col justify-between p-3.5 sm:p-7 md:p-10 transition-all duration-200 ${
-        isPrintMode ? 'print-certificate-page' : ''
+        isPrintMode ? "print-certificate-page" : ""
       }`}
       style={{
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 40px rgba(212, 175, 55, 0.15)'
+        boxShadow:
+          "0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 40px rgba(212, 175, 55, 0.15)",
       }}
     >
       {/* ── BACKGROUND VECTOR ART (Exact match to certificate Iftiin Hub (1).pdf) ── */}
@@ -71,13 +73,32 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
       >
         <defs>
           {/* Gold polka dots pattern */}
-          <pattern id="goldDotsPattern" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+          <pattern
+            id="goldDotsPattern"
+            x="0"
+            y="0"
+            width="14"
+            height="14"
+            patternUnits="userSpaceOnUse"
+          >
             <circle cx="3" cy="3" r="1.5" fill="#d4af37" fillOpacity="0.75" />
           </pattern>
 
           {/* Soft drop shadow for layered curved cards */}
-          <filter id="cornerCardShadow" x="-20%" y="-20%" width="150%" height="150%">
-            <feDropShadow dx="4" dy="6" stdDeviation="8" floodColor="#000000" floodOpacity="0.8" />
+          <filter
+            id="cornerCardShadow"
+            x="-20%"
+            y="-20%"
+            width="150%"
+            height="150%"
+          >
+            <feDropShadow
+              dx="4"
+              dy="6"
+              stdDeviation="8"
+              floodColor="#000000"
+              floodOpacity="0.8"
+            />
           </filter>
         </defs>
 
@@ -187,7 +208,8 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
           <div
             className="text-xl sm:text-3xl md:text-4xl lg:text-5xl text-amber-400 font-serif italic tracking-wide lowercase mt-0.5 sm:-mt-1 drop-shadow-sm select-none"
             style={{
-              fontFamily: "'Dancing Script', 'Caveat', 'Brush Script MT', 'Great Vibes', cursive"
+              fontFamily:
+                "'Dancing Script', 'Caveat', 'Brush Script MT', 'Great Vibes', cursive",
             }}
           >
             certificate
@@ -219,12 +241,12 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
               className="font-black uppercase tracking-wider text-amber-300 font-serif drop-shadow-sm whitespace-nowrap block w-full"
               style={{
                 fontSize: (() => {
-                  const len = (studentName || '').length;
-                  if (len <= 15) return 'clamp(1.1rem, 4vw, 2rem)';
-                  if (len <= 22) return 'clamp(0.9rem, 3.2vw, 1.6rem)';
-                  if (len <= 30) return 'clamp(0.75rem, 2.5vw, 1.3rem)';
-                  return 'clamp(0.6rem, 2vw, 1.05rem)';
-                })()
+                  const len = (studentName || "").length;
+                  if (len <= 15) return "clamp(1.1rem, 4vw, 2rem)";
+                  if (len <= 22) return "clamp(0.9rem, 3.2vw, 1.6rem)";
+                  if (len <= 30) return "clamp(0.75rem, 2.5vw, 1.3rem)";
+                  return "clamp(0.6rem, 2vw, 1.05rem)";
+                })(),
               }}
             >
               {studentName}
@@ -233,24 +255,59 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
         </div>
       </div>
 
-      {/* ── MIDDLE SECTION 2: GOLD BORDERED COURSE BOX (Exact match to PDF) ── */}
+      {/* ── MIDDLE SECTION 2: DIPLOMA AWARD BOX ── */}
       <div className="relative z-10 max-w-2xl mx-auto w-full px-2 sm:px-6 md:px-8 my-1 sm:my-2">
         <div className="border border-amber-400/90 rounded-none p-2.5 sm:p-4 md:p-6 bg-slate-950/40 sm:bg-transparent text-center relative backdrop-blur-xs sm:backdrop-blur-none">
-          {/* Course Name Header: Full Stack (Exact match to PDF) */}
-          <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold text-amber-400 tracking-wide mb-1 sm:mb-2 md:mb-3 drop-shadow-sm">
-            {cleanCourseTitle}
+          {/* Authority Line */}
+          <p className="text-[9px] sm:text-xs md:text-sm text-slate-300 tracking-widest uppercase font-semibold mb-1 sm:mb-2">
+            By the Authority of Academic Board of Iftiinhub
+          </p>
+
+          {/* Diploma Title */}
+          <h2 className="text-base sm:text-2xl md:text-3xl lg:text-4xl font-bold text-amber-400 tracking-wide mb-1 sm:mb-2 md:mb-3 drop-shadow-sm">
+            Diploma in Web Applications Development
           </h2>
 
-          {/* Curriculum Description & Competencies Text */}
-          <p className="text-[10px] sm:text-xs md:text-sm text-slate-100 leading-relaxed font-normal max-w-xl mx-auto">
-            Has demonstrated academic excellence and practical proficiency in {cleanCourseTitle}. Successfully engineered, tested, and deployed end-to-end full-scale software capstones encompassing {skillsText}.
+          {/* Award Text */}
+          <p className="text-[10px] sm:text-xs md:text-sm text-slate-100 leading-relaxed font-normal max-w-xl mx-auto mb-1 sm:mb-2">
+            has been awarded to
+          </p>
+
+          {/* Recipient Name */}
+          <p className="text-sm sm:text-lg md:text-xl font-black uppercase tracking-wider text-white font-serif drop-shadow-sm mb-1 sm:mb-2">
+            {studentName}
+          </p>
+
+          {/* Completion Statement */}
+          <p className="text-[10px] sm:text-xs md:text-sm text-slate-100 leading-relaxed font-normal max-w-xl mx-auto mb-1 sm:mb-2">
+            who has successfully completed the diploma requirements
+          </p>
+
+          {/* Approval Line */}
+          <p className="text-[9px] sm:text-[11px] md:text-xs text-slate-400 leading-relaxed font-normal max-w-xl mx-auto">
+            The degree was approved by the Academic Board on {formattedDate}
+          </p>
+
+          {/* CEO Line */}
+          <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-amber-400/30">
+            <p className="text-[9px] sm:text-xs md:text-sm text-slate-300 font-semibold tracking-wide">
+              Chief Executive Officer
+            </p>
+            <p className="text-[10px] sm:text-sm md:text-base font-bold text-amber-300 tracking-wide">
+              Eng. Zakariye Yusuf Hussein
+            </p>
+          </div>
+
+          {/* Certificate Number */}
+          <p className="mt-1.5 sm:mt-2 text-[8px] sm:text-[10px] md:text-xs font-mono text-slate-400 tracking-widest">
+            Certificate No:{" "}
+            <span className="text-amber-400 font-bold">{certificateId}</span>
           </p>
         </div>
       </div>
 
       {/* ── BOTTOM SECTION: DATE, QR CODE & SIGNATURE (Exact match to PDF) ── */}
       <div className="relative z-10 grid grid-cols-3 gap-1 sm:gap-3 md:gap-4 items-end mt-2 sm:mt-4 md:mt-6 pb-1 sm:pb-2 px-1 sm:px-4 md:px-6">
-        
         {/* Left: Date */}
         <div className="text-center flex flex-col items-center">
           <div className="text-[10px] sm:text-xs md:text-sm font-bold text-amber-300 tracking-wide pb-0.5 sm:pb-1 whitespace-nowrap">
@@ -296,7 +353,6 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
             {displayInstructor}
           </span>
         </div>
-
       </div>
     </div>
   );
