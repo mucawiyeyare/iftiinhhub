@@ -288,13 +288,20 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
             The degree was approved by the Academic Board on {formattedDate}
           </p>
 
-          {/* CEO Line */}
-          <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-amber-400/30">
+          {/* CEO Line with Signature */}
+          <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-amber-400/30 flex flex-col items-center">
+            {/* Signature image above name */}
+            <img
+              src={signatureImg}
+              alt="Signature"
+              className="h-8 sm:h-11 md:h-14 w-auto object-contain drop-shadow-sm filter brightness-110 mb-0.5 sm:mb-1"
+            />
+            <div className="w-20 sm:w-32 md:w-44 border-b border-amber-400/60 mb-0.5 sm:mb-1"></div>
             <p className="text-[9px] sm:text-xs md:text-sm text-slate-300 font-semibold tracking-wide">
               Chief Executive Officer
             </p>
             <p className="text-[10px] sm:text-sm md:text-base font-bold text-amber-300 tracking-wide">
-              Eng. Zakariye Yusuf Hussein
+              Abdirahman Mohamed Ibrahim
             </p>
           </div>
 
