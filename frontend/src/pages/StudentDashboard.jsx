@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import PageTitle from '../components/PageTitle';
 import IftiinCertificate from '../components/IftiinCertificate';
+import { downloadCertificateAsPDF, downloadCertificateAsImage } from '../utils/downloadCertificate';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
@@ -673,7 +674,22 @@ const StudentDashboard = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
-                          View &amp; Print Certificate
+                          View Certificate
+                        </button>
+                        <button
+                          onClick={() => {
+                            setPreviewCert(cert);
+                            setTimeout(() => {
+                              downloadCertificateAsPDF(cert.certificateId, cert.studentName);
+                            }, 300);
+                          }}
+                          className="py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                          title="Download high-resolution PDF"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                          Download PDF
                         </button>
                         <Link
                           to={`/verify-certificate?id=${encodeURIComponent(cert.certificateId)}`}
@@ -702,22 +718,41 @@ const StudentDashboard = () => {
                 <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fadeIn">
                   <div className="bg-[#0A0E1A] border-2 border-amber-500 rounded-3xl p-4 sm:p-6 max-w-5xl w-full text-white shadow-2xl relative">
                     {/* Top Action Bar */}
-                    <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800 no-print">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-800 no-print">
                       <div className="flex items-center gap-2">
                         <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
                         <h4 className="font-bold text-sm sm:text-base text-amber-300">
                           Official Certificate Preview ({previewCert.certificateId})
                         </h4>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+                        <button
+                          onClick={() => downloadCertificateAsPDF(previewCert.certificateId, previewCert.studentName)}
+                          className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition flex items-center gap-1.5 shadow-md cursor-pointer"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                          Download PDF
+                        </button>
+                        <button
+                          onClick={() => downloadCertificateAsImage(previewCert.certificateId, previewCert.studentName)}
+                          className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 font-bold text-xs transition flex items-center gap-1.5 shadow-sm cursor-pointer"
+                          title="Download as PNG image"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          Image (PNG)
+                        </button>
                         <button
                           onClick={() => window.print()}
-                          className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition flex items-center gap-1.5 shadow-md cursor-pointer"
+                          className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition flex items-center gap-1.5 shadow-sm cursor-pointer"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                           </svg>
-                          Print / Save as PDF
+                          Print
                         </button>
                         <button
                           onClick={() => setPreviewCert(null)}
