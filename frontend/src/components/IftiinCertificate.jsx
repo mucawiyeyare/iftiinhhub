@@ -8,7 +8,7 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
 
   const {
     studentName = "Student Name",
-    courseTitle = "Full Stack Web Developer (MERN Stack)",
+    courseTitle = "Diploma in Web Applications Development",
     issueDate = new Date().toISOString(),
     certificateId = "IFT-2025-000000",
     instructor = "Abdirahman Mohamed Ibrahim",
@@ -26,8 +26,8 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
   // Always use iftiinhub.com domain for QR verification
   const verificationUrl = `https://iftiinhub.com/verify-certificate?id=${encodeURIComponent(certificateId)}`;
 
-  // Clean course title: remove any "Associate" and normalize full-stack
-  const rawTitle = (courseTitle || "Full Stack Web Development")
+  // Clean course title
+  const rawTitle = (courseTitle || "Diploma in Web Applications Development")
     .replace(/associate\s*/gi, "")
     .trim();
 
@@ -35,27 +35,15 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
     rawTitle.toLowerCase().includes("full") ||
     rawTitle.toLowerCase().includes("stack") ||
     rawTitle.toLowerCase().includes("web")
-      ? "Full Stack Web Development"
+      ? "Diploma in Web Applications Development"
       : rawTitle.toLowerCase().includes("data")
         ? "Data Analysis (Excel & Power BI)"
         : rawTitle;
 
-  // Normalized instructor (ensure fallback to Abdirahman Mohamed Ibrahim if not customized or old team value)
-  const displayInstructor =
-    instructor && !instructor.includes("Mucawiye")
-      ? instructor.replace(/^eng\.\s*/i, "").trim()
-      : "Abdirahman Mohamed Ibrahim";
-
-  // Skills description
-  const skillsText =
-    skills && skills.length > 0
-      ? skills.join(" • ")
-      : "HTML5, CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js, Express & MongoDB Database Architecture";
-
   return (
     <div
       id={`certificate-${certificateId}`}
-      className={`relative w-full max-w-4xl mx-auto min-h-[490px] sm:min-h-0 sm:aspect-[1.414/1] bg-[#0d1117] text-white rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden selection:bg-amber-500 selection:text-black flex flex-col justify-between p-3.5 sm:p-7 md:p-10 transition-all duration-200 ${
+      className={`relative w-full max-w-4xl mx-auto aspect-[1.414/1] bg-[#0d1117] text-white rounded-lg sm:rounded-2xl shadow-2xl overflow-hidden selection:bg-amber-500 selection:text-black flex flex-col justify-between p-2.5 sm:p-5 md:p-7 lg:p-8 transition-all duration-200 ${
         isPrintMode ? "print-certificate-page" : ""
       }`}
       style={{
@@ -63,7 +51,7 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
           "0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 40px rgba(212, 175, 55, 0.15)",
       }}
     >
-      {/* ── BACKGROUND VECTOR ART (Exact match to certificate Iftiin Hub (1).pdf) ── */}
+      {/* ── BACKGROUND VECTOR ART ── */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none z-0"
         viewBox="0 0 1000 707"
@@ -195,18 +183,18 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
         />
       </svg>
 
-      {/* ── TOP SECTION: TITLES & CIRCULAR LOGO BADGE (Exact match to PDF) ── */}
-      <div className="relative z-10 flex items-start justify-between gap-2">
-        {/* Left Spacer to balance the top right badge */}
-        <div className="w-12 sm:w-20 md:w-24 shrink-0"></div>
+      {/* ── TOP SECTION: TITLES & CIRCULAR LOGO BADGE ── */}
+      <div className="relative z-10 flex items-start justify-between gap-1 sm:gap-2">
+        {/* Left Spacer to balance top right badge */}
+        <div className="w-8 sm:w-16 md:w-20 shrink-0"></div>
 
         {/* Center: IFTIIN HUB + cursive certificate */}
-        <div className="text-center flex-1 pt-0.5 sm:pt-1">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-[0.14em] text-white uppercase font-sans drop-shadow-md leading-none">
+        <div className="text-center flex-1 pt-0 sm:pt-1">
+          <h1 className="text-sm sm:text-2xl md:text-4xl lg:text-5xl font-black tracking-[0.14em] text-white uppercase font-sans drop-shadow-md leading-tight">
             IFTIIN HUB
           </h1>
           <div
-            className="text-xl sm:text-3xl md:text-4xl lg:text-5xl text-amber-400 font-serif italic tracking-wide lowercase mt-0.5 sm:-mt-1 drop-shadow-sm select-none"
+            className="text-xs sm:text-xl md:text-3xl lg:text-4xl text-amber-400 font-serif italic tracking-wide lowercase -mt-1 sm:-mt-1.5 drop-shadow-sm select-none"
             style={{
               fontFamily:
                 "'Dancing Script', 'Caveat', 'Brush Script MT', 'Great Vibes', cursive",
@@ -216,10 +204,10 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
           </div>
         </div>
 
-        {/* Top-Right: Circular Golden Logo Badge (Exact match to PDF) */}
-        <div className="shrink-0 pt-0 sm:pt-1 pr-0 sm:pr-1">
-          <div className="w-12 h-12 sm:w-18 sm:h-18 md:w-22 md:h-22 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 p-1 sm:p-1.5 border-2 sm:border-3 md:border-4 border-amber-300 shadow-xl flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
-            <div className="w-full h-full rounded-full bg-white flex items-center justify-center p-1 sm:p-1.5 shadow-inner">
+        {/* Top-Right: Circular Golden Logo Badge */}
+        <div className="shrink-0 pt-0 sm:pt-0.5 pr-0 sm:pr-1">
+          <div className="w-8 h-8 sm:w-14 sm:h-14 md:w-18 md:h-18 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 p-0.5 sm:p-1 border sm:border-2 border-amber-300 shadow-xl flex items-center justify-center">
+            <div className="w-full h-full rounded-full bg-white flex items-center justify-center p-0.5 sm:p-1 shadow-inner">
               <img
                 src={logoImg}
                 alt="IftiinHub Logo"
@@ -230,134 +218,88 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
         </div>
       </div>
 
-      {/* ── MIDDLE SECTION 1: NAME : ________________________ (Exact match to PDF) ── */}
-      <div className="relative z-10 my-2 sm:my-4 md:my-5 max-w-2xl mx-auto w-full px-2 sm:px-6 md:px-8">
-        <div className="flex items-end gap-2 sm:gap-3 w-full">
-          <span className="text-base sm:text-xl md:text-2xl font-bold text-white tracking-wide shrink-0 pb-0.5 sm:pb-1 font-sans">
-            Name :
-          </span>
-          <div className="flex-1 relative border-b-2 sm:border-b-3 border-amber-400 pb-0.5 sm:pb-1 text-left pl-1 sm:pl-3">
-            <span
-              className="font-black uppercase tracking-wider text-amber-300 font-serif drop-shadow-sm whitespace-nowrap block w-full"
-              style={{
-                fontSize: (() => {
-                  const len = (studentName || "").length;
-                  if (len <= 15) return "clamp(1.1rem, 4vw, 2rem)";
-                  if (len <= 22) return "clamp(0.9rem, 3.2vw, 1.6rem)";
-                  if (len <= 30) return "clamp(0.75rem, 2.5vw, 1.3rem)";
-                  return "clamp(0.6rem, 2vw, 1.05rem)";
-                })(),
-              }}
-            >
-              {studentName}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── MIDDLE SECTION 2: DIPLOMA AWARD BOX ── */}
-      <div className="relative z-10 max-w-2xl mx-auto w-full px-2 sm:px-6 md:px-8 my-1 sm:my-2">
-        <div className="border border-amber-400/90 rounded-none p-2.5 sm:p-4 md:p-6 bg-slate-950/40 sm:bg-transparent text-center relative backdrop-blur-xs sm:backdrop-blur-none">
+      {/* ── MIDDLE SECTION: DIPLOMA AWARD BOX ── */}
+      <div className="relative z-10 max-w-2xl mx-auto w-full px-2 sm:px-4 md:px-6 my-auto">
+        <div className="border border-amber-400/90 rounded-none p-1.5 sm:p-3 md:p-4 bg-slate-950/40 text-center relative backdrop-blur-xs">
           {/* Authority Line */}
-          <p className="text-[9px] sm:text-xs md:text-sm text-slate-300 tracking-widest uppercase font-semibold mb-1 sm:mb-2">
+          <p className="text-[7px] sm:text-[10px] md:text-xs text-slate-300 tracking-widest uppercase font-semibold mb-0.5 sm:mb-1">
             By the Authority of Academic Board of Iftiinhub
           </p>
 
           {/* Diploma Title */}
-          <h2 className="text-base sm:text-2xl md:text-3xl lg:text-4xl font-bold text-amber-400 tracking-wide mb-1 sm:mb-2 md:mb-3 drop-shadow-sm">
-            Diploma in Web Applications Development
+          <h2 className="text-[10px] sm:text-lg md:text-2xl lg:text-3xl font-bold text-amber-400 tracking-wide mb-0.5 sm:mb-1 drop-shadow-sm leading-tight">
+            {cleanCourseTitle}
           </h2>
 
           {/* Award Text */}
-          <p className="text-[10px] sm:text-xs md:text-sm text-slate-100 leading-relaxed font-normal max-w-xl mx-auto mb-1 sm:mb-2">
+          <p className="text-[7px] sm:text-xs md:text-sm text-slate-200 font-normal mb-0.5 sm:mb-1">
             has been awarded to
           </p>
 
           {/* Recipient Name */}
-          <p className="text-sm sm:text-lg md:text-xl font-black uppercase tracking-wider text-white font-serif drop-shadow-sm mb-1 sm:mb-2">
+          <p className="text-[11px] sm:text-lg md:text-2xl lg:text-3xl font-black uppercase tracking-wider text-amber-300 font-serif drop-shadow-sm mb-0.5 sm:mb-1 leading-tight">
             {studentName}
           </p>
 
           {/* Completion Statement */}
-          <p className="text-[10px] sm:text-xs md:text-sm text-slate-100 leading-relaxed font-normal max-w-xl mx-auto mb-1 sm:mb-2">
+          <p className="text-[7px] sm:text-[11px] md:text-xs text-slate-200 font-normal mb-0.5 sm:mb-1 leading-snug">
             who has successfully completed the diploma requirements
           </p>
 
           {/* Approval Line */}
-          <p className="text-[9px] sm:text-[11px] md:text-xs text-slate-400 leading-relaxed font-normal max-w-xl mx-auto">
+          <p className="text-[6px] sm:text-[9px] md:text-xs text-slate-400 font-normal">
             The degree was approved by the Academic Board on {formattedDate}
-          </p>
-
-          {/* CEO Line with Signature */}
-          <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-amber-400/30 flex flex-col items-center">
-            {/* Signature image above name */}
-            <img
-              src={signatureImg}
-              alt="Signature"
-              className="h-8 sm:h-11 md:h-14 w-auto object-contain drop-shadow-sm filter brightness-110 mb-0.5 sm:mb-1"
-            />
-            <div className="w-20 sm:w-32 md:w-44 border-b border-amber-400/60 mb-0.5 sm:mb-1"></div>
-            <p className="text-[9px] sm:text-xs md:text-sm text-slate-300 font-semibold tracking-wide">
-              Chief Executive Officer
-            </p>
-            <p className="text-[10px] sm:text-sm md:text-base font-bold text-amber-300 tracking-wide">
-              Abdirahman Mohamed Ibrahim
-            </p>
-          </div>
-
-          {/* Certificate Number */}
-          <p className="mt-1.5 sm:mt-2 text-[8px] sm:text-[10px] md:text-xs font-mono text-slate-400 tracking-widest">
-            Certificate No:{" "}
-            <span className="text-amber-400 font-bold">{certificateId}</span>
           </p>
         </div>
       </div>
 
-      {/* ── BOTTOM SECTION: DATE, QR CODE & SIGNATURE (Exact match to PDF) ── */}
-      <div className="relative z-10 grid grid-cols-3 gap-1 sm:gap-3 md:gap-4 items-end mt-2 sm:mt-4 md:mt-6 pb-1 sm:pb-2 px-1 sm:px-4 md:px-6">
-        {/* Left: Date */}
-        <div className="text-center flex flex-col items-center">
-          <div className="text-[10px] sm:text-xs md:text-sm font-bold text-amber-300 tracking-wide pb-0.5 sm:pb-1 whitespace-nowrap">
+      {/* ── BOTTOM SECTION: DATE, QR CODE & CEO SIGNATURE ── */}
+      <div className="relative z-10 grid grid-cols-3 gap-1 sm:gap-3 md:gap-4 items-end pb-0.5 sm:pb-1 px-1 sm:px-4 md:px-6">
+        {/* Left: Date & Certificate ID */}
+        <div className="text-center flex flex-col items-center justify-end">
+          <div className="text-[7px] sm:text-xs md:text-sm font-bold text-amber-300 tracking-wide pb-0.5 whitespace-nowrap">
             {formattedDate}
           </div>
-          <div className="w-18 sm:w-28 md:w-36 lg:w-44 border-b-1.5 sm:border-b-2 border-amber-400 mb-0.5 sm:mb-1"></div>
-          <span className="text-xs sm:text-sm md:text-base font-bold text-white tracking-wider">
+          <div className="w-14 sm:w-24 md:w-32 lg:w-40 border-b sm:border-b-2 border-amber-400 mb-0.5 sm:mb-1"></div>
+          <span className="text-[8px] sm:text-xs md:text-sm font-bold text-white tracking-wider leading-none">
             Date
           </span>
-          <span className="text-[8px] sm:text-[9px] md:text-[10px] font-mono text-slate-400 tracking-wider truncate max-w-[90px] sm:max-w-none">
-            {certificateId}
+          <span className="text-[6px] sm:text-[8px] md:text-[10px] font-mono text-slate-400 tracking-wider truncate max-w-[90px] sm:max-w-none mt-0.5">
+            Cert No: {certificateId}
           </span>
         </div>
 
-        {/* Center: QR Code with "SCAN ME" (Exact match to PDF) */}
+        {/* Center: QR Code with "SCAN ME" */}
         <div className="flex flex-col items-center justify-center">
-          <div className="bg-white p-1 sm:p-1.5 md:p-2 rounded-lg sm:rounded-xl shadow-2xl border sm:border-2 border-amber-400 transform hover:scale-105 transition-transform duration-200">
+          <div className="bg-white p-0.5 sm:p-1 md:p-1.5 rounded sm:rounded-lg shadow-xl border border-amber-400 transform hover:scale-105 transition-transform duration-200">
             <QRCodeSVG
               value={verificationUrl}
-              size={46}
+              size={36}
               level="H"
               includeMargin={false}
-              className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16"
+              className="w-7 h-7 sm:w-11 sm:h-11 md:w-14 md:h-14"
             />
           </div>
-          <div className="mt-0.5 sm:mt-1 px-1.5 py-0.5 rounded bg-slate-950 border border-amber-400/60 text-[8px] sm:text-[9px] md:text-[10px] font-mono font-black text-amber-300 uppercase tracking-wider shadow-xs">
+          <div className="mt-0.5 px-1 py-0.2 rounded bg-slate-950 border border-amber-400/60 text-[6px] sm:text-[8px] md:text-[9px] font-mono font-black text-amber-300 uppercase tracking-wider shadow-xs">
             SCAN ME
           </div>
         </div>
 
-        {/* Right: Signature */}
-        <div className="text-center flex flex-col items-center">
-          {/* Symbol signature image above the line (Exact match to requested signature) */}
-          <div className="h-8 sm:h-10 md:h-12 flex items-end justify-center pb-0.5 select-none">
+        {/* Right: CEO Official Signature */}
+        <div className="text-center flex flex-col items-center justify-end">
+          <div className="h-5 sm:h-8 md:h-10 flex items-end justify-center pb-0.5 select-none">
             <img
               src={signatureImg}
               alt="Official Signature"
-              className="h-7 sm:h-9 md:h-11 w-auto object-contain drop-shadow-sm filter brightness-110"
+              className="h-4 sm:h-7 md:h-9 w-auto object-contain drop-shadow-sm filter brightness-110"
             />
           </div>
-          <div className="w-18 sm:w-28 md:w-36 lg:w-44 border-b-1.5 sm:border-b-2 border-amber-400 mb-0.5 sm:mb-1 mt-0.5"></div>
-          <span className="text-xs sm:text-sm md:text-base font-bold text-white tracking-wide text-center">
-            {displayInstructor}
+          <div className="w-14 sm:w-24 md:w-32 lg:w-40 border-b sm:border-b-2 border-amber-400 mb-0.5 sm:mb-1"></div>
+          <span className="text-[6px] sm:text-[10px] md:text-xs text-slate-300 font-semibold tracking-wide block leading-none">
+            Chief Executive Officer
+          </span>
+          <span className="text-[7px] sm:text-xs md:text-sm font-bold text-amber-300 tracking-wide block truncate max-w-[110px] sm:max-w-none mt-0.5">
+            Abdirahman Mohamed Ibrahim
           </span>
         </div>
       </div>
