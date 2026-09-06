@@ -353,29 +353,18 @@ const Home = () => {
           </div>
 
           {/* ── CUSTOMER / PROJECT CARDS (TOP IMAGE, NAME, DESCRIPTION, LINK) ── */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 mb-12">
-            {(dbProjects.length > 0
-              ? dbProjects.map((p) => ({
-                  id: p._id,
-                  name: p.name,
-                  logo: p.logo,
-                  image: p.image || p.logo,
-                  url: p.link || '#',
-                  githubLink: p.githubLink,
-                  description: p.description || 'Enterprise ICT software solution engineered for performance and reliability.',
-                  technologies: (p.technologies && p.technologies.length > 0) ? p.technologies : ['REACT', 'NODE.JS', 'TAILWIND']
-                }))
-              : customerLogos.map(c => ({
-                  id: c.id,
-                  name: c.name,
-                  logo: c.logo,
-                  image: c.logo,
-                  url: c.url,
-                  githubLink: '',
-                  description: `${c.category} - Enterprise cloud database and management system engineered by IftiinHub.`,
-                  technologies: ['FULL-STACK', 'CLOUD DB', 'TAILWIND']
-                }))
-            ).map((proj) => (
+          {dbProjects.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 mb-12">
+              {dbProjects.map((p) => ({
+                id: p._id,
+                name: p.name,
+                logo: p.logo,
+                image: p.image || p.logo,
+                url: p.link || '#',
+                githubLink: p.githubLink,
+                description: p.description || 'Enterprise ICT software solution engineered for performance and reliability.',
+                technologies: (p.technologies && p.technologies.length > 0) ? p.technologies : ['REACT', 'NODE.JS', 'TAILWIND']
+              })).map((proj) => (
               <div
                 key={proj.id}
                 className="bg-white rounded-3xl border border-slate-200 shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
@@ -451,6 +440,7 @@ const Home = () => {
               </div>
             ))}
           </div>
+          )}
 
           {/* Consultation Banner */}
           <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-orange-500 rounded-3xl p-8 sm:p-12 text-slate-950 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
