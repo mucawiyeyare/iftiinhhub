@@ -31,7 +31,7 @@ export const downloadCertificateAsPDF = async (
   }
 
   if (!element) {
-    toast.error("Opening print view for PDF...");
+    toast.error("Opening browser print view for PDF...");
     window.print();
     return false;
   }
@@ -41,9 +41,13 @@ export const downloadCertificateAsPDF = async (
   try {
     const dataUrl = await toPng(element, {
       quality: 0.95,
-      pixelRatio: 3,
-      cacheBust: true,
+      pixelRatio: 2,
+      cacheBust: false,
       backgroundColor: "#0d1117",
+      skipFonts: true,
+      filter: (node) => {
+        return !node.classList || !node.classList.contains("no-print");
+      },
     });
 
     const pdf = new jsPDF({
@@ -61,9 +65,9 @@ export const downloadCertificateAsPDF = async (
     toast.success("Certificate PDF downloaded!", { id: toastId });
     return true;
   } catch (error) {
-    console.error("Error generating certificate PDF:", error);
-    toast.error("Opening browser print view...", { id: toastId });
-    setTimeout(() => window.print(), 300);
+    console.warn("Direct PDF generation fallback:", error);
+    toast.dismiss(toastId);
+    window.print();
     return false;
   }
 };
@@ -89,9 +93,13 @@ export const downloadCertificateAsImage = async (
   try {
     const dataUrl = await toPng(element, {
       quality: 0.95,
-      pixelRatio: 3,
-      cacheBust: true,
+      pixelRatio: 2,
+      cacheBust: false,
       backgroundColor: "#0d1117",
+      skipFonts: true,
+      filter: (node) => {
+        return !node.classList || !node.classList.contains("no-print");
+      },
     });
 
     const link = document.createElement("a");
@@ -105,8 +113,9 @@ export const downloadCertificateAsImage = async (
     toast.success("Certificate image downloaded!", { id: toastId });
     return true;
   } catch (error) {
-    console.error("Error generating certificate image:", error);
-    toast.error("Failed to generate image.", { id: toastId });
+    console.warn("PNG generation fallback:", error);
+    toast.error("Opening browser print view instead...", { id: toastId });
+    setTimeout(() => window.print(), 300);
     return false;
   }
 };
