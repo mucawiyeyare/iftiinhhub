@@ -104,12 +104,22 @@ const testimonials = [
 
 const Home = () => {
   const [courses, setCourses] = useState([]);
+  const [dbProjects, setDbProjects] = useState([]);
 
   useEffect(() => {
     axios.get('/courses')
       .then(res => {
         if (Array.isArray(res.data) && res.data.length > 0) {
           setCourses(res.data);
+        }
+      })
+      .catch(() => {});
+
+    axios.get('/projects')
+      .then(res => {
+        const raw = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+        if (raw.length > 0) {
+          setDbProjects(raw);
         }
       })
       .catch(() => {});
@@ -342,60 +352,103 @@ const Home = () => {
             </p>
           </div>
 
-          {/* ── 3 CUSTOMER LOGO CARDS WITH SYSTEM IDENTITY COLORS ── */}
+          {/* ── CUSTOMER / PROJECT CARDS (TOP IMAGE, NAME, DESCRIPTION, LINK) ── */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 mb-12">
-            {customerLogos.map((cust) => (
-              <a
-                key={cust.id}
-                href={cust.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative group cursor-pointer transition-all duration-300 hover:-translate-y-2 block"
+            {(dbProjects.length > 0
+              ? dbProjects.map((p) => ({
+                  id: p._id,
+                  name: p.name,
+                  logo: p.logo,
+                  image: p.image || p.logo,
+                  url: p.link || '#',
+                  githubLink: p.githubLink,
+                  description: p.description || 'Enterprise ICT software solution engineered for performance and reliability.',
+                  technologies: (p.technologies && p.technologies.length > 0) ? p.technologies : ['REACT', 'NODE.JS', 'TAILWIND']
+                }))
+              : customerLogos.map(c => ({
+                  id: c.id,
+                  name: c.name,
+                  logo: c.logo,
+                  image: c.logo,
+                  url: c.url,
+                  githubLink: '',
+                  description: `${c.category} - Enterprise cloud database and management system engineered by IftiinHub.`,
+                  technologies: ['FULL-STACK', 'CLOUD DB', 'TAILWIND']
+                }))
+            ).map((proj) => (
+              <div
+                key={proj.id}
+                className="bg-white rounded-3xl border border-slate-200 shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
               >
-                {/* System Color Shadow / Bottom Accent Tab */}
-                <div
-                  className="absolute -bottom-2.5 right-6 w-24 h-4 rounded-full transition-all duration-300 opacity-80 group-hover:opacity-100 group-hover:w-32 shadow-md"
-                  style={{ backgroundColor: cust.tabColor }}
-                ></div>
-
-                {/* White Logo Card with System Color Accents */}
-                <div className={`relative bg-white rounded-2xl border-2 p-6 sm:p-8 flex flex-col items-center justify-between h-56 shadow-lg transition-all duration-300 ${cust.borderColor} ${cust.cardBg}`}>
-                  
-                  {/* Category Pill with System Color */}
-                  <div className="w-full flex items-center justify-between mb-2">
-                    <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${cust.pillColor}`}>
-                      {cust.category}
-                    </span>
-                    <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                      Live
-                    </span>
+                {/* 1. TOP DISPLAY IMAGE */}
+                <div className="w-full h-48 sm:h-56 bg-slate-900 overflow-hidden relative border-b border-slate-100 flex items-center justify-center p-4">
+                  <img
+                    src={proj.image || proj.logo}
+                    alt={proj.name}
+                    className="w-full h-full object-cover rounded-xl transform group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => {
+                      e.target.className = "max-h-24 max-w-[200px] w-auto h-auto object-contain";
+                    }}
+                  />
+                  {/* Floating Icon Box */}
+                  <div className="absolute -bottom-5 left-6 w-12 h-12 rounded-2xl bg-white border border-slate-200 shadow-md flex items-center justify-center text-amber-500 text-xl font-black">
+                    🌐
                   </div>
-
-                  {/* Real Customer Logo Image */}
-                  <div className="w-full h-24 flex items-center justify-center p-2">
-                    <img
-                      src={cust.logo}
-                      alt={cust.name}
-                      className="max-h-20 max-w-[200px] w-auto h-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-
-                  {/* Domain & Visit Link with System Color */}
-                  <div className="w-full pt-3 border-t border-slate-200/80 flex items-center justify-between text-xs font-mono font-bold text-slate-800">
-                    <span className="group-hover:text-slate-950 transition-colors">
-                      {cust.domain}
-                    </span>
-                    <span
-                      className="font-sans font-bold flex items-center gap-1 transition-transform group-hover:translate-x-1"
-                      style={{ color: cust.systemColor }}
-                    >
-                      Visit System →
-                    </span>
-                  </div>
-
                 </div>
-              </a>
+
+                {/* 2. PROJECT NAME & 3. DESCRIPTION */}
+                <div className="p-6 sm:p-8 pt-8 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight mb-3 group-hover:text-amber-600 transition-colors">
+                      {proj.name}
+                    </h3>
+                    <p className="text-slate-600 text-sm leading-relaxed mb-6">
+                      {proj.description}
+                    </p>
+
+                    {/* Technology Badges */}
+                    {proj.technologies && proj.technologies.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {proj.technologies.map((tech, idx) => (
+                          <span key={idx} className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 font-bold text-[11px] uppercase tracking-wider">
+                            ⚡ {tech}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 4. PROJECT LINK BUTTONS */}
+                  <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center gap-3">
+                    {proj.url && proj.url !== '#' && (
+                      <a
+                        href={proj.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm inline-flex items-center gap-2 shadow-sm transition-all transform hover:-translate-y-0.5"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        Live Demo
+                      </a>
+                    )}
+                    {proj.githubLink && (
+                      <a
+                        href={proj.githubLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm inline-flex items-center gap-2 border border-slate-200 transition-all transform hover:-translate-y-0.5"
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                        </svg>
+                        GitHub
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
 

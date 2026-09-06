@@ -87,6 +87,21 @@ const AdminDashboard = () => {
     skills: 'HTML5, CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js, Express, MongoDB'
   });
 
+  // Projects management state
+  const [projects, setProjects] = useState([]);
+  const [loadingProjects, setLoadingProjects] = useState(false);
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
+  const [projectData, setProjectData] = useState({
+    name: '',
+    link: '',
+    githubLink: '',
+    logo: '',
+    image: '',
+    description: '',
+    technologies: ''
+  });
+
   // Sidebar menu items
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: (
@@ -97,6 +112,11 @@ const AdminDashboard = () => {
     { id: 'courses', label: 'Courses', icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+      </svg>
+    ) },
+    { id: 'projects', label: 'Projects', icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
       </svg>
     ) },
     { id: 'students', label: 'Students', icon: (
@@ -144,6 +164,7 @@ const AdminDashboard = () => {
   // Derived counts for sidebar badges
   const sidebarCounts = {
     courses: (courses || []).length,
+    projects: (projects || []).length,
     students: (users || []).filter(u => u.role === 'student' && u.status !== 'pending').length,
     users: (users || []).length,
     messages: (messages || []).length,
@@ -214,8 +235,90 @@ const AdminDashboard = () => {
     fetchDashboardData();
     fetchMessages();
     fetchCertificates();
+    fetchProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const fetchProjects = async () => {
+    setLoadingProjects(true);
+    try {
+      const res = await axios.get('/projects');
+      const rawProjs = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+      setProjects(rawProjs);
+    } catch (error) {
+      console.error('Failed to fetch projects:', error);
+      setProjects([]);
+    } finally {
+      setLoadingProjects(false);
+    }
+  };
+
+  const openProjectModal = (proj = null) => {
+    if (proj) {
+      setEditingProject(proj);
+      setProjectData({
+        name: proj.name || '',
+        link: proj.link || '',
+        githubLink: proj.githubLink || '',
+        logo: proj.logo || '',
+        image: proj.image || '',
+        description: proj.description || '',
+        technologies: Array.isArray(proj.technologies) ? proj.technologies.join(', ') : (proj.technologies || '')
+      });
+    } else {
+      setEditingProject(null);
+      setProjectData({
+        name: '',
+        link: '',
+        githubLink: '',
+        logo: '',
+        image: '',
+        description: '',
+        technologies: ''
+      });
+    }
+    setShowProjectModal(true);
+  };
+
+  const handleSaveProject = async (e) => {
+    e.preventDefault();
+    if (!projectData.name || (!projectData.logo && !projectData.image)) {
+      setToast('Project name and logo/image URL are required');
+      setTimeout(() => setToast(''), 3000);
+      return;
+    }
+    try {
+      if (editingProject) {
+        const res = await axios.put(`/projects/${editingProject._id}`, projectData);
+        setProjects(prev => prev.map(p => p._id === editingProject._id ? res.data.data : p));
+        setToast('Project updated successfully!');
+      } else {
+        const res = await axios.post('/projects', projectData);
+        setProjects(prev => [res.data.data, ...prev]);
+        setToast('Project created successfully!');
+      }
+      setShowProjectModal(false);
+      setEditingProject(null);
+      setProjectData({ name: '', link: '', githubLink: '', logo: '', image: '', description: '', technologies: '' });
+      setTimeout(() => setToast(''), 3000);
+    } catch (error) {
+      setToast(error.response?.data?.message || 'Failed to save project');
+      setTimeout(() => setToast(''), 3000);
+    }
+  };
+
+  const handleDeleteProject = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this project?')) return;
+    try {
+      await axios.delete(`/projects/${id}`);
+      setProjects(prev => prev.filter(p => p._id !== id));
+      setToast('Project deleted successfully');
+      setTimeout(() => setToast(''), 3000);
+    } catch (error) {
+      setToast('Failed to delete project');
+      setTimeout(() => setToast(''), 3000);
+    }
+  };
 
   const fetchCertificates = async () => {
     setLoadingCertificates(true);
@@ -2631,6 +2734,108 @@ const AdminDashboard = () => {
                 </div>
               </div>
             )}
+
+            {/* Projects Tab */}
+            {activeTab === 'projects' && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+                  <div>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">Customer Projects &amp; Showcase</h2>
+                    <p className="text-sm text-slate-500 mt-1">Manage project logos, system names, and links published on the Home page "Our Customers" section.</p>
+                  </div>
+                  <button
+                    onClick={() => openProjectModal()}
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm rounded-xl transition shadow-sm shrink-0 cursor-pointer"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add New Project
+                  </button>
+                </div>
+
+                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                  {loadingProjects ? (
+                    <div className="p-8 text-center text-slate-500">Loading projects...</div>
+                  ) : projects.length === 0 ? (
+                    <div className="p-12 text-center">
+                      <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-900 mb-1">No Projects Added Yet</h3>
+                      <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">Currently, default customer logos are displayed on the Home page. Add custom projects here to publish your clients' logos and links dynamically.</p>
+                      <button
+                        onClick={() => openProjectModal()}
+                        className="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm rounded-xl transition"
+                      >
+                        Create First Project
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            <th className="py-3.5 px-6">Logo</th>
+                            <th className="py-3.5 px-6">Project Name</th>
+                            <th className="py-3.5 px-6">Website Link</th>
+                            <th className="py-3.5 px-6">Description / Category</th>
+                            <th className="py-3.5 px-6 text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 text-sm">
+                          {projects.map((proj) => (
+                            <tr key={proj._id} className="hover:bg-slate-50/80 transition">
+                              <td className="py-4 px-6">
+                                <div className="w-16 h-12 rounded-lg bg-slate-50 border border-slate-200 p-1 flex items-center justify-center overflow-hidden">
+                                  <img
+                                    src={proj.logo}
+                                    alt={proj.name}
+                                    className="max-h-full max-w-full object-contain"
+                                    onError={(e) => { e.target.src = 'https://via.placeholder.com/80x40?text=Logo'; }}
+                                  />
+                                </div>
+                              </td>
+                              <td className="py-4 px-6 font-bold text-slate-900">
+                                {proj.name}
+                              </td>
+                              <td className="py-4 px-6 text-blue-600 font-mono text-xs">
+                                {proj.link ? (
+                                  <a href={proj.link} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                                    {proj.link}
+                                  </a>
+                                ) : (
+                                  <span className="text-slate-400">N/A</span>
+                                )}
+                              </td>
+                              <td className="py-4 px-6 text-slate-600 max-w-xs truncate">
+                                {proj.description || 'Enterprise Customer'}
+                              </td>
+                              <td className="py-4 px-6 text-right space-x-2">
+                                <button
+                                  onClick={() => openProjectModal(proj)}
+                                  className="px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold rounded-lg text-xs transition cursor-pointer"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteProject(proj._id)}
+                                  className="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 font-bold rounded-lg text-xs transition cursor-pointer"
+                                >
+                                  Delete
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
               </div>
             </div>
   
@@ -3106,6 +3311,125 @@ const AdminDashboard = () => {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add / Edit Project Modal */}
+      {showProjectModal && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200">
+            <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+              <h3 className="text-lg font-bold">
+                {editingProject ? 'Edit Customer Project' : 'Add New Customer Project'}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowProjectModal(false)}
+                className="text-slate-400 hover:text-white transition cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+            <form onSubmit={handleSaveProject} className="p-6 space-y-4 text-slate-800 text-sm max-h-[80vh] overflow-y-auto">
+              <div>
+                <label className="block font-bold text-slate-800 mb-1">Project Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={projectData.name}
+                  onChange={(e) => setProjectData({ ...projectData, name: e.target.value })}
+                  placeholder="e.g. Weather Forecasts"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-800 mb-1">Top Display Image URL (Cover / Screenshot) *</label>
+                <input
+                  type="text"
+                  required
+                  value={projectData.image}
+                  onChange={(e) => setProjectData({ ...projectData, image: e.target.value, logo: projectData.logo || e.target.value })}
+                  placeholder="https://example.com/screenshot.png or image URL"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-xs"
+                />
+                {projectData.image && (
+                  <div className="mt-2 p-2 border border-slate-200 rounded-lg bg-slate-50 flex items-center gap-3">
+                    <span className="text-xs text-slate-500 font-semibold">Image Preview:</span>
+                    <img
+                      src={projectData.image}
+                      alt="Top Image Preview"
+                      className="h-12 max-w-[140px] object-cover rounded-md"
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-800 mb-1">Description *</label>
+                <textarea
+                  rows="3"
+                  required
+                  value={projectData.description}
+                  onChange={(e) => setProjectData({ ...projectData, description: e.target.value })}
+                  placeholder="A responsive web application that fetches real-time data and displays forecast details..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-800 mb-1">Technologies (Comma Separated)</label>
+                <input
+                  type="text"
+                  value={projectData.technologies}
+                  onChange={(e) => setProjectData({ ...projectData, technologies: e.target.value })}
+                  placeholder="e.g. JS, TAILWIND CSS, PHP"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none uppercase text-xs"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-800 mb-1">Live Demo Link (URL)</label>
+                  <input
+                    type="url"
+                    value={projectData.link}
+                    onChange={(e) => setProjectData({ ...projectData, link: e.target.value })}
+                    placeholder="https://example.com"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none font-mono text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-800 mb-1">GitHub Link (Optional)</label>
+                  <input
+                    type="url"
+                    value={projectData.githubLink}
+                    onChange={(e) => setProjectData({ ...projectData, githubLink: e.target.value })}
+                    placeholder="https://github.com/user/repo"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none font-mono text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setShowProjectModal(false)}
+                  className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition text-xs"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold transition text-xs shadow-sm"
+                >
+                  {editingProject ? 'Update Project' : 'Save Project'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
