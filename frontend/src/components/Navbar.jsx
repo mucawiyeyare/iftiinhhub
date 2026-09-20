@@ -298,7 +298,7 @@ const Navbar = () => {
 
             {/* ── Brand Logo ── */}
             <Link to="/" className="navbar-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', flexShrink: 0 }}
-              onClick={() => setIsMenuOpen(false)}>
+              onClick={() => { setIsMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
               <IftiinLogo size={48} />
             </Link>
 

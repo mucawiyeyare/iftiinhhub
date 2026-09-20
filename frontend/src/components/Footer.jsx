@@ -10,7 +10,7 @@ const Footer = () => {
 
           {/* Column 1: Brand Info */}
           <div className="col-span-1 md:col-span-2">
-            <Link to="/" className="inline-flex items-center gap-3 mb-5">
+            <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="inline-flex items-center gap-3 mb-5">
               <img
                 src={logoImg}
                 alt="IftiinHub Logo"

@@ -5,7 +5,7 @@
  * Handles navigation, protected routes, and conditional rendering of navbar/footer.
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
@@ -65,6 +65,11 @@ const PrivateRoute = ({ children, allowedRoles = [] }) => {
  */
 const Layout = () => {
   const location = useLocation();
+
+  // Always show a newly opened page from the top (e.g. after clicking a footer link)
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [location.pathname]);
 
   // Check if current page is a course detail page
   const isCourseDetail = /^\/courses\/[^/]+$/.test(location.pathname);

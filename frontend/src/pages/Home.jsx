@@ -4,12 +4,8 @@ import axios from 'axios';
 import PageTitle from '../components/PageTitle';
 import fullstackImg from '../assets/program-fullstack.png';
 import dataAnalysisImg from '../assets/program-data-analysis.png';
-import instructorImg from '../assets/instructor.jpg';
 
-// Real customer logos provided by user
-import snabDentalLogo from '../assets/customers/snab-dental-logo.png';
-import dhiigkaalLogo from '../assets/customers/dhiigkaal-logo.png';
-import ntwHuLogo from '../assets/customers/ntw-hu-logo.png';
+
 
 const programs = [
   {
@@ -36,50 +32,6 @@ const programs = [
   }
 ];
 
-const customerLogos = [
-  {
-    id: 'dhiigkaal',
-    name: 'Dhiigkaal Blood Bank & Healthcare System',
-    shortName: 'Dhiigkaal Blood Bank',
-    logo: dhiigkaalLogo,
-    url: 'https://dhiigkaal.iftiinhub.com',
-    domain: 'dhiigkaal.iftiinhub.com',
-    category: 'Healthcare & Blood Bank ERP',
-    systemColor: '#e11d48',
-    cardBg: 'bg-rose-50/30 hover:bg-rose-50/60',
-    borderColor: 'border-rose-200/80 hover:border-rose-400',
-    tabColor: '#e11d48',
-    pillColor: 'bg-rose-100 text-rose-800 border-rose-200'
-  },
-  {
-    id: 'snabdental',
-    name: 'SNAB Dental Clinic & Healthcare Management',
-    shortName: 'SNAB Dental Clinic',
-    logo: snabDentalLogo,
-    url: 'https://snabdental.iftiinhub.com',
-    domain: 'snabdental.iftiinhub.com',
-    category: 'Dental & Clinical EHR System',
-    systemColor: '#d97706',
-    cardBg: 'bg-amber-50/30 hover:bg-amber-50/60',
-    borderColor: 'border-amber-200/80 hover:border-amber-400',
-    tabColor: '#f59e0b',
-    pillColor: 'bg-amber-100 text-amber-900 border-amber-200'
-  },
-  {
-    id: 'ntw',
-    name: 'NTW Academic & University Portal (Hormuud University)',
-    shortName: 'Hormuud University (NTW)',
-    logo: ntwHuLogo,
-    url: 'https://ntw.hu.edu.so',
-    domain: 'ntw.hu.edu.so',
-    category: 'Higher Education Management System',
-    systemColor: '#16a34a',
-    cardBg: 'bg-emerald-50/30 hover:bg-emerald-50/60',
-    borderColor: 'border-emerald-200/80 hover:border-emerald-400',
-    tabColor: '#16a34a',
-    pillColor: 'bg-emerald-100 text-emerald-800 border-emerald-200'
-  }
-];
 
 const testimonials = [
   {
@@ -212,19 +164,11 @@ const Home = () => {
             const image = (isDbCourse ? p.imageUrl : p.image) || fullstackImg;
             const duration = isDbCourse ? (p.duration || '12 Weeks') : p.duration;
             const instructor = isDbCourse ? (p.instructor || 'Eng. Abdirahman Mohamed') : 'Eng. Abdirahman Mohamed Ibrahim';
-            const instructorImage = isDbCourse ? (p.instructorImage || instructorImg) : instructorImg;
             const desc = isDbCourse ? p.description : p.desc;
             const whatsappMsg = isDbCourse
               ? `Salaan! Waxaan doonayaa inaan iska diiwaangeliyo koorsada: ${p.name}.`
               : p.whatsappMsg;
             const linkTo = isDbCourse ? `/courses/${p._id}` : '/training-programs';
-            const whatYouWillLearn = (isDbCourse && Array.isArray(p.whatYouWillLearn) && p.whatYouWillLearn.length > 0)
-              ? p.whatYouWillLearn 
-              : [
-                  'Live interactive Zoom sessions with screen sharing',
-                  'Real portfolio projects & live code review',
-                  '1-on-1 WhatsApp instructor support & recordings'
-                ];
 
             return (
               <div
@@ -232,12 +176,12 @@ const Home = () => {
                 className="bg-white rounded-2xl border border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
               >
                 <div>
-                  {/* Card Image Header with Duration */}
-                  <div className="bg-slate-900 p-6 border-b border-slate-100 flex items-center justify-center relative min-h-[220px]">
+                  {/* Cover image */}
+                  <div className="bg-slate-900 relative h-52 sm:h-60 overflow-hidden">
                     <img
                       src={image}
                       alt={title}
-                      className="w-full h-auto max-h-60 object-contain rounded-xl transform group-hover:scale-102 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       onError={(e) => { e.target.src = fullstackImg; }}
                     />
                     <div className="absolute top-4 right-4 bg-amber-500 text-slate-950 font-black text-xs px-3 py-1 rounded-full shadow-md">
@@ -246,68 +190,41 @@ const Home = () => {
                   </div>
 
                   {/* Card Content */}
-                  <div className="p-6 sm:p-8">
-                    <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
-                        🎥 Live Zoom Online
-                      </span>
-                      <span className="text-xs font-semibold text-slate-500">
-                        ⏱️ {duration}
-                      </span>
-                    </div>
-
-                    {/* Course-Name */}
-                    <h3 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight mb-2 group-hover:text-amber-600 transition-colors">
+                  <div className="p-5 sm:p-6">
+                    <h3 className="text-lg sm:text-xl font-extrabold text-slate-950 leading-snug mb-2 line-clamp-2 group-hover:text-amber-600 transition-colors">
                       {title}
                     </h3>
-
-                    {/* Instructor Name & His Image */}
-                    <div className="flex items-center gap-2.5 pb-3 mb-4 border-b border-slate-100">
-                      <img
-                        src={instructorImage}
-                        alt={instructor}
-                        className="w-8 h-8 rounded-full object-cover border-2 border-amber-500 shadow-xs flex-shrink-0"
-                        onError={(e) => { e.target.src = instructorImg; }}
-                      />
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider leading-none">Instructor</p>
-                        <p className="text-xs sm:text-sm font-bold text-slate-900 truncate">
-                          {instructor}
-                        </p>
-                      </div>
-                    </div>
-
-                    <p className="text-sm text-slate-600 leading-relaxed mb-6 line-clamp-3">
+                    <p className="text-sm text-slate-500 leading-relaxed mb-4 line-clamp-3">
                       {desc}
                     </p>
 
-                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700 space-y-1.5">
-                      {whatYouWillLearn.slice(0, 3).map((item, i) => (
-                        <div key={i} className="flex items-center gap-2">
-                          <span className="text-amber-500 font-bold">✓</span>
-                          <span>{item}</span>
-                        </div>
-                      ))}
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-100">
+                      <span className="px-2.5 py-1 rounded border border-slate-200 bg-slate-50 text-[11px] text-slate-500">Live Zoom Online</span>
+                      <span className="px-2.5 py-1 rounded border border-slate-200 bg-slate-50 text-[11px] text-slate-500">{instructor}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Actions Footer */}
-                <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
-                  <a
-                    href={`https://wa.me/616408886?text=${encodeURIComponent(whatsappMsg)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-brand-primary flex-1 text-center text-sm py-3 justify-center"
-                  >
-                    💬 Enroll via WhatsApp
-                  </a>
-                  <Link
-                    to={linkTo}
-                    className="btn-brand-dark text-center text-sm py-3 px-5 justify-center"
-                  >
-                    View Course Details →
-                  </Link>
+                {/* Footer: duration + action */}
+                <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-1 flex items-center justify-between gap-3 flex-wrap">
+                  <span className="text-sm font-bold text-slate-600">⏱️ {duration}</span>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={`https://wa.me/616408886?text=${encodeURIComponent(whatsappMsg)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2.5 rounded-lg text-sm font-bold border border-amber-500 text-amber-700 hover:bg-amber-50 transition-colors"
+                    >
+                      💬 WhatsApp
+                    </a>
+                    <Link
+                      to={linkTo}
+                      className="px-5 py-2.5 rounded-lg text-sm font-bold bg-slate-950 text-white hover:bg-amber-600 transition-colors"
+                    >
+                      View Course
+                    </Link>
+                  </div>
                 </div>
               </div>
             );
