@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
@@ -84,7 +84,8 @@ const AdminDashboard = () => {
     certificateId: '',
     grade: '',
     instructor: 'Abdirahman Mohamed Ibrahim',
-    skills: 'HTML5, CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js, Express, MongoDB'
+    skills: 'HTML5, CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js, Express, MongoDB',
+    completionText: 'who has successfully completed the diploma requirements'
   });
 
   // Projects management state
@@ -172,6 +173,19 @@ const AdminDashboard = () => {
     registeredStudents: (users || []).filter(u => u.role === 'student' && u.status !== 'pending').length,
     notifications: (users || []).filter(u => u.status === 'pending').length,
   };
+
+  // Suggestions for the free-text course/bootcamp title field: existing DB
+  // courses, the two quick-preset tracks, and any titles already used on
+  // past certificates — so the admin can type a new name or pick a past one.
+  const courseTitleSuggestions = useMemo(() => {
+    const names = new Set([
+      'Full Stack Web Development',
+      'Data Analysis (Excel & Power BI)',
+      ...(courses || []).map(c => c.name).filter(Boolean),
+      ...(certificates || []).map(c => c.courseTitle).filter(Boolean),
+    ]);
+    return Array.from(names);
+  }, [courses, certificates]);
 
   const handleStudentSelect = (selectedStudentId) => {
     const selected = users.find(u => u._id === selectedStudentId);
@@ -360,7 +374,8 @@ const AdminDashboard = () => {
         certificateId: '',
         grade: '',
         instructor: 'Abdirahman Mohamed Ibrahim',
-        skills: 'HTML5, CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js, Express, MongoDB'
+        skills: 'HTML5, CSS3, Tailwind CSS, JavaScript ES6+, React.js, Node.js, Express, MongoDB',
+        completionText: 'who has successfully completed the diploma requirements'
       });
       setToast(res.data.message || 'Certificate issued and student marked as completed!');
       setTimeout(() => setToast(''), 3000);
@@ -1136,107 +1151,119 @@ const AdminDashboard = () => {
             {/* Courses Tab */}
             {activeTab === 'courses' && (
               <div>
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold text-gray-900">Course Management</h2>
+                <div className="flex flex-wrap justify-between items-center gap-3 mb-5">
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900">Course Management</h2>
+                    <p className="text-sm text-slate-500 mt-0.5">{courses.length} course{courses.length === 1 ? '' : 's'} in the academy</p>
+                  </div>
                   <Link
                     to="/courses/new"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200"
+                    className="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl shadow-md transition-colors"
                   >
-                    Add New Course
+                    + Add New Course
                   </Link>
                 </div>
                 {/* Search Bar for Courses */}
-                <div className="mb-4">
+                <div className="mb-6">
                   <input
                     type="text"
-                    placeholder="Search courses..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Search courses by name or instructor..."
+                    className="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                     value={courseSearchTerm}
                     onChange={(e) => setCourseSearchTerm(e.target.value)}
                   />
                 </div>
-                <div className="overflow-x-auto shadow-sm rounded-lg border border-gray-200">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Course
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Instructor
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Price
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {courses
-                        .filter(course =>
-                          course.name.toLowerCase().includes(courseSearchTerm.toLowerCase()) ||
-                          course.instructor.toLowerCase().includes(courseSearchTerm.toLowerCase())
-                        )
-                        .map(course => (
-                          <tr key={course._id}>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div>
-                                <div className="text-sm font-medium text-gray-900">{course.name}</div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {course.instructor}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              ${course.price}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                              <div className="flex items-center space-x-2">
-                                <button
-                                  onClick={() => handleDeleteCourse(course._id)}
-                                  className="text-red-600 hover:text-red-900"
-                                >
-                                  Delete
-                                </button>
-                                <Link
-                                  to={`/courses/${course._id}/edit`}
-                                  className="text-blue-600 hover:text-blue-900"
-                                >
-                                  Edit
-                                </Link>
-                                <Link
-                                  to={`/courses/${course._id}/learn`}
-                                  className="bg-green-600 text-white px-2 py-1 rounded-md hover:bg-green-700 transition-colors text-xs"
-                                >
-                                  Manage
-                                </Link>
-                                <button
-                                  onClick={() => openVideoModal(course)}
-                                  className="bg-purple-600 text-white px-2 py-1 rounded-md hover:bg-purple-700 transition-colors text-xs"
-                                >
-                                  Add Video
-                                </button>
-                                <button
-                                  onClick={() => openSectionModal(course)}
-                                  className="bg-indigo-600 text-white px-2 py-1 rounded-md hover:bg-indigo-700 transition-colors text-xs"
-                                >
-                                  Add Section
-                                </button>
-                                <button
-                                  onClick={() => openSectionsView(course)}
-                                  className="bg-gray-600 text-white px-2 py-1 rounded-md hover:bg-gray-700 transition-colors text-xs"
-                                >
-                                  View Sections
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
+
+                {/* Course Cards Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {courses
+                    .filter(course =>
+                      course.name.toLowerCase().includes(courseSearchTerm.toLowerCase()) ||
+                      course.instructor.toLowerCase().includes(courseSearchTerm.toLowerCase())
+                    )
+                    .map(course => (
+                      <div
+                        key={course._id}
+                        className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col"
+                      >
+                        {/* Cover Image */}
+                        <div className="h-36 bg-slate-900 relative overflow-hidden shrink-0">
+                          {course.imageUrl ? (
+                            <img
+                              src={course.imageUrl}
+                              alt={course.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-slate-600 text-3xl">📚</div>
+                          )}
+                          <span className="absolute top-2.5 right-2.5 bg-amber-500 text-slate-950 text-[11px] font-black px-2.5 py-0.5 rounded-full shadow">
+                            ${course.price ?? 0}
+                          </span>
+                        </div>
+
+                        {/* Body */}
+                        <div className="p-4 flex-1 flex flex-col">
+                          <h3 className="text-sm font-bold text-slate-900 leading-snug line-clamp-2 mb-1">
+                            {course.name}
+                          </h3>
+                          <p className="text-xs text-slate-500 mb-4">
+                            👤 {course.instructor}{course.duration ? ` · ⏱️ ${course.duration}` : ''}
+                          </p>
+
+                          {/* Primary actions */}
+                          <div className="mt-auto grid grid-cols-2 gap-2 mb-2">
+                            <Link
+                              to={`/courses/${course._id}/edit`}
+                              className="text-center text-xs font-bold px-3 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 transition-colors"
+                            >
+                              ✏️ Edit
+                            </Link>
+                            <Link
+                              to={`/courses/${course._id}/learn`}
+                              className="text-center text-xs font-bold px-3 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+                            >
+                              ▶ Manage
+                            </Link>
+                          </div>
+
+                          {/* Secondary actions */}
+                          <div className="flex flex-wrap gap-1.5 pt-2 border-t border-slate-100">
+                            <button
+                              onClick={() => openVideoModal(course)}
+                              className="text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-colors cursor-pointer"
+                            >
+                              + Video
+                            </button>
+                            <button
+                              onClick={() => openSectionModal(course)}
+                              className="text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition-colors cursor-pointer"
+                            >
+                              + Section
+                            </button>
+                            <button
+                              onClick={() => openSectionsView(course)}
+                              className="text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition-colors cursor-pointer"
+                            >
+                              Sections
+                            </button>
+                            <button
+                              onClick={() => handleDeleteCourse(course._id)}
+                              className="text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 transition-colors cursor-pointer ml-auto"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                 </div>
+
+                {courses.length === 0 && (
+                  <div className="text-center py-16 text-slate-400 text-sm">
+                    No courses yet. Click "Add New Course" to create one.
+                  </div>
+                )}
               </div>
             )}
 
@@ -2566,13 +2593,54 @@ const AdminDashboard = () => {
                         </div>
 
                         <div>
-                          <label className="block font-bold text-slate-800 mb-1">Course / Program Title *</label>
+                          <label className="block font-bold text-slate-800 mb-1">Course / Program / Bootcamp Title *</label>
                           <input
                             type="text"
                             required
+                            list="course-title-suggestions"
                             value={newCert.courseTitle}
                             onChange={(e) => setNewCert({ ...newCert, courseTitle: e.target.value })}
-                            placeholder="e.g. Associate Full-Stack Web Developer (MERN Stack)"
+                            placeholder="Type any course or bootcamp name, or pick a suggestion"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+                          />
+                          <datalist id="course-title-suggestions">
+                            {courseTitleSuggestions.map((name) => (
+                              <option key={name} value={name} />
+                            ))}
+                          </datalist>
+                          <p className="text-[11px] text-slate-400 mt-1">This exact text is printed as the title on the certificate — type a new name freely, or start typing to pick an existing one.</p>
+                        </div>
+
+                        <div>
+                          <label className="block font-bold text-slate-800 mb-1">Completion Statement (editable)</label>
+                          <div className="flex flex-wrap gap-2 mb-1.5">
+                            <button
+                              type="button"
+                              onClick={() => setNewCert({ ...newCert, completionText: 'who has successfully completed the diploma requirements' })}
+                              className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold border border-slate-200 cursor-pointer"
+                            >
+                              Diploma wording
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setNewCert({ ...newCert, completionText: 'who has successfully completed the bootcamp requirements' })}
+                              className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold border border-slate-200 cursor-pointer"
+                            >
+                              Bootcamp wording
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setNewCert({ ...newCert, completionText: 'who has successfully completed the training program requirements' })}
+                              className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold border border-slate-200 cursor-pointer"
+                            >
+                              Training wording
+                            </button>
+                          </div>
+                          <input
+                            type="text"
+                            value={newCert.completionText}
+                            onChange={(e) => setNewCert({ ...newCert, completionText: e.target.value })}
+                            placeholder="e.g. who has successfully completed the bootcamp requirements"
                             className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
                           />
                         </div>

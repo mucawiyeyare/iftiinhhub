@@ -24,6 +24,11 @@ const certificateSchema = new mongoose.Schema({
     required: [true, 'Course title is required'],
     trim: true
   },
+  completionText: {
+    type: String,
+    trim: true,
+    default: 'who has successfully completed the diploma requirements'
+  },
   courseId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Course'

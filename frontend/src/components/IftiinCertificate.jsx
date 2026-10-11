@@ -14,6 +14,7 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
     instructor = "Abdirahman Mohamed Ibrahim",
     skills = [],
     grade = null,
+    completionText = "who has successfully completed the diploma requirements",
   } = certificate;
 
   // Always use the current date dynamically
@@ -26,19 +27,12 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
   // Always use iftiinhub.com domain for QR verification
   const verificationUrl = `https://iftiinhub.com/verify-certificate?id=${encodeURIComponent(certificateId)}`;
 
-  // Clean course title
-  const rawTitle = (courseTitle || "Diploma in Web Applications Development")
-    .replace(/associate\s*/gi, "")
+  // Show the title exactly as the admin entered it (just tidy stray whitespace
+  // and drop a leading "Associate" prefix), instead of forcing it into one of
+  // a fixed set of hardcoded titles.
+  const cleanCourseTitle = (courseTitle || "Diploma in Web Applications Development")
+    .replace(/^\s*associate\s*/i, "")
     .trim();
-
-  const cleanCourseTitle =
-    rawTitle.toLowerCase().includes("full") ||
-    rawTitle.toLowerCase().includes("stack") ||
-    rawTitle.toLowerCase().includes("web")
-      ? "Diploma in Web Applications Development"
-      : rawTitle.toLowerCase().includes("data")
-        ? "Data Analysis (Excel & Power BI)"
-        : rawTitle;
 
   return (
     <div
@@ -243,7 +237,7 @@ const IftiinCertificate = ({ certificate, isPrintMode = false }) => {
 
           {/* Completion Statement */}
           <p className="text-[7px] sm:text-[11px] md:text-xs text-slate-200 font-normal mb-0.5 sm:mb-1 leading-snug">
-            who has successfully completed the diploma requirements
+            {completionText}
           </p>
 
           {/* Approval Line */}

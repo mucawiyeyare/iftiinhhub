@@ -184,6 +184,7 @@ export const createCertificate = async (req, res) => {
       grade,
       instructor,
       skills,
+      completionText,
       status
     } = req.body;
 
@@ -217,6 +218,7 @@ export const createCertificate = async (req, res) => {
       grade: grade || 'Distinction (98%)',
       instructor: instructor || 'Eng. Mucawiye & IftiinHub Academic Team',
       skills: Array.isArray(skills) ? skills : (skills ? skills.split(',').map(s => s.trim()) : ['HTML5 & CSS3', 'JavaScript ES6+', 'React.js', 'Node.js', 'MongoDB']),
+      completionText: completionText || 'who has successfully completed the diploma requirements',
       status: status || 'valid'
     });
 
@@ -233,7 +235,7 @@ export const createCertificate = async (req, res) => {
  */
 export const assignCompletedAndGenerateCertificate = async (req, res) => {
   try {
-    const { studentId, courseId, grade, instructor, skills, customCourseTitle } = req.body;
+    const { studentId, courseId, grade, instructor, skills, courseTitle: typedCourseTitle, customCourseTitle, completionText } = req.body;
 
     if (!studentId) {
       return res.status(400).json({ message: 'Student selection is required' });
@@ -245,18 +247,13 @@ export const assignCompletedAndGenerateCertificate = async (req, res) => {
     }
 
     let course = null;
-    let courseTitle = customCourseTitle;
-
     if (courseId) {
       course = await Course.findById(courseId);
-      if (course) {
-        courseTitle = course.name;
-      }
     }
 
-    if (!courseTitle) {
-      courseTitle = 'Full Stack Web Development';
-    }
+    // The admin's typed/edited title always wins — it's what they explicitly
+    // reviewed in the form, even if a course record was also selected for auto-fill.
+    const courseTitle = typedCourseTitle || customCourseTitle || course?.name || 'Full Stack Web Development';
 
     // Update or create enrollment marked as completed
     if (courseId) {
@@ -290,6 +287,7 @@ export const assignCompletedAndGenerateCertificate = async (req, res) => {
       grade: grade || 'Distinction (98%)',
       instructor: instructor || 'Eng. Mucawiye & IftiinHub Academic Team',
       skills: Array.isArray(skills) ? skills : (skills ? skills.split(',').map(s => s.trim()) : ['HTML5 & CSS3', 'Tailwind CSS', 'JavaScript ES6+', 'React.js', 'Node.js & Express', 'MongoDB']),
+      completionText: completionText || 'who has successfully completed the diploma requirements',
       status: 'valid'
     });
 
